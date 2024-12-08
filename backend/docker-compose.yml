@@ -1,0 +1,29 @@
+services:
+  postgres-dev:
+    image: postgres:latest
+    container_name: postgres-dev
+    environment:
+      POSTGRES_USER: ${POSTGRES_DEV_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_DEV_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DEV_DB}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data_dev:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+
+#  postgres-prod:
+#    image: postgres:latest
+#    container_name: postgres-prod
+#    environment:
+#      POSTGRES_USER: ${POSTGRES_PROD_USER}
+#      POSTGRES_PASSWORD: ${POSTGRES_PROD_PASSWORD}
+#      POSTGRES_DB: ${POSTGRES_PROD_DB}
+#    ports:
+#      - "5433:5432"
+#    volumes:
+#      - postgres_data_prod:/var/lib/postgresql/data
+
+volumes:
+  postgres_data_dev:
+#  postgres_data_prod:

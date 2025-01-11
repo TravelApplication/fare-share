@@ -140,4 +140,4 @@ Desktop.ini
 ######################
 .eslintcache%
 
-.env
+.env.prod

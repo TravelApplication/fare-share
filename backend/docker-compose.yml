@@ -1,13 +1,13 @@
+# solely for db
+
 services:
   postgres-dev:
     image: postgres:latest
     container_name: postgres-dev
-    env_file:
-      - .env.dev
     environment:
-      POSTGRES_USER: ${POSTGRES_DEV_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_DEV_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DEV_DB}
+      POSTGRES_USER: fare_dev_user
+      POSTGRES_PASSWORD: fare_dev_password
+      POSTGRES_DB: fare_dev_db
     ports:
       - "5432:5432"
     volumes:

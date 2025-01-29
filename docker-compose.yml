@@ -1,0 +1,24 @@
+services:
+  postgres-dev:
+    container_name: fareshare-db-dev
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: fare_dev_user
+      POSTGRES_PASSWORD: fare_dev_password
+      POSTGRES_DB: fare_dev_db
+    ports:
+      - "5432:5432"
+
+  backend-app:
+    container_name: backend-app
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+#    environment:
+#      - DATABASE_URL=postgresql://fare_dev_user:fare_dev_password@postgres-dev:5432/fare_dev_db
+    environment:
+      - DATABASE_HOST=fareshare-db-dev
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres-dev

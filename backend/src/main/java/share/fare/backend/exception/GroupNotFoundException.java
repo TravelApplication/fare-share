@@ -4,12 +4,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Exception thrown when a user is not found.
+ * Exception thrown when a group is not found.
  */
 @ResponseStatus(code = HttpStatus.NOT_FOUND)
-public class UserNotFoundException extends RuntimeException {
-    public UserNotFoundException(String message) {
+public class GroupNotFoundException extends RuntimeException {
+    public GroupNotFoundException(String message) {
         super(message);
     }
 }
-

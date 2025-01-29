@@ -75,4 +75,28 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
 
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
+
+    /**
+     * Global exception handler for InvalidCredentialsException
+     * @param ex InvalidCredentialsException
+     * @param request WebRequest
+     * @return ResponseEntity<ErrorDetails>
+     */
+    @ExceptionHandler(InvalidCredentialsException.class)
+    public final ResponseEntity<ErrorDetails> handleInvalidCredentialsException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
+    }
+
+    /**
+     * Global exception handler for UserAlreadyExistsException
+     * @param ex UserAlreadyExistsException
+     * @param request WebRequest
+     * @return ResponseEntity<ErrorDetails>
+     */
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public final ResponseEntity<ErrorDetails> userAlreadyExistsException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
 }

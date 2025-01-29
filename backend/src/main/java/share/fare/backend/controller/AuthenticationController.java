@@ -13,6 +13,9 @@ import share.fare.backend.dto.request.RegisterRequest;
 import share.fare.backend.dto.response.AuthenticationResponse;
 import share.fare.backend.service.AuthenticationService;
 
+/**
+ * Controller for handling authentication requests.
+ */
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
@@ -32,15 +35,5 @@ public class AuthenticationController {
             @RequestBody AuthenticationRequest request
     ) {
         return ResponseEntity.ok(authenticationService.authenticate(request));
-    }
-
-    @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ex.getMessage());
-    }
-
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseEntity<String> handleIllegalStateException(IllegalStateException ex) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 }

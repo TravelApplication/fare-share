@@ -32,7 +32,7 @@ const handleSignUp = async (values, { setError, resetForm }) => {
       values
     );
     const token = result.data.token;
-    document.cookie = `token=${token}; path=/; max-age=604800; secure; samesite=strict`;
+    document.cookie = `token=${token}; path=/; max-age=36000; secure; samesite=strict`;
     window.location.href = "/";
     resetForm();
   } catch (err) {

@@ -1,3 +1,4 @@
+import Navbar from "@/components/shared/Navbar";
 import "../globals.css";
 export const metadata = {
   title: "Next.js",
@@ -11,7 +12,12 @@ export default function AuthLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <Navbar />
+        <section className="main-container">
+          <div className="w-full max-w-4xl">{children}</div>
+        </section>
+      </body>
     </html>
   );
 }

@@ -26,7 +26,7 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
             User user1 = User.builder()
                     .email("user@example.com")
                     .password(passwordEncoder.encode("password"))
-                    .role(Role.USER)
+                    .role(Role.ADMIN)
                     .createdAt(LocalDate.now())
                     .build();
 

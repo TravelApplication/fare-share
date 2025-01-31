@@ -24,12 +24,6 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping
-    public ResponseEntity<PaginatedResponse<UserResponse>> getUsers(
-            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
-        return ResponseEntity.ok(new PaginatedResponse<>(userService.getUsers(pageable)));
-    }
-
-    @GetMapping
     public ResponseEntity<UserResponse> getUser(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(userService.getUser(user.getId()));
     }
@@ -48,14 +42,14 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("/admin/{userId}")
     public ResponseEntity<Void> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return ResponseEntity.noContent().build();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("/{userId}")
+    @PutMapping("/admin/{userId}")
     public ResponseEntity<UserResponse> updateUser(
             @PathVariable Long userId,
             @Valid @RequestBody UserRequest userRequest) {
@@ -63,13 +57,13 @@ public class UserController {
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("/{userId}")
+    @GetMapping("/admin/{userId}")
     public ResponseEntity<UserResponse> getUser(@PathVariable Long userId) {
         return ResponseEntity.ok(userService.getUser(userId));
     }
 
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping("/admin")
     public ResponseEntity<PaginatedResponse<UserResponse>> getUsersAdmin(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(new PaginatedResponse<>(userService.getUsers(pageable)));

@@ -130,4 +130,16 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Global exception for not found activity
+     */
+    @ExceptionHandler(ActivityNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> activityNotFoundException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
 }
+
+
+// TODO: Improve the java docs here

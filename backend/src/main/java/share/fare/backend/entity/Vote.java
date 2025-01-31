@@ -34,3 +34,5 @@ public class Vote {
         votedAt = LocalDateTime.now();
     }
 }
+
+// TODO: add base entity and move prePersist there

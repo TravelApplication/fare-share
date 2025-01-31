@@ -1,6 +1,7 @@
 package share.fare.backend.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,21 +17,24 @@ import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
 
     public GroupResponse createGroup(GroupRequest groupRequest, Long createdByUserId) {
         validateTripDates(groupRequest.getTripStartDate(), groupRequest.getTripEndDate());
+        log.info("Created by user ID: {}", createdByUserId);
 
         User createdBy = userRepository.findById(createdByUserId)
                 .orElseThrow(() -> new UserNotFoundException("User with ID " + createdByUserId + " not found"));
 
         Group newGroup = GroupMapper.toEntity(groupRequest, createdBy);
+
+        newGroup.addMember(createdBy, GroupRole.OWNER);
 
         return GroupMapper.toResponse(groupRepository.save(newGroup));
     }
@@ -58,7 +62,6 @@ public class GroupService {
                 .orElseThrow(() -> new GroupNotFoundException("Group not found with ID: " + groupId));
 
         updateGroupFields(existingGroup, groupRequest);
-        updateGroupMembers(existingGroup, groupRequest.getMemberIds());
 
         Group updatedGroup = groupRepository.save(existingGroup);
         return GroupMapper.toResponse(updatedGroup);
@@ -72,21 +75,6 @@ public class GroupService {
         group.setTags(request.getTags());
         group.setGroupImageUrl(request.getGroupImageUrl());
         group.setLinks(request.getLinks());
-    }
-
-    private void updateGroupMembers(Group group, List<Long> newMemberIds) {
-        group.getMemberships().removeIf(membership ->
-                !newMemberIds.contains(membership.getUser().getId())
-        );
-
-        newMemberIds.stream()
-                .filter(memberId -> group.getMemberships().stream()
-                        .noneMatch(m -> m.getUser().getId().equals(memberId)))
-                .forEach(memberId -> {
-                    User user = userRepository.findById(memberId)
-                            .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + memberId));
-                    group.addMember(user, GroupRole.MEMBER);
-                });
     }
 
     private void validateTripDates(LocalDate startDate, LocalDate endDate) {

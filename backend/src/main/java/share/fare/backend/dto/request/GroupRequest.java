@@ -21,11 +21,7 @@ public class GroupRequest {
     @Size(max = 500, message = "Description must be less than 500 characters")
     private String description;
 
-    @NotNull(message = "Created by user ID is required")
-    private Long createdByUserId; // ID of the user creating the group
-
-    @NotEmpty(message = "At least one member must be added to the group")
-    private List<Long> memberIds; // List of user IDs to add as members
+    private Long createdByUserId;
 
     @FutureOrPresent(message = "Trip start date must be in the present or future")
     private LocalDate tripStartDate;

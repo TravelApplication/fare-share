@@ -99,4 +99,26 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
+
+    /**
+     * Global exception handler for UserAlreadyInGroupException
+     * @param ex UserAlreadyInGroupException
+     * @param request WebRequest
+     * @return ResponseEntity<ErrorDetails>
+     */
+    @ExceptionHandler(UserAlreadyInGroupException.class)
+    public final ResponseEntity<ErrorDetails> userAlreadyInGroupException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Global exception handler for GroupNotFoundException
+     */
+    @ExceptionHandler(UserIsNotInGroupException.class)
+    public final ResponseEntity<ErrorDetails> userIsNotInGroupException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
 }

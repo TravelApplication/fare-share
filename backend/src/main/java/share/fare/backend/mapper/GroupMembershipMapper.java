@@ -1,16 +1,23 @@
 package share.fare.backend.mapper;
 
 import share.fare.backend.dto.response.GroupMembershipResponse;
+import share.fare.backend.entity.Group;
 import share.fare.backend.entity.GroupMembership;
 
 public class GroupMembershipMapper {
-    public static GroupMembershipResponse toResponse(GroupMembership groupMembership) {
+    public static GroupMembershipResponse toResponse(GroupMembership membership) {
+        if (membership == null) {
+            return null;
+        }
+
         return GroupMembershipResponse.builder()
-                .id(groupMembership.getId())
-                .groupId(groupMembership.getGroup().getId())
-                .userId(groupMembership.getUser().getId())
-                .role(String.valueOf(groupMembership.getRole()))
-                .joinedAt(groupMembership.getJoinedAt())
+                .id(membership.getId())
+                .userId(membership.getUser() != null ? membership.getUser().getId() : null)
+                .userEmail(membership.getUser() != null ? membership.getUser().getEmail() : null)
+                .groupId(membership.getGroup() != null ? membership.getGroup().getId() : null)
+                .role(membership.getRole())
+                .joinedAt(membership.getJoinedAt())
                 .build();
     }
+
 }

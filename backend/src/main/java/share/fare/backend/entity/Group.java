@@ -47,7 +47,7 @@ public class Group {
     private List<String> links = new ArrayList<>();
 
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<GroupMembership> memberships;
+    private List<GroupMembership> memberships = new ArrayList<>();
 
     @PrePersist
     public void prePersist() {

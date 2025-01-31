@@ -26,7 +26,7 @@ public class GroupMembershipService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
 
-    public GroupMembershipResponse addMemberToGroup(Long groupId, Long userId, GroupRole role) {
+    public GroupMembershipResponse addMemberToGroup(Long groupId, Long userId, GroupRole role, Long currentUserId) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException("Group with ID " + groupId + " not found"));
 

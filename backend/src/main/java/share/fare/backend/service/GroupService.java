@@ -48,6 +48,11 @@ public class GroupService {
                 .orElseThrow(() -> new GroupNotFoundException("Group with ID " + groupId + " not found")));
     }
 
+    public Page<GroupResponse> getGroupsForUser(Long userId, Pageable pageable) {
+        Page<Group> groups = groupRepository.findByCreatedByIdOrMembershipsUser_Id(userId, pageable);
+        return groups.map(GroupMapper::toResponse);
+    }
+
     public void deleteGroup(Long groupId) {
         if (!groupRepository.existsById(groupId)) {
             throw new GroupNotFoundException("Group not found with ID: " + groupId);

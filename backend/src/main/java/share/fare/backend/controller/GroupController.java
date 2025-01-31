@@ -3,6 +3,7 @@ package share.fare.backend.controller;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
@@ -43,6 +44,14 @@ public class GroupController {
         return ResponseEntity.ok(groupService.getGroupById(groupId));
     }
 
+    @GetMapping("/user-groups")
+    public ResponseEntity<PaginatedResponse<GroupResponse>> getGroupsForCurrentUser(
+            @AuthenticationPrincipal User user,
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
+        Page<GroupResponse> groups = groupService.getGroupsForUser(user.getId(), pageable);
+        return ResponseEntity.ok(new PaginatedResponse<>(groups));
+    }
+
     @GetMapping
     public ResponseEntity<PaginatedResponse<GroupResponse>> getAllGroups(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
@@ -61,14 +70,4 @@ public class GroupController {
         groupService.deleteGroup(groupId);
         return ResponseEntity.noContent().build();
     }
-
-    // move it to separate service / controller for group memberships
-//    @PostMapping("/{groupId}/members")
-//    public ResponseEntity<GroupResponse> addMemberToGroup(
-//            @PathVariable Long groupId,
-//            @RequestParam Long userId,
-//            @RequestParam(defaultValue = "MEMBER") GroupRole role) {
-//        return ResponseEntity.ok(groupService.addMemberToGroup(groupId, userId, role));
-//        return null;
-//    }
 }

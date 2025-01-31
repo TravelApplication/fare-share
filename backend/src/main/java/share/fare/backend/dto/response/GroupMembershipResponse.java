@@ -11,7 +11,6 @@ import java.time.LocalDate;
 @Setter
 @Builder
 public class GroupMembershipResponse {
-    private Long id;
     private Long userId;
     private String userEmail;
     private Long groupId;

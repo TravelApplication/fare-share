@@ -57,6 +57,10 @@ public class GroupMembershipService {
         GroupMembership membership = groupMembershipRepository.findByGroupAndUser(group, user)
                 .orElseThrow(() -> new UserIsNotInGroupException("User is not a member of the group"));
 
+        if (membership.getRole() == GroupRole.OWNER) {
+            throw new IllegalArgumentException("Owner cannot be removed from the group");
+        }
+
         groupMembershipRepository.delete(membership);
     }
 

@@ -121,4 +121,13 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
+    /**
+     * Global exception for trying to delete the owner of a group
+     */
+    @ExceptionHandler(OwnerDeletionException.class)
+    public final ResponseEntity<ErrorDetails> ownerDeletionException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
 }

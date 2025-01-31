@@ -28,4 +28,9 @@ public class GroupMembership {
     private GroupRole role;
 
     private LocalDate joinedAt;
+
+    @PrePersist
+    public void prePersist() {
+        joinedAt = LocalDate.now();
+    }
 }

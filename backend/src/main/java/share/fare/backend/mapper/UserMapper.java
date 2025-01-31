@@ -1,42 +1,42 @@
-package share.fare.backend.mapping;
+package share.fare.backend.mapper;
 
-import share.fare.backend.dto.request.UserRequestDto;
-import share.fare.backend.dto.response.UserResponseDto;
+import share.fare.backend.dto.request.UserRequest;
+import share.fare.backend.dto.response.UserResponse;
 import share.fare.backend.entity.User;
 
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
 public class UserMapper {
-    public static User toEntity(UserRequestDto userRequestDto) {
+    public static User toEntity(UserRequest userRequest) {
         return User.builder()
-                .email(userRequestDto.getEmail())
-                .password(userRequestDto.getPassword())
+                .email(userRequest.getEmail())
+                .password(userRequest.getPassword())
                 .createdAt(LocalDate.now())
                 .build();
     }
 
-    public static UserResponseDto toResponseDto(User user) {
-        return UserResponseDto.builder()
+    public static UserResponse toResponse(User user) {
+        return UserResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .createdAt(user.getCreatedAt())
-                .userInfo(user.getUserInfo() != null ? UserInfoMapper.toResponseDto(user.getUserInfo()) : null)
+                .userInfo(user.getUserInfo() != null ? UserInfoMapper.toResponse(user.getUserInfo()) : null)
                 .groupsCreated(user.getGroupsCreated() != null
                         ? user.getGroupsCreated().stream()
-                        .map(GroupMapper::toResponseDto)
+                        .map(GroupMapper::toResponse)
                         .collect(Collectors.toList())
                         : null)
                 .memberships(user.getMemberships() != null
                         ? user.getMemberships().stream()
-                        .map(GroupMembershipMapper::toResponseDto)
+                        .map(GroupMembershipMapper::toResponse)
                         .collect(Collectors.toList())
                         : null)
                 .build();
     }
 
-    public static UserRequestDto toUserRequestDto(User user) {
-        return UserRequestDto.builder()
+    public static UserRequest toUserRequest(User user) {
+        return UserRequest.builder()
                 .email(user.getEmail())
                 .password(user.getPassword())
                 .build();

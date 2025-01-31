@@ -1,0 +1,433 @@
+{
+	"info": {
+		"_postman_id": "a5707fa4-ff84-4f9c-a3bb-28b38ee7d11b",
+		"name": "fare share",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "31179255",
+		"_collection_link": "https://warped-capsule-339072.postman.co/workspace/Team-Workspace~c3669986-4a8f-4c69-82a2-eaae9ef6c552/collection/31179255-a5707fa4-ff84-4f9c-a3bb-28b38ee7d11b?action=share&source=collection_link&creator=31179255"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user2@example.com\",\n    \"password\": \"password2\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/auth/login",
+							"path": [
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "register",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "/auth/register",
+							"path": [
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "admin",
+			"item": [
+				{
+					"name": "get users",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsImlhdCI6MTczODMyOTY0OCwiZXhwIjoxNzM4MzY1NjQ4fQ.WKmHyRUj11vKpg-jazf9eqfAyyQFJVBfZ2AiIKrlStc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/users/admin",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "group membership",
+			"item": [
+				{
+					"name": "get groups members",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/members",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"members"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add an user to a group",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/members?userId=3",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"members"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "3"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove group member",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/members/1",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"members",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "change role",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/members/3/role?role=OWNER",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"members",
+								"3",
+								"role"
+							],
+							"query": [
+								{
+									"key": "role",
+									"value": "OWNER"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "get all user info",
+					"event": [
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsImlhdCI6MTczODMyODY0NiwiZXhwIjoxNzM4MzY0NjQ2fQ.s7XRGvu9NftUtReEDens0lyJM-DS29VSuiKxaORVpyc",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/users",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete user",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/users",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update user",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"abc@test.com\",\n    \"password\": 12345678\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/users",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "group",
+			"item": [
+				{
+					"name": "get all groups",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4MzIxNzY0LCJleHAiOjE3MzgzNTc3NjR9.GSDwpHhfiM3U-hhTXAduSLO4-xcCOxehbeBIfRVpQyA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups",
+							"path": [
+								"api",
+								"v1",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add group",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4MzIxNzY0LCJleHAiOjE3MzgzNTc3NjR9.GSDwpHhfiM3U-hhTXAduSLO4-xcCOxehbeBIfRVpQyA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Summer Road Trip\",\n  \"description\": \"A fun road trip with friends!\",\n  \"tripStartDate\": \"2025-07-15\",\n  \"tripEndDate\": \"2025-07-25\",\n  \"tags\": [\"road trip\", \"summer\"],\n  \"groupImageUrl\": \"https://example.com/group-image.jpg\",\n  \"links\": [\"https://docs.google.com/document/123\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups",
+							"path": [
+								"api",
+								"v1",
+								"groups"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "edit group",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4MzIxNzY0LCJleHAiOjE3MzgzNTc3NjR9.GSDwpHhfiM3U-hhTXAduSLO4-xcCOxehbeBIfRVpQyA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Winter Road Trip\",\n  \"description\": \"A fun road trip with friends!\",\n  \"tripStartDate\": \"2025-07-15\",\n  \"tripEndDate\": \"2025-07-25\",\n  \"tags\": [\"road trip\", \"summer\"],\n  \"groupImageUrl\": \"https://example.com/group-image.jpg\",\n  \"links\": [\"https://docs.google.com/document/123\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete group",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4MzIxNzY0LCJleHAiOjE3MzgzNTc3NjR9.GSDwpHhfiM3U-hhTXAduSLO4-xcCOxehbeBIfRVpQyA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get user groups",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/user-groups",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"user-groups"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					"pm.request.url.protocol=\"http\";",
+					"pm.request.url.host=\"localhost\";",
+					"pm.request.url.port=\"8080\";"
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

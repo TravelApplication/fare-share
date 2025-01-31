@@ -12,6 +12,9 @@ import share.fare.backend.dto.response.AuthenticationResponse;
 import share.fare.backend.entity.Role;
 import share.fare.backend.entity.User;
 import share.fare.backend.entity.UserInfo;
+import share.fare.backend.exception.InvalidCredentialsException;
+import share.fare.backend.exception.UserAlreadyExistsException;
+import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.repository.UserRepository;
 
 import java.time.LocalDate;
@@ -24,9 +27,14 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
+    /**
+     * Registers a new user.
+     * @param registerRequest The request containing the user's information.
+     * @return The response containing the JWT token and user ID.
+     */
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
-            throw new IllegalStateException("Email already in use");
+            throw new UserAlreadyExistsException("Email already in use");
         }
 
         User user = User.builder()
@@ -56,7 +64,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         User user = userRepository.findByEmail(authenticationRequest.getEmail())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid username or password"));
+                .orElseThrow(() -> new UserNotFoundException("Did not find user with email " + authenticationRequest.getEmail()));
 
         try {
             authenticationManager.authenticate(
@@ -66,7 +74,7 @@ public class AuthenticationService {
                     )
             );
         } catch (BadCredentialsException e) {
-            throw new IllegalArgumentException("Invalid username or password");
+            throw new InvalidCredentialsException("Invalid username or password");
         }
 
         String jwtToken = jwtService.generateToken(user);

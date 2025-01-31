@@ -1,7 +1,6 @@
 package share.fare.backend.dto.request;
 
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -11,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserRequestDto {
+public class UserRequest {
     @NotBlank(message = "Email is required")
     private String email;
 

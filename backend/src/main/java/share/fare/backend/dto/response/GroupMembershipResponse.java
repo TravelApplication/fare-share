@@ -3,16 +3,16 @@ package share.fare.backend.dto.response;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import share.fare.backend.entity.GroupRole;
 
 import java.time.LocalDate;
 
 @Getter
 @Setter
 @Builder
-public class GroupMembershipResponseDto {
-    private Long id;
-    private Long groupId;
+public class GroupMembershipResponse {
     private Long userId;
-    private String role;
+    private String userEmail;
+    private GroupRole role;
     private LocalDate joinedAt;
 }

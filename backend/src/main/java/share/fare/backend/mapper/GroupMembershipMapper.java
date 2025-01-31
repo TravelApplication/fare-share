@@ -1,11 +1,11 @@
-package share.fare.backend.mapping;
+package share.fare.backend.mapper;
 
-import share.fare.backend.dto.response.GroupMembershipResponseDto;
+import share.fare.backend.dto.response.GroupMembershipResponse;
 import share.fare.backend.entity.GroupMembership;
 
 public class GroupMembershipMapper {
-    public static GroupMembershipResponseDto toResponseDto(GroupMembership groupMembership) {
-        return GroupMembershipResponseDto.builder()
+    public static GroupMembershipResponse toResponse(GroupMembership groupMembership) {
+        return GroupMembershipResponse.builder()
                 .id(groupMembership.getId())
                 .groupId(groupMembership.getGroup().getId())
                 .userId(groupMembership.getUser().getId())

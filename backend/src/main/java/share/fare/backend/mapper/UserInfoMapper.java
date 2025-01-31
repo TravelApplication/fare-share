@@ -1,12 +1,12 @@
-package share.fare.backend.mapping;
+package share.fare.backend.mapper;
 
-import share.fare.backend.dto.response.UserInfoResponseDto;
+import share.fare.backend.dto.response.UserInfoResponse;
 import share.fare.backend.entity.UserInfo;
 
 public class UserInfoMapper {
 
-    public static UserInfoResponseDto toResponseDto(UserInfo userInfo) {
-        return UserInfoResponseDto.builder()
+    public static UserInfoResponse toResponse(UserInfo userInfo) {
+        return UserInfoResponse.builder()
                 .id(userInfo.getId())
                 .firstName(userInfo.getFirstName())
                 .lastName(userInfo.getLastName())

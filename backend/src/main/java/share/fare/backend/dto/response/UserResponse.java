@@ -10,11 +10,11 @@ import java.util.List;
 @Getter
 @Setter
 @Builder
-public class UserResponseDto {
+public class UserResponse {
     private Long id;
     private String email;
     private LocalDate createdAt;
-    private UserInfoResponseDto userInfo;
-    private List<GroupResponseDto> groupsCreated;
-    private List<GroupMembershipResponseDto> memberships;
+    private UserInfoResponse userInfo;
+    private List<GroupResponse> groupsCreated;
+    private List<GroupMembershipResponse> memberships;
 }

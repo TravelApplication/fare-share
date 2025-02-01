@@ -30,6 +30,7 @@ public class GroupMapper {
                 .groupImageUrl(group.getGroupImageUrl())
                 .links(group.getLinks())
                 .memberships(mapMemberships(group.getMemberships()))
+                .activities(ActivityMapper.mapActivities(group.getActivities()))
                 .build();
     }
 

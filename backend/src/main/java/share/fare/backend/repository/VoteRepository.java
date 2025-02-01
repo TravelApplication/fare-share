@@ -11,4 +11,6 @@ public interface VoteRepository extends JpaRepository<Vote, Long> {
     boolean existsByActivityAndUser(Activity activity, User user);
 
     Optional<Vote> findByActivity(Activity activity);
+
+    Optional<Vote> findByIdAndUser_Id(Long voteId, Long userId);
 }

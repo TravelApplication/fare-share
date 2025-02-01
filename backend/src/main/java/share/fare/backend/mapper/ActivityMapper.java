@@ -54,4 +54,14 @@ public class ActivityMapper {
                 .map(VoteMapper::toResponse)
                 .collect(Collectors.toList());
     }
+
+    protected static List<ActivityResponse> mapActivities(List<Activity> activities) {
+        if (activities == null) {
+            return Collections.emptyList();
+        }
+
+        return activities.stream()
+                .map(ActivityMapper::toResponse)
+                .collect(Collectors.toList());
+    }
 }

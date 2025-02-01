@@ -18,5 +18,5 @@ public class ActivityResponse {
     private String link;
     private Long groupId;
     private LocalDateTime createdAt;
-    private List<VoteResponse> votes; // List of votes for this activity
+    private List<VoteResponse> votes;
 }

@@ -10,6 +10,7 @@ import share.fare.backend.entity.Vote;
 import share.fare.backend.exception.*;
 import share.fare.backend.mapper.VoteMapper;
 import share.fare.backend.repository.ActivityRepository;
+import share.fare.backend.repository.GroupMembershipRepository;
 import share.fare.backend.repository.UserRepository;
 import share.fare.backend.repository.VoteRepository;
 
@@ -22,6 +23,7 @@ public class VoteService {
     private final VoteRepository voteRepository;
     private final ActivityRepository activityRepository;
     private final UserRepository userRepository;
+    private final GroupMembershipRepository groupMembershipRepository;
 
     public VoteResponse addVote(Long activityId, Long userId, VoteRequest voteRequest) {
         Activity activity = activityRepository.findById(activityId)
@@ -32,6 +34,10 @@ public class VoteService {
 
         if (voteRepository.existsByActivityAndUser(activity, user)) {
             throw new DuplicateVoteException("User has already voted on this activity");
+        }
+
+        if (!groupMembershipRepository.existsByGroupAndUser(activity.getGroup(), user)) {
+            throw new UserIsNotInGroupException("User with ID: " + userId + " is not a member of the group");
         }
 
         Vote vote = VoteMapper.toEntity(voteRequest, activity, user);

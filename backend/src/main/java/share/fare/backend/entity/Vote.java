@@ -2,6 +2,7 @@ package share.fare.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDateTime;
 
@@ -10,12 +11,8 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class Vote {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@SuperBuilder
+public class Vote extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -28,11 +25,4 @@ public class Vote {
     private VoteType voteType;
 
     private LocalDateTime votedAt;
-
-    @PrePersist
-    public void prePersist() {
-        votedAt = LocalDateTime.now();
-    }
 }
-
-// TODO: add base entity and move prePersist there

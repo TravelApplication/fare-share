@@ -11,6 +11,7 @@ import share.fare.backend.entity.User;
 import share.fare.backend.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Component
@@ -27,21 +28,21 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                     .email("user@example.com")
                     .password(passwordEncoder.encode("password"))
                     .role(Role.ADMIN)
-                    .createdAt(LocalDate.now())
+                    .createdAt(LocalDateTime.now())
                     .build();
 
             User user2 = User.builder()
                     .email("user2@example.com")
                     .password(passwordEncoder.encode("password2"))
                     .role(Role.USER)
-                    .createdAt(LocalDate.now())
+                    .createdAt(LocalDateTime.now())
                     .build();
 
             User user3 = User.builder()
                     .email("user3@example.com")
                     .password(passwordEncoder.encode("password3"))
                     .role(Role.USER)
-                    .createdAt(LocalDate.now())
+                    .createdAt(LocalDateTime.now())
                     .build();
 
             userRepository.saveAll(List.of(user1, user2, user3));

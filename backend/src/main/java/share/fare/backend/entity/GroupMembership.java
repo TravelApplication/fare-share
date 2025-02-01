@@ -2,6 +2,7 @@ package share.fare.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 import java.time.LocalDate;
 
@@ -10,12 +11,8 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-public class GroupMembership {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
+@SuperBuilder
+public class GroupMembership extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
@@ -28,9 +25,4 @@ public class GroupMembership {
     private GroupRole role;
 
     private LocalDate joinedAt;
-
-    @PrePersist
-    public void prePersist() {
-        joinedAt = LocalDate.now();
-    }
 }

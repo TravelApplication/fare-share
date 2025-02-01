@@ -18,6 +18,7 @@ import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.repository.UserRepository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -41,7 +42,7 @@ public class AuthenticationService {
                 .email(registerRequest.getEmail())
                 .password(passwordEncoder.encode(registerRequest.getPassword()))
                 .role(Role.USER)
-                .createdAt(LocalDate.now())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         UserInfo userInfo = UserInfo.builder()

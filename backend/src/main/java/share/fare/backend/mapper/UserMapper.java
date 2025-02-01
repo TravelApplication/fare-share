@@ -5,6 +5,7 @@ import share.fare.backend.dto.response.UserResponse;
 import share.fare.backend.entity.User;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.stream.Collectors;
 
 public class UserMapper {
@@ -12,7 +13,7 @@ public class UserMapper {
         return User.builder()
                 .email(userRequest.getEmail())
                 .password(userRequest.getPassword())
-                .createdAt(LocalDate.now())
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 

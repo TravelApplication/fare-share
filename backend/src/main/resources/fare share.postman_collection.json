@@ -17,7 +17,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"user2@example.com\",\n    \"password\": \"password2\"\n}",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -62,7 +62,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsImlhdCI6MTczODMyOTY0OCwiZXhwIjoxNzM4MzY1NjQ4fQ.WKmHyRUj11vKpg-jazf9eqfAyyQFJVBfZ2AiIKrlStc",
+									"value": "{{jwt-token}}",
 									"type": "string"
 								}
 							]
@@ -265,16 +265,6 @@
 				{
 					"name": "get all groups",
 					"request": {
-						"auth": {
-							"type": "bearer",
-							"bearer": [
-								{
-									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4MzIxNzY0LCJleHAiOjE3MzgzNTc3NjR9.GSDwpHhfiM3U-hhTXAduSLO4-xcCOxehbeBIfRVpQyA",
-									"type": "string"
-								}
-							]
-						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -296,7 +286,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4MzIxNzY0LCJleHAiOjE3MzgzNTc3NjR9.GSDwpHhfiM3U-hhTXAduSLO4-xcCOxehbeBIfRVpQyA",
+									"value": "{{jwt-token}}",
 									"type": "string"
 								}
 							]
@@ -402,6 +392,499 @@
 						}
 					},
 					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwt-token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "activities",
+			"item": [
+				{
+					"name": "add activity",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"disney land\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/activities",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"activities"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update activity",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/activities/1",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"activities",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete activity",
+					"request": {
+						"method": "DELETE",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "get group activities",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/activities",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"activities"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsImlhdCI6MTczODQyMTEzNiwiZXhwIjoxNzM4NDU3MTM2fQ.tpadIbJpJObqkPrsY7Tf9ihNjkZBVUuJnW41h_Dqc28",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "friend-invitations",
+			"item": [
+				{
+					"name": "send friend invitation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/friend-invitations/send?receiverId=1",
+							"path": [
+								"api",
+								"v1",
+								"friend-invitations",
+								"send"
+							],
+							"query": [
+								{
+									"key": "receiverId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get sent friend invitations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/friend-invitations/sent",
+							"path": [
+								"api",
+								"v1",
+								"friend-invitations",
+								"sent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get received friend invitations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/friend-invitations/received",
+							"path": [
+								"api",
+								"v1",
+								"friend-invitations",
+								"received"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "group-invitations",
+			"item": [
+				{
+					"name": "send group invitation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/group-invitations/send?receiverId=1&groupId=1",
+							"path": [
+								"api",
+								"v1",
+								"group-invitations",
+								"send"
+							],
+							"query": [
+								{
+									"key": "receiverId",
+									"value": "1"
+								},
+								{
+									"key": "groupId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get sent group invitations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/group-invitations/sent",
+							"path": [
+								"api",
+								"v1",
+								"group-invitations",
+								"sent"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get received group invitations",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/group-invitations/received",
+							"path": [
+								"api",
+								"v1",
+								"group-invitations",
+								"received"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "votes",
+			"item": [
+				{
+					"name": "vote for activity",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4NDIzODAwLCJleHAiOjE3Mzg0NTk4MDB9.87eXmxVaVd8yeCbx-kQNZAA_QqgiP1ElsVPXn2iQB3A",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"voteType\": \"FOR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/activities/1/votes",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"activities",
+								"1",
+								"votes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "vote against",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"voteType\": \"FOR\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get votes for activity",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/activities/1/votes",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"activities",
+								"1",
+								"votes"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update vote",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/activities/1/votes/1",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"activities",
+								"1",
+								"votes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete vote",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/activities/1/votes/1",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"activities",
+								"1",
+								"votes",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"auth": {
+				"type": "bearer",
+				"bearer": [
+					{
+						"key": "token",
+						"value": "{{jwt-token}}",
+						"type": "string"
+					}
+				]
+			},
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"packages": {},
+						"exec": [
+							""
+						]
+					}
 				}
 			]
 		}

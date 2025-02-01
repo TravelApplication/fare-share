@@ -16,5 +16,4 @@ public class VoteResponse {
     private String userEmail;
     private Long activityId;
     private VoteType voteType;
-    private LocalDateTime votedAt;
 }

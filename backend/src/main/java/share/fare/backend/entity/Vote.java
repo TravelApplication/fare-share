@@ -23,6 +23,4 @@ public class Vote extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     private VoteType voteType;
-
-    private LocalDateTime votedAt;
 }

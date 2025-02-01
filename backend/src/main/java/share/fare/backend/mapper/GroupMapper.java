@@ -71,6 +71,7 @@ public class GroupMapper {
                 .userId(membership.getUser() != null ? membership.getUser().getId() : null)
                 .userEmail(membership.getUser() != null ? membership.getUser().getEmail() : null)
                 .role(membership.getRole())
+                .groupId(membership.getGroup().getId() != null ? membership.getGroup().getId() : null)
                 .joinedAt(membership.getJoinedAt())
                 .build();
     }

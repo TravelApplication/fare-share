@@ -18,7 +18,6 @@ public class VoteMapper {
                 .userEmail(vote.getUser() != null ? vote.getUser().getEmail() : null)
                 .activityId(vote.getActivity() != null ? vote.getActivity().getId() : null)
                 .voteType(vote.getVoteType())
-                .votedAt(vote.getVotedAt())
                 .build();
     }
 

@@ -132,6 +132,9 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
 
     @ExceptionHandler(InvitationAlreadyExistsException.class)
     public final ResponseEntity<ErrorDetails> handleInvitationAlreadyExistsException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
     /**
      * Global exception for not found activity
      */

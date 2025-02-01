@@ -198,7 +198,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsImlhdCI6MTczODMyODY0NiwiZXhwIjoxNzM4MzY0NjQ2fQ.s7XRGvu9NftUtReEDens0lyJM-DS29VSuiKxaORVpyc",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsImlhdCI6MTczODQzMDM3MCwiZXhwIjoxNzM4NDY2MzcwfQ.Dg0J__4iVTbA14F1QMx8gQ32-29Ffeg9WNKskx5GPXU",
 									"type": "string"
 								}
 							]
@@ -582,6 +582,62 @@
 					"response": []
 				},
 				{
+					"name": "accept friend invitation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/friend-invitations/accept/3",
+							"path": [
+								"api",
+								"v1",
+								"friend-invitations",
+								"accept",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reject friend invitation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/friend-invitations/reject/1",
+							"path": [
+								"api",
+								"v1",
+								"friend-invitations",
+								"reject",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "get sent friend invitations",
 					"request": {
 						"auth": {
@@ -672,6 +728,62 @@
 									"key": "groupId",
 									"value": "1"
 								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "reject group invitation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/group-invitations/reject/2",
+							"path": [
+								"api",
+								"v1",
+								"group-invitations",
+								"reject",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "accept group invitation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/group-invitations/accept/2",
+							"path": [
+								"api",
+								"v1",
+								"group-invitations",
+								"accept",
+								"2"
 							]
 						}
 					},

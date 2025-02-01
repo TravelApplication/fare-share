@@ -23,4 +23,5 @@ public class GroupResponse {
     private String groupImageUrl;
     private List<String> links;
     private List<GroupMembershipResponse> memberships;
+    private List<ActivityResponse> activities;
 }

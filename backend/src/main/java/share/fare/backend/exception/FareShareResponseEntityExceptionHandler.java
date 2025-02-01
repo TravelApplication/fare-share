@@ -130,4 +130,42 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Global exception for not found activity
+     */
+    @ExceptionHandler(ActivityNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> activityNotFoundException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Global exception for duplicate vote
+     */
+    @ExceptionHandler(DuplicateVoteException.class)
+    public final ResponseEntity<ErrorDetails> duplicateVoteException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
+    /**
+     * Global exception for vote not found
+     */
+    @ExceptionHandler(VoteNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> voteNotFoundException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    /**
+     * Global exception for action not allowed
+     */
+    @ExceptionHandler(ActionIsNotAllowedException.class)
+    public final ResponseEntity<ErrorDetails> actionNotAllowedException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
+    }
 }
+
+
+// TODO: Improve the java docs here

@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -12,17 +12,17 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class GroupMembership extends BaseEntity {
+public class Vote extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id", nullable = false)
-    private Group group;
+    @JoinColumn(name = "activity_id", nullable = false)
+    private Activity activity;
 
     @Enumerated(EnumType.STRING)
-    private GroupRole role;
+    private VoteType voteType;
 
-    private LocalDate joinedAt;
+    private LocalDateTime votedAt;
 }

@@ -24,12 +24,12 @@ public class UserService {
 
     public UserResponse getUser(Long userId) {
         return UserMapper.toResponse(userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found")));
+                .orElseThrow(() -> new UserNotFoundException(userId)));
     }
 
     public UserResponse updateUser(Long userId, UserRequest userRequest) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
         user.setEmail(userRequest.getEmail());
         user.setPassword(passwordEncoder.encode(userRequest.getPassword()));
         return UserMapper.toResponse(userRepository.save(user));

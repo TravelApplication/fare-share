@@ -30,7 +30,7 @@ public class GroupService {
         log.info("Created by user ID: {}", createdByUserId);
 
         User createdBy = userRepository.findById(createdByUserId)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + createdByUserId + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(createdByUserId));
 
         Group newGroup = GroupMapper.toEntity(groupRequest, createdBy);
 
@@ -45,7 +45,7 @@ public class GroupService {
 
     public GroupResponse getGroupById(Long groupId) {
         return GroupMapper.toResponse(groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group with ID " + groupId + " not found")));
+                .orElseThrow(() -> new GroupNotFoundException(groupId)));
     }
 
     public Page<GroupResponse> getGroupsForUser(Long userId, Pageable pageable) {
@@ -55,7 +55,7 @@ public class GroupService {
 
     public void deleteGroup(Long groupId) {
         if (!groupRepository.existsById(groupId)) {
-            throw new GroupNotFoundException("Group not found with ID: " + groupId);
+            throw new GroupNotFoundException(groupId);
         }
         groupRepository.deleteById(groupId);
     }
@@ -64,7 +64,7 @@ public class GroupService {
         validateTripDates(groupRequest.getTripStartDate(), groupRequest.getTripEndDate());
 
         Group existingGroup = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group not found with ID: " + groupId));
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         updateGroupFields(existingGroup, groupRequest);
 

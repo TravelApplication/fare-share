@@ -1,31 +1,38 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Formik, Field, Form, ErrorMessage } from "formik";
-import * as Yup from "yup";
+import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
 import Link from "next/link";
 import axios from "axios";
 import { useState } from "react";
 import { Alert } from "@/components/ui/alert";
+import { toFormikValidationSchema } from "zod-formik-adapter";
+import { z } from "zod";
+import { authApiSchema, loginFormSchema } from "@/validation/authSchemas";
 
-const SignInSchema = Yup.object().shape({
-  email: Yup.string().email("Invalid email.").required("Required"),
-  password: Yup.string()
-    .min(8, "Password must have 8 characters.")
-    .required("Required"),
-});
-
-const handleSignIn = async (values, { setError, resetForm }) => {
+const handleSignIn = async (
+  values: z.infer<typeof loginFormSchema>,
+  {
+    setError,
+    resetForm,
+  }: FormikHelpers<z.infer<typeof loginFormSchema>> & {
+    setError: (error: string) => void;
+  }
+) => {
   try {
-    console.log(values);
     const result = await axios.post("http://localhost:8080/auth/login", values);
-    const token = result.data.token;
+    const parsedResult = authApiSchema.safeParse(result.data);
+    if (!parsedResult.success) {
+      setError("Invalid response from server. Please try again.");
+      return;
+    }
+    const token = parsedResult.data.token;
     document.cookie = `token=${token}; path=/; max-age=36000; secure; samesite=strict`;
     window.location.href = "/";
     resetForm();
-  } catch (err) {
-    console.error(err);
-    setError(`${err.response.data}. Please try again.`);
+  } catch (err: any) {
+    console.error(err, "err");
+    setError(`${err.response.data.message}. Please try again.`);
     resetForm();
   }
 };
@@ -42,7 +49,7 @@ function page() {
       )}
       <Formik
         initialValues={{ email: "", password: "" }}
-        validationSchema={SignInSchema}
+        validationSchema={toFormikValidationSchema(loginFormSchema)}
         onSubmit={(values, actions) =>
           handleSignIn(values, { ...actions, setError })
         }

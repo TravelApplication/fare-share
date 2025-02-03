@@ -9,6 +9,7 @@ import { Alert } from "@/components/ui/alert";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import { z } from "zod";
 import { authApiSchema, loginFormSchema } from "@/validation/authSchemas";
+import { CircleAlert } from "lucide-react";
 
 const handleSignIn = async (
   values: z.infer<typeof loginFormSchema>,
@@ -32,7 +33,11 @@ const handleSignIn = async (
     resetForm();
   } catch (err: any) {
     console.error(err, "err");
-    setError(`${err.response.data.message}. Please try again.`);
+    setError(
+      `${
+        err.response?.data?.message || "Something went wrong"
+      }. Please try again.`
+    );
     resetForm();
   }
 };
@@ -54,28 +59,50 @@ function page() {
           handleSignIn(values, { ...actions, setError })
         }
       >
-        {({ isSubmitting }) => (
+        {({ isSubmitting, errors, touched }) => (
           <Form>
             <div className="mt-4">
               <label className="font-semibold" htmlFor="email">
                 Email
               </label>
-              <Field name="email" type="email" as={Input} />
-              <ErrorMessage
-                className="text-terminate-color"
+              <Field
                 name="email"
-                component="div"
+                type="email"
+                as={Input}
+                className={`mt-1 ${
+                  errors.email && touched.email ? "border-red-500" : ""
+                }`}
+              />
+              <ErrorMessage
+                name="email"
+                render={(msg) => (
+                  <div className="flex items-center mt-1 text-sm text-red-500">
+                    <CircleAlert className="mr-2" />
+                    <p>{msg}</p>
+                  </div>
+                )}
               />
             </div>
             <div className="mt-4">
               <label className="font-semibold" htmlFor="password">
                 Password
               </label>
-              <Field name="password" type="password" as={Input} />
-              <ErrorMessage
-                className="text-terminate-color"
+              <Field
                 name="password"
-                component="div"
+                type="password"
+                as={Input}
+                className={`mt-1 ${
+                  errors.password && touched.password ? "border-red-500" : ""
+                }`}
+              />
+              <ErrorMessage
+                name="password"
+                render={(msg) => (
+                  <div className="flex items-center mt-1 text-sm text-red-500">
+                    <CircleAlert className="mr-2" />
+                    <p>{msg}</p>
+                  </div>
+                )}
               />
             </div>
             <div className="flex flex-col items-center mt-6">

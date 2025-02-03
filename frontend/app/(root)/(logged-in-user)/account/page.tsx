@@ -1,5 +1,6 @@
 "use client";
 
+import { CircleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -7,12 +8,13 @@ import { isAuthenticated, getToken, logout } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
 import { Input } from "@/components/ui/input";
-import { z } from "zod";
+import { set, z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
 import {
   updateEmailSchema,
   updatePasswordSchema,
 } from "@/validation/updateUserSchema";
+import { Alert } from "@/components/ui/alert";
 
 interface User {
   id: number;
@@ -31,16 +33,16 @@ interface UserInfo {
 
 function Page() {
   const [user, setUser] = useState<User | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState("");
   const router = useRouter();
 
   useEffect(() => {
     if (!isAuthenticated()) {
       console.log("User is not authenticated, redirecting to sign-in page");
-      // router.push("/sign-in");
+      router.push("/sign-in");
       return;
     }
 
@@ -50,7 +52,7 @@ function Page() {
         console.log("Token:", token);
         if (!token) {
           console.log("Invalid token, logging out");
-          // logout();
+          logout();
           return;
         }
 
@@ -62,7 +64,7 @@ function Page() {
         console.log("User data:", response.data);
       } catch (error) {
         console.error("Error fetching user data:", error);
-        // logout();
+        logout();
       }
     };
 
@@ -101,11 +103,12 @@ function Page() {
 
         resetForm();
         setIsEditingEmail(false);
+        setEmailError(null);
       } else {
-        setError("Incorrect current password. Please try again.");
+        setEmailError("Incorrect current password. Please try again.");
       }
     } catch (err: any) {
-      setError("Error updating email. Please try again.");
+      setEmailError("Error updating email. Please try again.");
     }
   };
 
@@ -135,11 +138,12 @@ function Page() {
 
         resetForm();
         setIsEditingPassword(false);
+        setPasswordError(null);
       } else {
-        setError("Incorrect current password. Please try again.");
+        setPasswordError("Incorrect current password. Please try again.");
       }
     } catch (err: any) {
-      setError("Error updating password. Please try again.");
+      setPasswordError("Error updating password. Please try again.");
     }
   };
 
@@ -158,7 +162,10 @@ function Page() {
               <p className="col-span-4">{user?.email}</p>
               <Button
                 className="bg-blue-500 hover:bg-blue-400 col-span-1"
-                onClick={() => setIsEditingEmail(true)}
+                onClick={() => {
+                  setIsEditingEmail(true);
+                  setEmailError(null);
+                }}
               >
                 Edit
               </Button>
@@ -166,6 +173,11 @@ function Page() {
           </>
         ) : (
           <div className="mb-4 rounded-lg p-4 bg-gray-100">
+            {emailError && (
+              <Alert variant="destructive" className="my-4 p-4">
+                {emailError}
+              </Alert>
+            )}
             <Formik
               initialValues={{ currentPassword: "", newEmail: user.email }}
               validationSchema={toFormikValidationSchema(updateEmailSchema)}
@@ -175,35 +187,56 @@ function Page() {
                 })
               }
             >
-              {({ isSubmitting }) => (
+              {({ isSubmitting, errors, touched }) => (
                 <Form>
+                  <h4 className="text-heading4-semibold mb-4">Change e-mail</h4>
                   <label className="font-semibold" htmlFor="password">
                     New Email
                   </label>
                   <Field
-                    className="bg-light-1"
+                    className={`mt-1 bg-light-1 ${
+                      errors.newEmail && touched.newEmail
+                        ? "border-red-500"
+                        : ""
+                    }`}
                     name="newEmail"
                     type="email"
                     as={Input}
                   />
                   <ErrorMessage
-                    className="text-terminate-color"
                     name="newEmail"
                     component="div"
+                    render={(msg) => (
+                      <div className="flex items-center mt-1 text-sm text-red-500">
+                        <CircleAlert className="mr-2" />
+                        <p>{msg}</p>
+                      </div>
+                    )}
                   />
-                  <label className="font-semibold" htmlFor="password">
-                    Current Password
-                  </label>
+                  <div className="mt-4">
+                    <label className="font-semibold" htmlFor="password">
+                      Current Password
+                    </label>
+                  </div>
                   <Field
-                    className="bg-light-1"
+                    className={`mt-1 bg-light-1 ${
+                      errors.currentPassword && touched.currentPassword
+                        ? "border-red-500"
+                        : ""
+                    }`}
                     name="currentPassword"
                     type="password"
                     as={Input}
                   />
                   <ErrorMessage
-                    className="text-terminate-color"
                     name="currentPassword"
                     component="div"
+                    render={(msg) => (
+                      <div className="flex items-center mt-1 text-sm text-red-500">
+                        <CircleAlert className="mr-2" />
+                        <p>{msg}</p>
+                      </div>
+                    )}
                   />
                   <Button
                     className="mt-4 bg-blue-500 hover:bg-blue-400"
@@ -238,6 +271,11 @@ function Page() {
           </>
         ) : (
           <div className="mb-4 rounded-lg p-4 bg-gray-100">
+            {passwordError && (
+              <Alert variant="destructive" className="my-4 p-4">
+                {passwordError}
+              </Alert>
+            )}
             <Formik
               initialValues={{ currentPassword: "", newPassword: "" }}
               validationSchema={toFormikValidationSchema(updatePasswordSchema)}
@@ -247,35 +285,58 @@ function Page() {
                 })
               }
             >
-              {({ isSubmitting }) => (
+              {({ isSubmitting, errors, touched }) => (
                 <Form>
+                  <h4 className="text-heading4-semibold mb-4">
+                    Change password
+                  </h4>
                   <label className="font-semibold" htmlFor="currentPassword">
                     Current Password
                   </label>
                   <Field
-                    className="bg-light-1"
+                    className={`mt-1 bg-light-1 ${
+                      errors.currentPassword && touched.currentPassword
+                        ? "border-red-500"
+                        : ""
+                    }`}
                     name="currentPassword"
                     type="password"
                     as={Input}
                   />
                   <ErrorMessage
-                    className="text-terminate-color"
                     name="currentPassword"
                     component="div"
+                    render={(msg) => (
+                      <div className="flex items-center mt-1 text-sm text-red-500">
+                        <CircleAlert className="mr-2" />
+                        <p>{msg}</p>
+                      </div>
+                    )}
                   />
-                  <label className="font-semibold" htmlFor="newPassword">
-                    New Password
-                  </label>
+                  <div className="mt-4">
+                    <label className="font-semibold" htmlFor="newPassword">
+                      New Password
+                    </label>
+                  </div>
                   <Field
-                    className="bg-light-1"
+                    className={`mt-1 bg-light-1 ${
+                      errors.newPassword && touched.newPassword
+                        ? "border-red-500"
+                        : ""
+                    }`}
                     name="newPassword"
                     type="text"
                     as={Input}
                   />
                   <ErrorMessage
-                    className="text-terminate-color"
                     name="newPassword"
                     component="div"
+                    render={(msg) => (
+                      <div className="flex items-center mt-1 text-sm text-red-500">
+                        <CircleAlert className="mr-2" />
+                        <p>{msg}</p>
+                      </div>
+                    )}
                   />
 
                   <Button
@@ -287,7 +348,10 @@ function Page() {
                   </Button>
                   <Button
                     className="mt-4 ml-2 bg-gray-500 hover:bg-gray-400"
-                    onClick={() => setIsEditingPassword(false)}
+                    onClick={() => {
+                      setIsEditingPassword(false);
+                      setPasswordError(null);
+                    }}
                   >
                     Cancel
                   </Button>
@@ -315,7 +379,7 @@ function Page() {
       </div>
 
       <Button className="mt-4 bg-red-500 hover:bg-red-400" onClick={logout}>
-        Logout
+        Log Out
       </Button>
     </div>
   );

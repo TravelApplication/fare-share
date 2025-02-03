@@ -29,12 +29,21 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     @Override
     public void onApplicationEvent(@NotNull ContextRefreshedEvent event) {
         if (userRepository.count() == 0) {
+
             User user1 = User.builder()
                     .email("user@example.com")
                     .password(passwordEncoder.encode("password"))
                     .role(Role.ADMIN)
                     .createdAt(LocalDateTime.now())
                     .build();
+
+            UserInfo userInfo = UserInfo.builder()
+                    .firstName("Test")
+                    .lastName("User")
+                    .user(user1)
+                    .build();
+
+            user1.setUserInfo(userInfo);
 
             User user2 = User.builder()
                     .email("user2@example.com")

@@ -12,16 +12,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import share.fare.backend.dto.request.UserRequest;
+import share.fare.backend.dto.response.UserGeneralResponse;
 import share.fare.backend.dto.response.UserResponse;
 import share.fare.backend.entity.User;
+import share.fare.backend.service.FriendshipService;
 import share.fare.backend.service.UserService;
 import share.fare.backend.util.PaginatedResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
+    private final FriendshipService friendshipService;
 
     @GetMapping
     public ResponseEntity<UserResponse> getUser(@AuthenticationPrincipal User user) {
@@ -67,5 +72,19 @@ public class UserController {
     public ResponseEntity<PaginatedResponse<UserResponse>> getUsersAdmin(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(new PaginatedResponse<>(userService.getUsers(pageable)));
+    }
+
+
+    @GetMapping("/friends")
+    public ResponseEntity<List<UserGeneralResponse>> getAllFriendIds(@AuthenticationPrincipal User user) {
+        List<UserGeneralResponse> friendIds = friendshipService.findFriendsByUserId(user.getId());
+        return ResponseEntity.ok(friendIds);
+    }
+
+    @DeleteMapping("/unfriend/{friendId}")
+    public ResponseEntity<Void> deleteFriendship(@AuthenticationPrincipal User user,
+                                                 @PathVariable Long friendId) {
+        friendshipService.deleteFriendship(user.getId(), friendId);
+        return ResponseEntity.noContent().build();
     }
 }

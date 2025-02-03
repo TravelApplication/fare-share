@@ -26,7 +26,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    private final FriendshipService friendshipService;
 
     @GetMapping
     public ResponseEntity<UserResponse> getUser(@AuthenticationPrincipal User user) {
@@ -72,19 +71,5 @@ public class UserController {
     public ResponseEntity<PaginatedResponse<UserResponse>> getUsersAdmin(
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.DESC) Pageable pageable) {
         return ResponseEntity.ok(new PaginatedResponse<>(userService.getUsers(pageable)));
-    }
-
-
-    @GetMapping("/friends")
-    public ResponseEntity<List<UserGeneralResponse>> getAllFriendIds(@AuthenticationPrincipal User user) {
-        List<UserGeneralResponse> friendIds = friendshipService.findFriendsByUserId(user.getId());
-        return ResponseEntity.ok(friendIds);
-    }
-
-    @DeleteMapping("/unfriend/{friendId}")
-    public ResponseEntity<Void> deleteFriendship(@AuthenticationPrincipal User user,
-                                                 @PathVariable Long friendId) {
-        friendshipService.deleteFriendship(user.getId(), friendId);
-        return ResponseEntity.noContent().build();
     }
 }

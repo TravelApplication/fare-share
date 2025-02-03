@@ -1,10 +1,45 @@
+"use client";
 import Image from "next/image";
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
+import { Button } from "../ui/button";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Bell, LogOut, Plane, User } from "lucide-react";
+
+function getCookie(name: string): string | null {
+  if (typeof document === "undefined") return null;
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return parts.pop()?.split(";").shift() ?? null;
+  return null;
+}
+
+function deleteCookie(name: string) {
+  if (typeof document !== "undefined") {
+    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
+  }
+}
+
+function handleLogout(): void {
+  deleteCookie("token");
+  window.location.reload();
+}
 
 function Navbar() {
-  // hardcoded values
-  // TODO: replace with actual values
-  const isLogged = true;
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const tokenFromCookie = getCookie("token");
+    setToken(tokenFromCookie);
+  }, []);
   return (
     <nav className="navbar">
       <div className="navbar_content">
@@ -13,39 +48,54 @@ function Navbar() {
           <p className="text-heading3-bold max-xs:hidden">FareShare</p>
         </Link>
         <div className="flex items-center gap-6">
-          {isLogged ? (
+          {token != null ? (
             <>
               <Link className="navbar_link" href="/trips">
-                <p>Trips</p>
+                <Plane />
+                <p className="max-sm:hidden">Trips</p>
               </Link>
 
               <Link className="navbar_link" href="/notifications">
-                <Image
-                  src="/assets/notification.svg"
-                  alt="notifications"
-                  width={24}
-                  height={24}
-                />
+                <Bell />
                 <p className="max-sm:hidden">Notifications</p>
               </Link>
-              <Link className="navbar_link" href="/account">
-                <Image
-                  src="/assets/profile.svg"
-                  alt="profile"
-                  width={24}
-                  height={24}
-                />
-                <p className="max-sm:hidden">Account</p>
-              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Avatar className="cursor-pointer">
+                    <AvatarFallback>XX</AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem>
+                    <Link className="navbar_link" href="/account">
+                      <User />
+                      <p>Profile</p>
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleLogout}>
+                    <Link
+                      className="navbar_link"
+                      href={"/"}
+                      onClick={handleLogout}
+                    >
+                      <LogOut />
+                      <p>Log out</p>
+                    </Link>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             </>
           ) : (
             <>
               <Link className="navbar_link" href="/sign-in">
                 Sign In
               </Link>
-              <button className="light-btn">
+              <Button className="bg-primary-500 hover:bg-primary-600">
                 <Link href="/sign-up">Sign Up - It's Free</Link>
-              </button>
+              </Button>
             </>
           )}
         </div>

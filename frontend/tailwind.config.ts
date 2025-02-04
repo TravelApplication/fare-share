@@ -180,6 +180,8 @@ export default {
     },
     extend: {
       colors: {
+        "primary-100": "#D6EFFF",
+        "primary-200": "#ADDEFF",
         "primary-500": "#0095F6",
         "primary-600": "#0087E0",
         "secondary-500": "#FFB620",

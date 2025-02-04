@@ -65,7 +65,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         User user = userRepository.findByEmail(authenticationRequest.getEmail())
-                .orElseThrow(() -> new InvalidCredentialsException("Invalid username or password"));
+                .orElseThrow(() -> new UserNotFoundException(authenticationRequest.getEmail()));
 
         try {
             authenticationManager.authenticate(

@@ -30,7 +30,7 @@ public class VoteService {
                 .orElseThrow(() -> new ActivityNotFoundException("Activity not found with ID: " + activityId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         if (voteRepository.existsByActivityAndUser(activity, user)) {
             throw new DuplicateVoteException("User has already voted on this activity");

@@ -28,10 +28,10 @@ public class GroupMembershipService {
 
     public GroupMembershipResponse addMemberToGroup(Long groupId, Long userId, GroupRole role, Long currentUserId) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group with ID " + groupId + " not found"));
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + userId + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         if (groupMembershipRepository.existsByGroupAndUser(group, user)) {
             throw new UserAlreadyInGroupException("User is already a member of this group");
@@ -49,10 +49,10 @@ public class GroupMembershipService {
 
     public void removeMemberFromGroup(Long groupId, Long userId) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group not found with ID: " + groupId));
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         GroupMembership membership = groupMembershipRepository.findByGroupAndUser(group, user)
                 .orElseThrow(() -> new UserIsNotInGroupException("User is not a member of the group"));
@@ -66,10 +66,10 @@ public class GroupMembershipService {
 
     public GroupMembershipResponse updateMemberRole(Long groupId, Long userId, GroupRole newRole) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group not found with ID: " + groupId));
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + userId));
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
         GroupMembership membership = groupMembershipRepository.findByGroupAndUser(group, user)
                 .orElseThrow(() -> new UserIsNotInGroupException("User is not a member of the group"));
@@ -80,7 +80,7 @@ public class GroupMembershipService {
 
     public List<GroupMembershipResponse> getGroupMembers(Long groupId) {
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group not found with ID: " + groupId));
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         return groupMembershipRepository.findByGroup(group).stream()
                 .map(GroupMembershipMapper::toResponse)

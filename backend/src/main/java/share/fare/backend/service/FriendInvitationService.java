@@ -1,6 +1,6 @@
 package share.fare.backend.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import share.fare.backend.dto.response.FriendInvitationResponse;
@@ -20,28 +20,30 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class FriendInvitationService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private FriendInvitationRepository invitationRepository;
+    private final FriendInvitationRepository invitationRepository;
 
-    @Autowired
-    private FriendshipRepository friendshipRepository;
+    private final FriendshipRepository friendshipRepository;
 
     @Transactional
     public FriendInvitationResponse sendFriendInvitation(Long senderId, Long receiverId) {
+        if (senderId.equals(receiverId)) {
+            throw new IllegalArgumentException("You cannot send a friend invitation to yourself.");
+        }
+
         if (invitationRepository.existsBySenderIdAndReceiverId(senderId, receiverId)) {
             throw new InvitationAlreadyExistsException("Friend invitation already exists.");
         }
 
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + senderId + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(senderId));
 
         User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + receiverId + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(receiverId));
 
         FriendInvitation invitation = FriendInvitation.builder()
                 .sender(sender)

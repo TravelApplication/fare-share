@@ -29,11 +29,11 @@ public class ActivityService {
     public ActivityResponse createActivity(ActivityRequest activityRequest, Long createdByUserId, Long groupId) {
         Group group = groupRepository
                 .findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group with ID " + groupId + " not found"));
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         User user = userRepository
                 .findById(createdByUserId)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + createdByUserId + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(createdByUserId));
 
         Activity activity = ActivityMapper.toEntity(activityRequest, group);
 

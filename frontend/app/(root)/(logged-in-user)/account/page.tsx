@@ -15,21 +15,7 @@ import {
   updatePasswordSchema,
 } from "@/validation/updateUserSchema";
 import { Alert } from "@/components/ui/alert";
-
-interface User {
-  id: number;
-  email: string;
-  createdAt: string;
-  userInfo: UserInfo;
-}
-
-interface UserInfo {
-  id: number;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-  dateOfBirth: string;
-}
+import { User, UserSchema } from "@/validation/userProfileSchemas";
 
 function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -40,18 +26,14 @@ function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      console.log("User is not authenticated, redirecting to sign-in page");
-      router.push("/sign-in");
-      return;
+    const token = getToken();
+    if (!token) {
+      logout();
     }
-
     const fetchUserData = async () => {
       try {
         const token = getToken();
-        console.log("Token:", token);
         if (!token) {
-          console.log("Invalid token, logging out");
           logout();
           return;
         }
@@ -59,11 +41,10 @@ function Page() {
         const response = await axios.get("/api/v1/users", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        const parsedUser = UserSchema.parse(response.data);
 
-        setUser(response.data);
-        console.log("User data:", response.data);
+        setUser(parsedUser);
       } catch (error) {
-        console.error("Error fetching user data:", error);
         logout();
       }
     };
@@ -83,7 +64,6 @@ function Page() {
       );
 
       if (authResponse.status === 200) {
-        console.log("Auth response:", authResponse.data.token);
         const newToken = authResponse.data.token;
 
         const response = await axios.put(
@@ -117,13 +97,11 @@ function Page() {
     { resetForm }: FormikHelpers<z.infer<typeof updatePasswordSchema>>
   ) => {
     try {
-      console.log(values.newPassword, values.currentPassword);
       const authResponse = await axios.post(
         "http://localhost:8080/auth/login",
         { email: user?.email, password: values.currentPassword }
       );
       if (authResponse.status === 200) {
-        console.log("Auth response:", authResponse.data.token);
         const newToken = authResponse.data.token;
 
         const response = await axios.put(
@@ -179,7 +157,11 @@ function Page() {
               </Alert>
             )}
             <Formik
-              initialValues={{ currentPassword: "", newEmail: user.email }}
+              initialValues={{
+                currentEmail: user.email,
+                currentPassword: "",
+                newEmail: user.email,
+              }}
               validationSchema={toFormikValidationSchema(updateEmailSchema)}
               onSubmit={(values, actions) =>
                 handleEmailUpdate(values, {
@@ -190,9 +172,21 @@ function Page() {
               {({ isSubmitting, errors, touched }) => (
                 <Form>
                   <h4 className="text-heading4-semibold mb-4">Change e-mail</h4>
-                  <label className="font-semibold" htmlFor="password">
-                    New Email
+                  <label className="font-semibold" htmlFor="currentEmail">
+                    Current e-mail
                   </label>
+                  <Field
+                    className="mt-1 bg-light-1"
+                    name="currentEmail"
+                    type="email"
+                    as={Input}
+                    disabled
+                  />
+                  <div className="mt-4">
+                    <label className="font-semibold" htmlFor="password">
+                      New e-mail
+                    </label>
+                  </div>
                   <Field
                     className={`mt-1 bg-light-1 ${
                       errors.newEmail && touched.newEmail

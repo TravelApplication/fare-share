@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       { protocol: "https", hostname: "via.placeholder.com", },
       { protocol: "https", hostname: "placecats.com", },
+      { protocol: "https", hostname: "example.com", },
     ]
   },
   async rewrites() {

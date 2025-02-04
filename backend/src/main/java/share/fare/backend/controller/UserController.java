@@ -12,10 +12,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import share.fare.backend.dto.request.UserRequest;
+import share.fare.backend.dto.response.UserGeneralResponse;
 import share.fare.backend.dto.response.UserResponse;
 import share.fare.backend.entity.User;
+import share.fare.backend.service.FriendshipService;
 import share.fare.backend.service.UserService;
 import share.fare.backend.util.PaginatedResponse;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/users")

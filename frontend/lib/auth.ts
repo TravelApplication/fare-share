@@ -12,7 +12,6 @@ export const getToken = (): string | null => {
 };
 
 
-
 export const decodeToken = (): DecodedToken | null => {
     const token = getToken();
     if (!token) return null;

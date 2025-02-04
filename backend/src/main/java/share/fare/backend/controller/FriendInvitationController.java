@@ -21,14 +21,14 @@ public class FriendInvitationController {
         this.friendInvitationService = friendInvitationService;
     }
 
-    @PostMapping("/send")
+    @PostMapping("/send/{receiverId}")
     public ResponseEntity<FriendInvitationResponse> sendFriendInvitation(
             @AuthenticationPrincipal User user,
-            @RequestParam Long receiverId) {
-
+            @PathVariable Long receiverId) {
         FriendInvitationResponse response = friendInvitationService.sendFriendInvitation(user.getId(), receiverId);
         return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/accept/{invitationId}")
     public ResponseEntity<Void> acceptFriendInvitation(@PathVariable Long invitationId, @AuthenticationPrincipal User user) {

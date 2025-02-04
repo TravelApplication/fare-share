@@ -65,7 +65,7 @@ public class AuthenticationService {
 
     public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
         User user = userRepository.findByEmail(authenticationRequest.getEmail())
-                .orElseThrow(() -> new UserNotFoundException("Did not find user with email " + authenticationRequest.getEmail()));
+                .orElseThrow(() -> new UserNotFoundException(authenticationRequest.getEmail()));
 
         try {
             authenticationManager.authenticate(

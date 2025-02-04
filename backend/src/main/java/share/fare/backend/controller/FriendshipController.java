@@ -16,13 +16,13 @@ import java.util.List;
 public class FriendshipController {
     private final FriendshipService friendshipService;
 
-    @GetMapping("/friends")
+    @GetMapping
     public ResponseEntity<List<UserGeneralResponse>> getAllFriendIds(@AuthenticationPrincipal User user) {
         List<UserGeneralResponse> friendIds = friendshipService.findFriendsByUserId(user.getId());
         return ResponseEntity.ok(friendIds);
     }
 
-    @DeleteMapping("/unfriend/{friendId}")
+    @DeleteMapping("/{friendId}")
     public ResponseEntity<Void> deleteFriendship(@AuthenticationPrincipal User user,
                                                  @PathVariable Long friendId) {
         friendshipService.deleteFriendship(user.getId(), friendId);

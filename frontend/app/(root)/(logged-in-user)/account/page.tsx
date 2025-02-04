@@ -26,7 +26,8 @@ function Page() {
   const router = useRouter();
 
   useEffect(() => {
-    if (!isAuthenticated()) {
+    const token = getToken();
+    if (!token) {
       logout();
     }
     const fetchUserData = async () => {

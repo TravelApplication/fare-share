@@ -14,13 +14,13 @@ const membershipSchema = z.object({
 export const tripSchema = z.object({
     id: z.number(),
     name: z.string().nonempty(),
-    description: z.string().nonempty(),
-    createdByUserId: z.number(),
-    createdAt: z.string(),
-    tripStartDate: z.string().date(),
-    tripEndDate: z.string().date(),
+    description: z.union([z.string(), z.null()]),
+    createdByUserId: z.union([z.number(), z.null()]),
+    createdAt: z.union([z.string(), z.null()]),
+    tripStartDate: z.union([z.string().date(), z.null()]),
+    tripEndDate: z.union([z.string().date(), z.null()]),
     tags: z.array(z.string()),
-    groupImageUrl: z.string().url(),
+    groupImageUrl: z.union([z.string(), z.null()]),
     memberships: z.array(membershipSchema),
 }).passthrough();
 

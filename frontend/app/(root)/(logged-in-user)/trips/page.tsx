@@ -4,7 +4,6 @@ import { getToken, isAuthenticated, logout } from "@/lib/auth";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Trip, tripSchema } from "@/validation/tripSchemas";
-import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import CustomPagination from "@/components/shared/CustomPagination";
@@ -15,8 +14,10 @@ import {
   ArrowDown,
   ArrowUp,
 } from "lucide-react";
+import { Alert } from "@/components/ui/alert";
 
 function Page() {
+  const [error, setError] = useState<string | null>(null);
   const [trips, setTrips] = useState<Trip[]>([]);
   const [totalTrips, setTotalTrips] = useState(0);
   const tripsPerPage = 3;
@@ -50,11 +51,21 @@ function Page() {
             sort: `${sortBy},${sortDirection}`,
           },
         });
-        const parsedTrips = z.array(tripSchema).parse(response.data.content);
+        const parsedTrips = response.data.content
+          .map((trip: any) => {
+            try {
+              return tripSchema.parse(trip);
+            } catch (error) {
+              return null;
+            }
+          })
+          .filter((trip: Trip | null) => trip !== null);
+
         setTrips(parsedTrips);
         setTotalTrips(response.data.totalElements);
       } catch (error) {
         console.error(error);
+        setError("An error occurred while loading trips. Please try again.");
       }
     };
 
@@ -135,6 +146,7 @@ function Page() {
       ) : (
         <div>No trips yet. Add a trip to get started!</div>
       )}
+      {error && <Alert className="mt-4">{error}</Alert>}
     </div>
   );
 }

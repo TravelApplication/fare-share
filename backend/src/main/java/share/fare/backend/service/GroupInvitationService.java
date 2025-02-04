@@ -1,6 +1,6 @@
 package share.fare.backend.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import share.fare.backend.dto.response.GroupInvitationResponse;
@@ -21,31 +21,32 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class GroupInvitationService {
 
-    @Autowired
-    private UserRepository userRepository;
+    private final UserRepository userRepository;
 
-    @Autowired
-    private GroupRepository groupRepository;
+    private final GroupRepository groupRepository;
 
-    @Autowired
-    private GroupInvitationRepository invitationRepository;
+    private final GroupInvitationRepository invitationRepository;
 
     @Transactional
     public GroupInvitationResponse sendGroupInvitation(Long senderId, Long receiverId, Long groupId) {
+        if (senderId.equals(receiverId)) {
+            throw new IllegalArgumentException("You cannot send a friend invitation to yourself.");
+        }
 
         if (invitationRepository.existsBySenderIdAndReceiverIdAndGroupId(senderId, receiverId, groupId)) {
             throw new InvitationAlreadyExistsException("Group invitation already exists.");
         }
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + senderId + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(senderId));
 
         User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new UserNotFoundException("User with ID " + receiverId + " not found"));
+                .orElseThrow(() -> new UserNotFoundException(receiverId));
 
         Group group = groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException("Group with ID " + groupId + " not found"));
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
 
 
         GroupInvitation invitation = GroupInvitation.builder()

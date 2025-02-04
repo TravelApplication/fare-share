@@ -1,6 +1,7 @@
 package share.fare.backend.mapper;
 
 import share.fare.backend.dto.request.UserRequest;
+import share.fare.backend.dto.response.UserGeneralResponse;
 import share.fare.backend.dto.response.UserResponse;
 import share.fare.backend.entity.User;
 
@@ -42,4 +43,14 @@ public class UserMapper {
                 .password(user.getPassword())
                 .build();
     }
+
+    public static UserGeneralResponse toGeneralResponse(User user) {
+        return UserGeneralResponse.builder()
+                .id(user.getId())
+                .firstName(user.getUserInfo() != null ? user.getUserInfo().getFirstName() : null)
+                .lastName(user.getUserInfo() != null ? user.getUserInfo().getLastName() : null)
+                .email(user.getEmail())
+                .build();
+    }
+
 }

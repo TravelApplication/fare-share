@@ -96,7 +96,12 @@ function TripForm({
                   ? "border-red-500"
                   : ""
               }`}
-              value={values.tripStartDate.toISOString().split("T")[0]}
+              value={
+                values.tripStartDate instanceof Date &&
+                !isNaN(values.tripStartDate.getTime())
+                  ? values.tripStartDate.toISOString().split("T")[0]
+                  : ""
+              }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const newDate = new Date(e.target.value);
                 setFieldValue("tripStartDate", newDate);
@@ -126,7 +131,12 @@ function TripForm({
                   ? "border-red-500"
                   : ""
               }`}
-              value={values.tripEndDate.toISOString().split("T")[0]}
+              value={
+                values.tripEndDate instanceof Date &&
+                !isNaN(values.tripEndDate.getTime())
+                  ? values.tripEndDate.toISOString().split("T")[0]
+                  : ""
+              }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const newDate = new Date(e.target.value);
                 setFieldValue("tripEndDate", newDate);

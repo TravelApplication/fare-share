@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import Link from "next/link";
 import { Trip } from "@/validation/tripSchemas";
 import { useState } from "react";
@@ -22,17 +21,18 @@ function TripCard({ trip }: TripCardProps) {
   );
 
   return (
-    <div className="section p-0 flex flex-col md:flex-row items-center justify-between">
-      <div className="py-6 px-10">
+    <div className="section p-0 flex flex-col md:flex-row md:items-start justify-start md:justify-between bg-white shadow-lg rounded-lg">
+      <div className="py-6 px-6 w-full md:w-2/3">
         <Link href={`/trips/${id}`}>
           <h4 className="text-heading3-bold text-primary-500 hover:underline">
             {name}
           </h4>
         </Link>
-        <p className="text-small-regular text-gray-500 mb-2 ">
+        <p className="text-small-regular text-gray-500 mb-2">
           {tripStartDate} - {tripEndDate}
         </p>
-        <p>{description}</p>
+        <p className="text-gray-700">{description}</p>
+
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-2 mt-2">
             {tags.map((tag, index) => (
@@ -46,20 +46,18 @@ function TripCard({ trip }: TripCardProps) {
           </div>
         )}
         <Link href="/">
-          <button className="p-0 text-small-regular text-primary-500 hover:underline mt-2">
+          <button className="p-0 text-small-regular text-primary-500 hover:underline mt-3">
             Manage Group Members
           </button>
         </Link>
       </div>
-      <div className="relative w-48 h-48">
+      <div className="relative w-48 h-48 md:w-60 md:h-60 hidden md:block overflow-hidden">
         <Link href={`/trips/${id}`}>
-          <Image
-            className="rounded-r-lg"
+          <img
             src={imageSrc}
-            onError={() => setImageSrc("/assets/trip-placeholder.png")}
             alt={name}
-            fill
-            objectFit="cover"
+            className="w-full h-full object-cover rounded-r-lg"
+            onError={() => setImageSrc("/assets/trip-placeholder.png")}
           />
         </Link>
       </div>

@@ -163,25 +163,22 @@ function TripForm({
                 }
               }}
             />
-            <div className="mt-2 flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-2 mt-2">
               {values.tags.map((tag, index: number) => (
                 <div
                   key={index}
-                  className="bg-light-2 p-2 rounded flex items-center"
+                  className="bg-primary-500 px-3 py-1 text-small-medium text-white rounded-lg flex items-center gap-2"
                 >
-                  <p className="font-medium">{tag}</p>
+                  <span className="flex-1">#{tag}</span>
                   <button
                     type="button"
-                    className="p-1 px-2"
+                    className="p-2 hover:bg-primary-600 rounded-full transition-colors text-terminate-color hover:text-red-500"
                     onClick={() => {
                       const newTags = values.tags.filter((_, i) => i !== index);
                       setFieldValue("tags", newTags);
                     }}
                   >
-                    <X
-                      size={16}
-                      className="text-terminate-color hover:text-red-500"
-                    />
+                    <X size={16} className="" />
                   </button>
                 </div>
               ))}

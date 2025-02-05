@@ -22,6 +22,7 @@ const NewTripPage = () => {
       });
       console.log(response);
       actions.resetForm();
+      window.location.href = `/trips/${response.data.id}`;
     } catch (err: any) {
       setError(err.message || "An error occurred");
     }

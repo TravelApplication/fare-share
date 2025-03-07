@@ -20,14 +20,12 @@ import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
 public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
 
     public GroupResponse createGroup(GroupRequest groupRequest, Long createdByUserId) {
         validateTripDates(groupRequest.getTripStartDate(), groupRequest.getTripEndDate());
-        log.info("Created by user ID: {}", createdByUserId);
 
         User createdBy = userRepository.findById(createdByUserId)
                 .orElseThrow(() -> new UserNotFoundException(createdByUserId));
@@ -87,5 +85,4 @@ public class GroupService {
             throw new IllegalArgumentException("Trip start date must be before end date");
         }
     }
-
 }

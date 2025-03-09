@@ -28,11 +28,6 @@ public class AuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    /**
-     * Registers a new user.
-     * @param registerRequest The request containing the user's information.
-     * @return The response containing the JWT token and user ID.
-     */
     public AuthenticationResponse register(RegisterRequest registerRequest) {
         if (userRepository.findByEmail(registerRequest.getEmail()).isPresent()) {
             throw new UserAlreadyExistsException("Email already in use");

@@ -63,7 +63,7 @@ class FriendshipServiceTest {
 
         assertNotNull(result);
         assertEquals(1, result.size());
-        assertEquals("user2@test.com", result.get(0).getEmail());
+        assertEquals("user2@test.com", result.getFirst().getEmail());
         verify(friendshipRepository, times(1)).findFriendsByUserId(1L);
     }
 

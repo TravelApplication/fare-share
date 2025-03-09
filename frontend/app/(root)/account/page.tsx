@@ -2,7 +2,6 @@
 import React from 'react';
 import { CircleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { getToken, logout } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
@@ -23,34 +22,27 @@ function Page() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
-  const router = useRouter();
 
-  useEffect(() => {
-    const token = getToken();
-    if (!token) {
+  const fetchUserData = async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        logout();
+        return;
+      }
+      const response = await axios.get('/api/v1/users', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const parsedUser = UserSchema.parse(response.data);
+      setUser(parsedUser);
+    } catch (error) {
+      console.log('error fetching user data', error);
       logout();
     }
-    const fetchUserData = async () => {
-      try {
-        const token = getToken();
-        if (!token) {
-          logout();
-          return;
-        }
-
-        const response = await axios.get('/api/v1/users', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const parsedUser = UserSchema.parse(response.data);
-
-        setUser(parsedUser);
-      } catch {
-        logout();
-      }
-    };
-
+  };
+  useEffect(() => {
     fetchUserData();
-  }, [router]);
+  }, []);
 
   const handleEmailUpdate = async (
     values: z.infer<typeof updateEmailSchema>,

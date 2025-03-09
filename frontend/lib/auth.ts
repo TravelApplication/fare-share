@@ -11,10 +11,7 @@ export const getToken = (): string | null => {
   return Cookies.get('token') || null;
 };
 
-export const decodeToken = (): DecodedToken | null => {
-  const token = getToken();
-  if (!token) return null;
-
+export const decodeToken = (token: string): DecodedToken | null => {
   try {
     return jwtDecode<DecodedToken>(token);
   } catch (error) {
@@ -23,17 +20,25 @@ export const decodeToken = (): DecodedToken | null => {
   }
 };
 
-export const isAuthenticated = (): boolean => {
-  const decoded = decodeToken();
-  return !!decoded && decoded.exp * 1000 > Date.now();
-};
+export const isLoggedIn = (token: string): boolean => {
+  const decodedToken = decodeToken(token);
+  if (!decodedToken) {
+    return false;
+  }
 
-export const getUserRole = (): string | null => {
-  const decoded = decodeToken();
-  return decoded ? decoded.role : null;
+  return decodedToken.exp > Date.now() / 1000;
 };
 
 export const logout = () => {
   Cookies.remove('token');
   window.location.href = '/sign-in';
+};
+
+export const setToken = (token: string): void => {
+  Cookies.set('token', token, {
+    path: '/',
+    expires: 10 / 24,
+    secure: true,
+    sameSite: 'strict',
+  });
 };

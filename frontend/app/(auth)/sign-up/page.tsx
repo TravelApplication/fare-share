@@ -11,6 +11,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { z } from 'zod';
 import { authApiSchema, registerFormSchema } from '@/validation/authSchemas';
 import { CircleAlert } from 'lucide-react';
+import { setToken } from '@/lib/auth';
 
 const handleSignUp = async (
   values: z.infer<typeof registerFormSchema>,
@@ -33,8 +34,8 @@ const handleSignUp = async (
       return;
     }
     const token = parsedResult.data.token;
-    document.cookie = `token=${token}; path=/; max-age=36000; secure; samesite=strict`;
-    window.location.href = '/';
+    setToken(token);
+    window.location.href = '/trips';
     resetForm();
   } catch (err: unknown) {
     setError(

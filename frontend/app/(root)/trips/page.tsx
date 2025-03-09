@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import TripCard from '@/components/cards/TripCard';
-import { getToken, isAuthenticated, logout } from '@/lib/auth';
+import { getToken, logout } from '@/lib/auth';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Trip, tripSchema } from '@/validation/tripSchemas';
@@ -31,11 +31,6 @@ function Page() {
   const sortDirection = searchParams.get('direction') || 'DESC';
 
   useEffect(() => {
-    if (!isAuthenticated()) {
-      logout();
-      return;
-    }
-
     const fetchTrips = async () => {
       try {
         const token = getToken();

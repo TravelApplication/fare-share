@@ -1,4 +1,5 @@
-import { redirect } from "next/navigation";
+import React from 'react';
+import { redirect } from 'next/navigation';
 
 export default async function LoggedInLayout({
   children,
@@ -9,7 +10,7 @@ export default async function LoggedInLayout({
   // TODO: replace with actual values
   const isLoggedIn = true;
   if (!isLoggedIn) {
-    redirect("/sign-in");
+    redirect('/sign-in');
   }
   return <>{children}</>;
 }

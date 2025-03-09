@@ -1,20 +1,21 @@
-"use client";
-import TripCard from "@/components/cards/TripCard";
-import { getToken, isAuthenticated, logout } from "@/lib/auth";
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { Trip, tripSchema } from "@/validation/tripSchemas";
-import { useRouter, useSearchParams } from "next/navigation";
-import Link from "next/link";
-import CustomPagination from "@/components/shared/CustomPagination";
+'use client';
+import React from 'react';
+import TripCard from '@/components/cards/TripCard';
+import { getToken, isAuthenticated, logout } from '@/lib/auth';
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { Trip, tripSchema } from '@/validation/tripSchemas';
+import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
+import CustomPagination from '@/components/shared/CustomPagination';
 import {
   CirclePlus,
   ArrowDownZA,
   ArrowUpAZ,
   ArrowDown,
   ArrowUp,
-} from "lucide-react";
-import { Alert } from "@/components/ui/alert";
+} from 'lucide-react';
+import { Alert } from '@/components/ui/alert';
 
 function Page() {
   const [error, setError] = useState<string | null>(null);
@@ -25,9 +26,9 @@ function Page() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const page = Number(searchParams.get("page")) || 1;
-  const sortBy = searchParams.get("sort") || "createdAt";
-  const sortDirection = searchParams.get("direction") || "DESC";
+  const page = Number(searchParams.get('page')) || 1;
+  const sortBy = searchParams.get('sort') || 'createdAt';
+  const sortDirection = searchParams.get('direction') || 'DESC';
 
   useEffect(() => {
     if (!isAuthenticated()) {
@@ -43,7 +44,7 @@ function Page() {
           return;
         }
 
-        const response = await axios.get("/api/v1/groups/user-groups", {
+        const response = await axios.get('/api/v1/groups/user-groups', {
           headers: { Authorization: `Bearer ${token}` },
           params: {
             page: page - 1,
@@ -52,10 +53,10 @@ function Page() {
           },
         });
         const parsedTrips = response.data.content
-          .map((trip: any) => {
+          .map((trip: unknown) => {
             try {
               return tripSchema.parse(trip);
-            } catch (error) {
+            } catch {
               return null;
             }
           })
@@ -65,7 +66,7 @@ function Page() {
         setTotalTrips(response.data.totalElements);
       } catch (error) {
         console.error(error);
-        setError("An error occurred while loading trips. Please try again.");
+        setError('An error occurred while loading trips. Please try again.');
       }
     };
 
@@ -74,12 +75,12 @@ function Page() {
 
   const handleSortChange = (newSortBy: string) => {
     let newDirection = sortDirection;
-    if (sortBy === newSortBy && sortDirection === "ASC") {
-      newDirection = "DESC";
-    } else if (sortBy === newSortBy && sortDirection === "DESC") {
-      newDirection = "ASC";
+    if (sortBy === newSortBy && sortDirection === 'ASC') {
+      newDirection = 'DESC';
+    } else if (sortBy === newSortBy && sortDirection === 'DESC') {
+      newDirection = 'ASC';
     } else {
-      newDirection = "DESC";
+      newDirection = 'DESC';
     }
 
     router.push(`?page=1&sort=${newSortBy}&direction=${newDirection}`);
@@ -99,13 +100,13 @@ function Page() {
         <div className="flex flex-col md:flex-row gap-4">
           <button
             className={`flex items-center gap-2 px-3 py-2  shadow-md ${
-              sortBy === "createdAt" ? "bg-primary-100" : ""
+              sortBy === 'createdAt' ? 'bg-primary-100' : ''
             }`}
-            onClick={() => handleSortChange("createdAt")}
+            onClick={() => handleSortChange('createdAt')}
           >
-            Sort by {sortBy !== "createdAt" ? "Newest" : ""}
-            {sortBy === "createdAt" &&
-              (sortDirection === "ASC" ? (
+            Sort by {sortBy !== 'createdAt' ? 'Newest' : ''}
+            {sortBy === 'createdAt' &&
+              (sortDirection === 'ASC' ? (
                 <>
                   Oldest <ArrowDown />
                 </>
@@ -117,14 +118,14 @@ function Page() {
           </button>
           <button
             className={`flex items-center gap-2 px-3 py-2 shadow-md ${
-              sortBy === "name" ? "bg-primary-100" : ""
+              sortBy === 'name' ? 'bg-primary-100' : ''
             }`}
-            onClick={() => handleSortChange("name")}
+            onClick={() => handleSortChange('name')}
           >
             Sort by Name
-            {sortBy === "name" && (
+            {sortBy === 'name' && (
               <span>
-                {sortDirection === "ASC" ? <ArrowUpAZ /> : <ArrowDownZA />}
+                {sortDirection === 'ASC' ? <ArrowUpAZ /> : <ArrowDownZA />}
               </span>
             )}
           </button>

@@ -1,15 +1,16 @@
-"use client";
-import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import axios from "axios";
-import Link from "next/link";
-import { useState } from "react";
-import { Alert } from "@/components/ui/alert";
-import { toFormikValidationSchema } from "zod-formik-adapter";
-import { z } from "zod";
-import { authApiSchema, registerFormSchema } from "@/validation/authSchemas";
-import { CircleAlert } from "lucide-react";
+'use client';
+import React from 'react';
+import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import axios from 'axios';
+import Link from 'next/link';
+import { useState } from 'react';
+import { Alert } from '@/components/ui/alert';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { z } from 'zod';
+import { authApiSchema, registerFormSchema } from '@/validation/authSchemas';
+import { CircleAlert } from 'lucide-react';
 
 const handleSignUp = async (
   values: z.infer<typeof registerFormSchema>,
@@ -18,36 +19,35 @@ const handleSignUp = async (
     resetForm,
   }: FormikHelpers<z.infer<typeof registerFormSchema>> & {
     setError: (error: string) => void;
-  }
+  },
 ) => {
   try {
     console.log(values);
     const result = await axios.post(
-      "http://localhost:8080/auth/register",
-      values
+      'http://localhost:8080/auth/register',
+      values,
     );
     const parsedResult = authApiSchema.safeParse(result.data);
     if (!parsedResult.success) {
-      setError("Invalid response from server. Please try again.");
+      setError('Invalid response from server. Please try again.');
       return;
     }
     const token = parsedResult.data.token;
     document.cookie = `token=${token}; path=/; max-age=36000; secure; samesite=strict`;
-    window.location.href = "/";
+    window.location.href = '/';
     resetForm();
-  } catch (err: any) {
-    console.error(err);
+  } catch (err: unknown) {
     setError(
       `${
-        err.response?.data?.message || "Something went wrong"
-      }. Please try again.`
+        err.response?.data?.message || 'Something went wrong'
+      }. Please try again.`,
     );
     resetForm();
   }
 };
 
-function page() {
-  const [error, setError] = useState("");
+function Page() {
+  const [error, setError] = useState('');
   return (
     <div className="section py-6 px-12">
       <h1 className="text-heading1-bold">Sign Up</h1>
@@ -58,12 +58,12 @@ function page() {
       )}
       <Formik
         initialValues={{
-          email: "",
-          password: "",
-          firstName: "",
-          lastName: "",
+          email: '',
+          password: '',
+          firstName: '',
+          lastName: '',
           dateOfBirth: new Date(),
-          phoneNumber: "",
+          phoneNumber: '',
         }}
         validationSchema={toFormikValidationSchema(registerFormSchema)}
         onSubmit={(values, actions) =>
@@ -81,7 +81,7 @@ function page() {
                 type="email"
                 as={Input}
                 className={`mt-1 ${
-                  errors.email && touched.email ? "border-red-500" : ""
+                  errors.email && touched.email ? 'border-red-500' : ''
                 }`}
               />
               <ErrorMessage
@@ -104,7 +104,7 @@ function page() {
                 type="password"
                 as={Input}
                 className={`mt-1 ${
-                  errors.password && touched.password ? "border-red-500" : ""
+                  errors.password && touched.password ? 'border-red-500' : ''
                 }`}
               />
               <ErrorMessage
@@ -126,7 +126,7 @@ function page() {
                 name="firstName"
                 as={Input}
                 className={`mt-1 ${
-                  errors.firstName && touched.firstName ? "border-red-500" : ""
+                  errors.firstName && touched.firstName ? 'border-red-500' : ''
                 }`}
               />
               <ErrorMessage
@@ -148,7 +148,7 @@ function page() {
                 name="lastName"
                 as={Input}
                 className={`mt-1 ${
-                  errors.lastName && touched.lastName ? "border-red-500" : ""
+                  errors.lastName && touched.lastName ? 'border-red-500' : ''
                 }`}
               />
               <ErrorMessage
@@ -172,17 +172,17 @@ function page() {
                 as={Input}
                 value={
                   values.dateOfBirth
-                    ? values.dateOfBirth.toISOString().split("T")[0]
-                    : ""
+                    ? values.dateOfBirth.toISOString().split('T')[0]
+                    : ''
                 }
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                   const date = e.target.value;
-                  setFieldValue("dateOfBirth", new Date(date));
+                  setFieldValue('dateOfBirth', new Date(date));
                 }}
                 className={`mt-1 ${
                   errors.dateOfBirth && touched.dateOfBirth
-                    ? "border-red-500"
-                    : ""
+                    ? 'border-red-500'
+                    : ''
                 }`}
               />
               <ErrorMessage
@@ -205,12 +205,12 @@ function page() {
                 type="number"
                 as={Input}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  setFieldValue("phoneNumber", e.target.value);
+                  setFieldValue('phoneNumber', e.target.value);
                 }}
                 className={`mt-1 ${
                   errors.phoneNumber && touched.phoneNumber
-                    ? "border-red-500"
-                    : ""
+                    ? 'border-red-500'
+                    : ''
                 }`}
               />
               <ErrorMessage
@@ -249,4 +249,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

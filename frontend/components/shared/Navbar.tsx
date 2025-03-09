@@ -1,7 +1,8 @@
-"use client";
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
+'use client';
+import React from 'react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,27 +10,27 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
-import { Button } from "../ui/button";
-import { Avatar, AvatarFallback } from "../ui/avatar";
-import { Bell, LogOut, Plane, User } from "lucide-react";
+} from '../ui/dropdown-menu';
+import { Button } from '../ui/button';
+import { Avatar, AvatarFallback } from '../ui/avatar';
+import { Bell, LogOut, Plane, User } from 'lucide-react';
 
 function getCookie(name: string): string | null {
-  if (typeof document === "undefined") return null;
+  if (typeof document === 'undefined') return null;
   const value = `; ${document.cookie}`;
   const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(";").shift() ?? null;
+  if (parts.length === 2) return parts.pop()?.split(';').shift() ?? null;
   return null;
 }
 
 function deleteCookie(name: string) {
-  if (typeof document !== "undefined") {
+  if (typeof document !== 'undefined') {
     document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
   }
 }
 
 function handleLogout(): void {
-  deleteCookie("token");
+  deleteCookie('token');
   window.location.reload();
 }
 
@@ -37,7 +38,7 @@ function Navbar() {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const tokenFromCookie = getCookie("token");
+    const tokenFromCookie = getCookie('token');
     setToken(tokenFromCookie);
   }, []);
   return (
@@ -78,7 +79,7 @@ function Navbar() {
                   <DropdownMenuItem onClick={handleLogout}>
                     <Link
                       className="navbar_link"
-                      href={"/"}
+                      href={'/'}
                       onClick={handleLogout}
                     >
                       <LogOut />
@@ -94,7 +95,7 @@ function Navbar() {
                 Sign In
               </Link>
               <Button className="bg-primary-500 hover:bg-primary-600">
-                <Link href="/sign-up">Sign Up - It's Free</Link>
+                <Link href="/sign-up">Sign Up - It`&apos;`s Free</Link>
               </Button>
             </>
           )}

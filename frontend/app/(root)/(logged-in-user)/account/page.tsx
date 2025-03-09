@@ -1,21 +1,21 @@
-"use client";
-
-import { CircleAlert } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import axios from "axios";
-import { isAuthenticated, getToken, logout } from "@/lib/auth";
-import { Button } from "@/components/ui/button";
-import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
-import { Input } from "@/components/ui/input";
-import { set, z } from "zod";
-import { toFormikValidationSchema } from "zod-formik-adapter";
+'use client';
+import React from 'react';
+import { CircleAlert } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import axios from 'axios';
+import { getToken, logout } from '@/lib/auth';
+import { Button } from '@/components/ui/button';
+import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
+import { Input } from '@/components/ui/input';
+import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 import {
   updateEmailSchema,
   updatePasswordSchema,
-} from "@/validation/updateUserSchema";
-import { Alert } from "@/components/ui/alert";
-import { User, UserSchema } from "@/validation/userProfileSchemas";
+} from '@/validation/updateUserSchema';
+import { Alert } from '@/components/ui/alert';
+import { User, UserSchema } from '@/validation/userProfileSchemas';
 
 function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -38,13 +38,13 @@ function Page() {
           return;
         }
 
-        const response = await axios.get("/api/v1/users", {
+        const response = await axios.get('/api/v1/users', {
           headers: { Authorization: `Bearer ${token}` },
         });
         const parsedUser = UserSchema.parse(response.data);
 
         setUser(parsedUser);
-      } catch (error) {
+      } catch {
         logout();
       }
     };
@@ -54,26 +54,26 @@ function Page() {
 
   const handleEmailUpdate = async (
     values: z.infer<typeof updateEmailSchema>,
-    { resetForm }: FormikHelpers<z.infer<typeof updateEmailSchema>>
+    { resetForm }: FormikHelpers<z.infer<typeof updateEmailSchema>>,
   ) => {
     try {
       console.log(values.newEmail, user?.email, values.currentPassword);
       const authResponse = await axios.post(
-        "http://localhost:8080/auth/login",
-        { email: user?.email, password: values.currentPassword }
+        'http://localhost:8080/auth/login',
+        { email: user?.email, password: values.currentPassword },
       );
 
       if (authResponse.status === 200) {
         const newToken = authResponse.data.token;
 
         const response = await axios.put(
-          "/api/v1/users",
+          '/api/v1/users',
           { email: values.newEmail, password: values.currentPassword },
           {
             headers: {
               Authorization: `Bearer ${newToken}`,
             },
-          }
+          },
         );
 
         setUser((prevState) => ({
@@ -85,43 +85,43 @@ function Page() {
         setIsEditingEmail(false);
         setEmailError(null);
       } else {
-        setEmailError("Incorrect current password. Please try again.");
+        setEmailError('Incorrect current password. Please try again.');
       }
-    } catch (err: any) {
-      setEmailError("Error updating email. Please try again.");
+    } catch {
+      setEmailError('Error updating email. Please try again.');
     }
   };
 
   const handlePasswordUpdate = async (
     values: z.infer<typeof updatePasswordSchema>,
-    { resetForm }: FormikHelpers<z.infer<typeof updatePasswordSchema>>
+    { resetForm }: FormikHelpers<z.infer<typeof updatePasswordSchema>>,
   ) => {
     try {
       const authResponse = await axios.post(
-        "http://localhost:8080/auth/login",
-        { email: user?.email, password: values.currentPassword }
+        'http://localhost:8080/auth/login',
+        { email: user?.email, password: values.currentPassword },
       );
       if (authResponse.status === 200) {
         const newToken = authResponse.data.token;
 
-        const response = await axios.put(
-          "/api/v1/users",
+        await axios.put(
+          '/api/v1/users',
           { email: user?.email, password: values.newPassword },
           {
             headers: {
               Authorization: `Bearer ${newToken}`,
             },
-          }
+          },
         );
 
         resetForm();
         setIsEditingPassword(false);
         setPasswordError(null);
       } else {
-        setPasswordError("Incorrect current password. Please try again.");
+        setPasswordError('Incorrect current password. Please try again.');
       }
-    } catch (err: any) {
-      setPasswordError("Error updating password. Please try again.");
+    } catch {
+      setPasswordError('Error updating password. Please try again.');
     }
   };
 
@@ -159,7 +159,7 @@ function Page() {
             <Formik
               initialValues={{
                 currentEmail: user.email,
-                currentPassword: "",
+                currentPassword: '',
                 newEmail: user.email,
               }}
               validationSchema={toFormikValidationSchema(updateEmailSchema)}
@@ -190,8 +190,8 @@ function Page() {
                   <Field
                     className={`mt-1 bg-light-1 ${
                       errors.newEmail && touched.newEmail
-                        ? "border-red-500"
-                        : ""
+                        ? 'border-red-500'
+                        : ''
                     }`}
                     name="newEmail"
                     type="email"
@@ -215,8 +215,8 @@ function Page() {
                   <Field
                     className={`mt-1 bg-light-1 ${
                       errors.currentPassword && touched.currentPassword
-                        ? "border-red-500"
-                        : ""
+                        ? 'border-red-500'
+                        : ''
                     }`}
                     name="currentPassword"
                     type="password"
@@ -253,7 +253,7 @@ function Page() {
         {!isEditingPassword ? (
           <>
             <div className="grid grid-cols-6 ">
-              <strong className="col-span-1">Password</strong>{" "}
+              <strong className="col-span-1">Password</strong>{' '}
               <p className="col-span-4">************</p>
               <Button
                 className="bg-blue-500 hover:bg-blue-400 col-span-1"
@@ -271,7 +271,7 @@ function Page() {
               </Alert>
             )}
             <Formik
-              initialValues={{ currentPassword: "", newPassword: "" }}
+              initialValues={{ currentPassword: '', newPassword: '' }}
               validationSchema={toFormikValidationSchema(updatePasswordSchema)}
               onSubmit={(values, actions) =>
                 handlePasswordUpdate(values, {
@@ -290,8 +290,8 @@ function Page() {
                   <Field
                     className={`mt-1 bg-light-1 ${
                       errors.currentPassword && touched.currentPassword
-                        ? "border-red-500"
-                        : ""
+                        ? 'border-red-500'
+                        : ''
                     }`}
                     name="currentPassword"
                     type="password"
@@ -315,8 +315,8 @@ function Page() {
                   <Field
                     className={`mt-1 bg-light-1 ${
                       errors.newPassword && touched.newPassword
-                        ? "border-red-500"
-                        : ""
+                        ? 'border-red-500'
+                        : ''
                     }`}
                     name="newPassword"
                     type="text"

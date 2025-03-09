@@ -1,23 +1,23 @@
-import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
-import { z } from "zod";
-import { toFormikValidationSchema } from "zod-formik-adapter";
+import { Formik, Field, Form, ErrorMessage } from 'formik';
+import { z } from 'zod';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
 import {
   createGroupFormSchema,
   TripFormPropsSchema,
-} from "@/validation/groupSchemas";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { CircleAlert, X } from "lucide-react";
-import React from "react";
+} from '@/validation/groupSchemas';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
+import { Button } from '@/components/ui/button';
+import { CircleAlert, X } from 'lucide-react';
+import React from 'react';
 
 const defaultInitialValues: z.infer<typeof createGroupFormSchema> = {
-  name: "",
-  description: "",
+  name: '',
+  description: '',
   tripStartDate: new Date(),
   tripEndDate: new Date(),
   tags: [],
-  groupImageUrl: "",
+  groupImageUrl: '',
 };
 
 function TripForm({
@@ -25,7 +25,7 @@ function TripForm({
   initialValues = defaultInitialValues,
   isSubmitting = false,
   error,
-  mode = "create",
+  mode = 'create',
 }: z.infer<typeof TripFormPropsSchema>) {
   return (
     <Formik
@@ -45,7 +45,7 @@ function TripForm({
               name="name"
               as={Input}
               className={`mt-1 ${
-                errors.name && touched.name ? "border-red-500" : ""
+                errors.name && touched.name ? 'border-red-500' : ''
               }`}
             />
             <ErrorMessage
@@ -68,8 +68,8 @@ function TripForm({
               as={Textarea}
               className={`mt-1 ${
                 errors.description && touched.description
-                  ? "border-red-500"
-                  : ""
+                  ? 'border-red-500'
+                  : ''
               }`}
             />
             <ErrorMessage
@@ -93,18 +93,18 @@ function TripForm({
               as={Input}
               className={`mt-1 ${
                 errors.tripStartDate && touched.tripStartDate
-                  ? "border-red-500"
-                  : ""
+                  ? 'border-red-500'
+                  : ''
               }`}
               value={
                 values.tripStartDate instanceof Date &&
                 !isNaN(values.tripStartDate.getTime())
-                  ? values.tripStartDate.toISOString().split("T")[0]
-                  : ""
+                  ? values.tripStartDate.toISOString().split('T')[0]
+                  : ''
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const newDate = new Date(e.target.value);
-                setFieldValue("tripStartDate", newDate);
+                setFieldValue('tripStartDate', newDate);
               }}
             />
             <ErrorMessage
@@ -128,18 +128,18 @@ function TripForm({
               as={Input}
               className={`mt-1 ${
                 errors.tripEndDate && touched.tripEndDate
-                  ? "border-red-500"
-                  : ""
+                  ? 'border-red-500'
+                  : ''
               }`}
               value={
                 values.tripEndDate instanceof Date &&
                 !isNaN(values.tripEndDate.getTime())
-                  ? values.tripEndDate.toISOString().split("T")[0]
-                  : ""
+                  ? values.tripEndDate.toISOString().split('T')[0]
+                  : ''
               }
               onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 const newDate = new Date(e.target.value);
-                setFieldValue("tripEndDate", newDate);
+                setFieldValue('tripEndDate', newDate);
               }}
             />
             <ErrorMessage
@@ -158,18 +158,18 @@ function TripForm({
             <Input
               placeholder="Add a tag and press Enter"
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                if (e.key === "Enter" && e.currentTarget.value.trim() !== "") {
+                if (e.key === 'Enter' && e.currentTarget.value.trim() !== '') {
                   e.preventDefault();
                   if (values.tags.length < 10) {
-                    setFieldValue("tags", [
+                    setFieldValue('tags', [
                       ...values.tags,
                       e.currentTarget.value.trim(),
                     ]);
-                    setFieldError("tags", "");
+                    setFieldError('tags', '');
                   } else {
-                    setFieldError("tags", "You can only add up to 10 tags");
+                    setFieldError('tags', 'You can only add up to 10 tags');
                   }
-                  e.currentTarget.value = "";
+                  e.currentTarget.value = '';
                 }
               }}
             />
@@ -185,7 +185,7 @@ function TripForm({
                     className="p-2 hover:bg-primary-600 rounded-full transition-colors text-terminate-color hover:text-red-500"
                     onClick={() => {
                       const newTags = values.tags.filter((_, i) => i !== index);
-                      setFieldValue("tags", newTags);
+                      setFieldValue('tags', newTags);
                     }}
                   >
                     <X size={16} className="" />
@@ -214,8 +214,8 @@ function TripForm({
               as={Input}
               className={`mt-1 ${
                 errors.groupImageUrl && touched.groupImageUrl
-                  ? "border-red-500"
-                  : ""
+                  ? 'border-red-500'
+                  : ''
               }`}
             />
             <ErrorMessage
@@ -235,10 +235,10 @@ function TripForm({
             disabled={isSubmitting}
           >
             {isSubmitting
-              ? "Submitting..."
-              : mode === "create"
-              ? "Create Trip"
-              : "Save Changes"}
+              ? 'Submitting...'
+              : mode === 'create'
+                ? 'Create Trip'
+                : 'Save Changes'}
           </Button>
 
           {error && (

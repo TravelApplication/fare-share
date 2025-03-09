@@ -3,7 +3,7 @@ import React from 'react';
 import { CircleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { getToken, logout } from '@/lib/auth';
+import { getToken, logout, setToken } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
 import { Input } from '@/components/ui/input';
@@ -15,6 +15,7 @@ import {
 } from '@/validation/updateUserSchema';
 import { Alert } from '@/components/ui/alert';
 import { User, UserSchema } from '@/validation/userProfileSchemas';
+import { authApiSchema } from '@/validation/authSchemas';
 
 function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -35,8 +36,7 @@ function Page() {
       });
       const parsedUser = UserSchema.parse(response.data);
       setUser(parsedUser);
-    } catch (error) {
-      console.log('error fetching user data', error);
+    } catch {
       logout();
     }
   };
@@ -73,6 +73,19 @@ function Page() {
           email: response.data.email,
         }));
 
+        // const loginWithNewEmailResponse = await axios.post(
+        //   'http://localhost:8080/auth/login',
+        //   { email: values.newEmail, password: values.currentPassword },
+        // );
+        // const parsedResult = authApiSchema.safeParse(
+        //   loginWithNewEmailResponse.data,
+        // );
+        // if (!parsedResult.success) {
+        //   setEmailError('Error updating email. Please try again.');
+        //   return;
+        // }
+        // const validToken = parsedResult.data.token;
+        // setToken(validToken);
         resetForm();
         setIsEditingEmail(false);
         setEmailError(null);

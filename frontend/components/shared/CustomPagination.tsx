@@ -1,4 +1,5 @@
-"use client";
+'use client';
+import React from 'react';
 import {
   Pagination,
   PaginationContent,
@@ -7,8 +8,8 @@ import {
   PaginationLink,
   PaginationEllipsis,
   PaginationNext,
-} from "../ui/pagination";
-import { useRouter, useSearchParams } from "next/navigation";
+} from '../ui/pagination';
+import { useSearchParams } from 'next/navigation';
 
 interface CustomPaginationProps {
   totalTrips: number;
@@ -18,7 +19,7 @@ interface CustomPaginationProps {
 function CustomPagination({ totalTrips, tripsPerPage }: CustomPaginationProps) {
   const totalPages = Math.ceil(totalTrips / tripsPerPage);
   const searchParams = useSearchParams();
-  const currentPage = Number(searchParams.get("page")) || 1;
+  const currentPage = Number(searchParams.get('page')) || 1;
 
   if (totalPages <= 1) return null;
 

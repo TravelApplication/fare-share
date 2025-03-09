@@ -1,17 +1,17 @@
-import { z } from "zod";
+import { z } from 'zod';
 
-const membershipSchema = z.object({
+const membershipSchema = z
+  .object({
     userId: z.number(),
     userEmail: z.string().email(),
     groupId: z.number(),
-    role: z.string(
-        z.enum(["MEMBER", "OWNER", "ADMIN"])
-    ),
+    role: z.string(z.enum(['MEMBER', 'OWNER', 'ADMIN'])),
     joinedAt: z.string().date(),
-}).passthrough();
+  })
+  .passthrough();
 
-
-export const tripSchema = z.object({
+export const tripSchema = z
+  .object({
     id: z.number(),
     name: z.string().nonempty(),
     description: z.union([z.string(), z.null()]),
@@ -22,6 +22,7 @@ export const tripSchema = z.object({
     tags: z.array(z.string()),
     groupImageUrl: z.union([z.string(), z.null()]),
     memberships: z.array(membershipSchema),
-}).passthrough();
+  })
+  .passthrough();
 
 export type Trip = z.infer<typeof tripSchema>;

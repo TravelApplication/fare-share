@@ -1,7 +1,8 @@
-"use client";
-import Link from "next/link";
-import { Trip } from "@/validation/tripSchemas";
-import { useState } from "react";
+'use client';
+import React from 'react';
+import Link from 'next/link';
+import { Trip } from '@/validation/tripSchemas';
+import { useState } from 'react';
 
 interface TripCardProps {
   trip: Trip;
@@ -17,7 +18,7 @@ function TripCard({ trip }: TripCardProps) {
     groupImageUrl,
   } = trip;
   const [imageSrc, setImageSrc] = useState(
-    groupImageUrl || "/assets/trip-placeholder.png"
+    groupImageUrl || '/assets/trip-placeholder.png',
   );
 
   return (
@@ -57,7 +58,7 @@ function TripCard({ trip }: TripCardProps) {
             src={imageSrc}
             alt={name}
             className="w-full h-full object-cover rounded-r-lg"
-            onError={() => setImageSrc("/assets/trip-placeholder.png")}
+            onError={() => setImageSrc('/assets/trip-placeholder.png')}
           />
         </Link>
       </div>

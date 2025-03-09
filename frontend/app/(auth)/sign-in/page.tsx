@@ -1,15 +1,16 @@
-"use client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Formik, Field, Form, ErrorMessage, FormikHelpers } from "formik";
-import Link from "next/link";
-import axios from "axios";
-import { useState } from "react";
-import { Alert } from "@/components/ui/alert";
-import { toFormikValidationSchema } from "zod-formik-adapter";
-import { z } from "zod";
-import { authApiSchema, loginFormSchema } from "@/validation/authSchemas";
-import { CircleAlert } from "lucide-react";
+'use client';
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
+import Link from 'next/link';
+import axios from 'axios';
+import { useState } from 'react';
+import { Alert } from '@/components/ui/alert';
+import { toFormikValidationSchema } from 'zod-formik-adapter';
+import { z } from 'zod';
+import { authApiSchema, loginFormSchema } from '@/validation/authSchemas';
+import { CircleAlert } from 'lucide-react';
 
 const handleSignIn = async (
   values: z.infer<typeof loginFormSchema>,
@@ -18,32 +19,31 @@ const handleSignIn = async (
     resetForm,
   }: FormikHelpers<z.infer<typeof loginFormSchema>> & {
     setError: (error: string) => void;
-  }
+  },
 ) => {
   try {
-    const result = await axios.post("http://localhost:8080/auth/login", values);
+    const result = await axios.post('http://localhost:8080/auth/login', values);
     const parsedResult = authApiSchema.safeParse(result.data);
     if (!parsedResult.success) {
-      setError("Invalid response from server. Please try again.");
+      setError('Invalid response from server. Please try again.');
       return;
     }
     const token = parsedResult.data.token;
     document.cookie = `token=${token}; path=/; max-age=36000; secure; samesite=strict`;
-    window.location.href = "/";
+    window.location.href = '/';
     resetForm();
-  } catch (err: any) {
-    console.error(err, "err");
+  } catch (err: unknown) {
     setError(
       `${
-        err.response?.data?.message || "Something went wrong"
-      }. Please try again.`
+        err.response?.data?.message || 'Something went wrong'
+      }. Please try again.`,
     );
     resetForm();
   }
 };
 
-function page() {
-  const [error, setError] = useState("");
+function Page() {
+  const [error, setError] = useState('');
   return (
     <div className="section py-6 px-12">
       <h1 className="text-heading1-bold">Sign In</h1>
@@ -53,7 +53,7 @@ function page() {
         </Alert>
       )}
       <Formik
-        initialValues={{ email: "", password: "" }}
+        initialValues={{ email: '', password: '' }}
         validationSchema={toFormikValidationSchema(loginFormSchema)}
         onSubmit={(values, actions) =>
           handleSignIn(values, { ...actions, setError })
@@ -70,7 +70,7 @@ function page() {
                 type="email"
                 as={Input}
                 className={`mt-1 ${
-                  errors.email && touched.email ? "border-red-500" : ""
+                  errors.email && touched.email ? 'border-red-500' : ''
                 }`}
               />
               <ErrorMessage
@@ -92,7 +92,7 @@ function page() {
                 type="password"
                 as={Input}
                 className={`mt-1 ${
-                  errors.password && touched.password ? "border-red-500" : ""
+                  errors.password && touched.password ? 'border-red-500' : ''
                 }`}
               />
               <ErrorMessage
@@ -114,7 +114,7 @@ function page() {
                 Sign In
               </Button>
               <div className="mt-4 flex items-center">
-                <p className="text-center">Don't have an account?</p>
+                <p className="text-center">Don`&apos;`t have an account?</p>
                 <Link
                   href="/sign-up"
                   className="ml-2 text-primary-600 underline"
@@ -130,4 +130,4 @@ function page() {
   );
 }
 
-export default page;
+export default Page;

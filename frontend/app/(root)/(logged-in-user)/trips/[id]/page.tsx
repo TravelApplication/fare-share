@@ -1,3 +1,5 @@
+import React from 'react';
+
 type PageProps = {
   params: Promise<{ id: string }>;
 };

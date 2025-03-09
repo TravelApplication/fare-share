@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import { toast } from 'sonner';
 import { CircleAlert } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
@@ -73,6 +74,16 @@ function Page() {
           email: response.data.email,
         }));
 
+        toast('Email updated successfully!', {
+          duration: 7000,
+          action: {
+            label: 'Close',
+            onClick: () => {
+              toast.dismiss();
+            },
+          },
+        });
+
         // const loginWithNewEmailResponse = await axios.post(
         //   'http://localhost:8080/auth/login',
         //   { email: values.newEmail, password: values.currentPassword },
@@ -122,6 +133,15 @@ function Page() {
         resetForm();
         setIsEditingPassword(false);
         setPasswordError(null);
+        toast('Password updated successfully!', {
+          duration: 7000,
+          action: {
+            label: 'Close',
+            onClick: () => {
+              toast.dismiss();
+            },
+          },
+        });
       } else {
         setPasswordError('Incorrect current password. Please try again.');
       }

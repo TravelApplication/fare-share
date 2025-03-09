@@ -4,7 +4,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Navbar from '@/components/shared/Navbar';
 import { Suspense } from 'react';
-
+import { Toaster } from '@/components/ui/sonner';
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -34,6 +34,7 @@ export default function RootLayout({
         <Suspense>
           <section className="main-container">
             <div className="w-full max-w-4xl">{children}</div>
+            <Toaster />
           </section>
         </Suspense>
       </body>

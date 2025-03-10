@@ -1,0 +1,56 @@
+name: Code Coverage
+
+on:
+  pull_request:
+    branches: ["master"]
+  push:
+    branches: ["master"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: 17
+          distribution: "temurin"
+          cache: maven
+
+      - name: Generate Coverage Report
+        run: |
+          mvn -B package --file pom.xml
+
+      - name: Upload Report
+        uses: "actions/upload-artifact@v2"
+        with:
+          name: jacoco-report
+          path: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
+
+      - name: Add coverage to PR
+        id: jacoco
+        uses: madrapps/jacoco-report@v1.2
+        with:
+          paths: ${{ github.workspace }}/target/site/jacoco/jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 80
+          min-coverage-changed-files: 80
+          title: Code Coverage
+
+      - name: Save Coverage To Environment Variable
+        run: |
+          echo "TOTAL_COVERAGE=${{ steps.jacoco.outputs.coverage-overall }}" >> $GITHUB_ENV
+          echo "CHANGED_FILES_COVERAGE=${{ steps.jacoco.outputs.coverage-changed-files }}" >> $GITHUB_ENV
+
+      - name: Print & Check Coverage Info
+        run: |
+          import os
+          import sys
+          print("Total Coverage: " + str(os.environ["TOTAL_COVERAGE"]))
+          print("Changed Files Coverage: " + str(os.environ["CHANGED_FILES_COVERAGE"]))
+          if float(os.environ["TOTAL_COVERAGE"]) < 80 or float(os.environ["CHANGED_FILES_COVERAGE"]) < 80:
+            print("Insufficient Coverage!")
+            sys.exit(-1) # Cause Status Check Failure due to noncompliant coverage
+          sys.exit(0)
+        shell: python

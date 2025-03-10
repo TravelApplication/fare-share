@@ -16,6 +16,7 @@ import share.fare.backend.exception.InvalidCredentialsException;
 import share.fare.backend.exception.UserAlreadyExistsException;
 import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.repository.UserRepository;
+import share.fare.backend.util.CustomUserDetails;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -58,7 +59,8 @@ public class AuthenticationService {
 
         userRepository.save(user);
 
-        String token = jwtService.generateToken(user);
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+        String token = jwtService.generateToken(userDetails);
 
         return new AuthenticationResponse(token, user.getId());
     }
@@ -70,7 +72,7 @@ public class AuthenticationService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            authenticationRequest.getEmail(),
+                            user.getId().toString(),
                             authenticationRequest.getPassword()
                     )
             );
@@ -78,8 +80,9 @@ public class AuthenticationService {
             throw new InvalidCredentialsException("Invalid username or password");
         }
 
-        String jwtToken = jwtService.generateToken(user);
+        CustomUserDetails userDetails = new CustomUserDetails(user);
+        String token = jwtService.generateToken(userDetails);
 
-        return new AuthenticationResponse(jwtToken, user.getId());
+        return new AuthenticationResponse(token, user.getId());
     }
 }

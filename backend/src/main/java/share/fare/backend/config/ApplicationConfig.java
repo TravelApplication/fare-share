@@ -9,11 +9,10 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import share.fare.backend.repository.UserRepository;
+import share.fare.backend.util.CustomUserDetails;
 
 @Configuration
 @RequiredArgsConstructor
@@ -23,8 +22,9 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByEmail(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User " + username + " not found"));
+        return username -> userRepository.findById(Long.parseLong(username))
+                .map(CustomUserDetails::new)
+                .orElseThrow(() -> new UsernameNotFoundException("User with ID " + username + " not found"));
     }
 
     @Bean

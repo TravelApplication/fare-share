@@ -7,7 +7,6 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import share.fare.backend.util.CustomUserDetails;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
@@ -35,11 +34,10 @@ public class JwtService {
     }
 
     public String generateToken(Map<String, Object> extraClaims , UserDetails userDetails) {
-        CustomUserDetails customUserDetails = (CustomUserDetails) userDetails;
         return Jwts
                 .builder()
                 .claims(extraClaims)
-                .subject(customUserDetails.getUsername())
+                .subject(userDetails.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000* 60 * 60 *10))
                 .signWith(getSignInKey(), Jwts.SIG.HS256)

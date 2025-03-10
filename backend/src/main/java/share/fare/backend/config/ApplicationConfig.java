@@ -12,7 +12,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import share.fare.backend.repository.UserRepository;
-import share.fare.backend.util.CustomUserDetails;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,9 +21,10 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> userRepository.findById(Long.parseLong(username))
-                .map(CustomUserDetails::new)
-                .orElseThrow(() -> new UsernameNotFoundException("User with ID " + username + " not found"));
+        return username -> {
+            return userRepository.findById(Long.parseLong(username))
+                    .orElseThrow(() -> new UsernameNotFoundException("User with ID " + username + " not found"));
+        };
     }
 
     @Bean

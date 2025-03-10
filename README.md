@@ -137,7 +137,7 @@ FareShare was developed by:
 <a href="https://github.com/TravelApplication/fare-share/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=TravelApplication/fare-share" />
 </a>
-
+<br>
 <small>
 - Agata Bartczak
 - Oskar Gawryszewski

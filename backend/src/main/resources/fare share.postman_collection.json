@@ -13,6 +13,9 @@
 				{
 					"name": "login",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -37,13 +40,25 @@
 				{
 					"name": "register",
 					"request": {
+						"auth": {
+							"type": "noauth"
+						},
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"lala@example.com\",\n    \"password\": \"laala1234!\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "/auth/register",
+							"raw": "/auth/login",
 							"path": [
 								"auth",
-								"register"
+								"login"
 							]
 						}
 					},
@@ -62,7 +77,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "{{jwt-token-user}}",
 									"type": "string"
 								}
 							]
@@ -198,7 +213,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsImlhdCI6MTczODQzMDM3MCwiZXhwIjoxNzM4NDY2MzcwfQ.Dg0J__4iVTbA14F1QMx8gQ32-29Ffeg9WNKskx5GPXU",
+									"value": "{{jwt-token-user}}",
 									"type": "string"
 								}
 							]
@@ -256,6 +271,61 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "unfriend",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token-user2}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/users/unfriend/1",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"unfriend",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get friends",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token-user2}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/users/friends",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"friends"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -265,6 +335,16 @@
 				{
 					"name": "get all groups",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token-user}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -286,7 +366,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "{{jwt-token-user}}",
 									"type": "string"
 								}
 							]
@@ -379,6 +459,16 @@
 				{
 					"name": "get user groups",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token-user}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -556,7 +646,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "{{jwt-token-user}}",
 									"type": "string"
 								}
 							]
@@ -564,18 +654,13 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "/api/v1/friend-invitations/send?receiverId=1",
+							"raw": "/api/v1/friend-invitations/send/3",
 							"path": [
 								"api",
 								"v1",
 								"friend-invitations",
-								"send"
-							],
-							"query": [
-								{
-									"key": "receiverId",
-									"value": "1"
-								}
+								"send",
+								"3"
 							]
 						}
 					},
@@ -589,7 +674,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "{{jwt-token-user2}}",
 									"type": "string"
 								}
 							]
@@ -597,13 +682,13 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "/api/v1/friend-invitations/accept/3",
+							"raw": "/api/v1/friend-invitations/accept/1",
 							"path": [
 								"api",
 								"v1",
 								"friend-invitations",
 								"accept",
-								"3"
+								"1"
 							]
 						}
 					},
@@ -645,7 +730,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "{{jwt-token-user}}",
 									"type": "string"
 								}
 							]
@@ -672,7 +757,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "{{jwt-token-user2}}",
 									"type": "string"
 								}
 							]
@@ -769,7 +854,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "{{jwt-token-user2}}",
 									"type": "string"
 								}
 							]
@@ -824,7 +909,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "{{jwt-token-user2}}",
 									"type": "string"
 								}
 							]
@@ -999,8 +1084,159 @@
 					}
 				}
 			]
+		},
+		{
+			"name": "friendship",
+			"item": [
+				{
+					"name": "get friends",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token-user}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/friendships",
+							"path": [
+								"api",
+								"v1",
+								"friendships"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "unfriend",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token-user}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/friendships/2",
+							"path": [
+								"api",
+								"v1",
+								"friendships",
+								"2"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "user-info",
+			"item": [
+				{
+					"name": "get user info",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MTcxODUxOSwiZXhwIjoxNzQxNzU0NTE5fQ.cK57nselYZCdg5IMuQM_6qbidtKckHFnNLMoU-NrRv0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/user-info/2",
+							"path": [
+								"api",
+								"v1",
+								"user-info",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "search user top8",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "search users page",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "add or update userinfo",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MTcxODUxOSwiZXhwIjoxNzQxNzU0NTE5fQ.cK57nselYZCdg5IMuQM_6qbidtKckHFnNLMoU-NrRv0",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstName\": \"oski\",\n    \"lastName\": \"gawr\",\n    \"bio\": \"\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/user-info",
+							"path": [
+								"api",
+								"v1",
+								"user-info"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{jwt-token-user}}",
+				"type": "string"
+			}
+		]
+	},
 	"event": [
 		{
 			"listen": "prerequest",

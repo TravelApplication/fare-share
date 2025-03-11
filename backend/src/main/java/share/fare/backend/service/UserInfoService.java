@@ -58,6 +58,9 @@ public class UserInfoService {
         UserInfo userInfo = userRepository.findById(targetUserId)
                 .orElseThrow(() -> new UserNotFoundException(targetUserId)).getUserInfo();
 
+        if (Objects.isNull(userInfo)) {
+            return UserInfoResponse.builder().build();
+        }
         return UserInfoMapper.toResponse(userInfo);
     }
 }

@@ -183,6 +183,3 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 }
-
-
-// TODO: Improve the java docs here

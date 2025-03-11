@@ -1,5 +1,6 @@
 package share.fare.backend.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -7,6 +8,7 @@ import org.springframework.stereotype.Service;
 import share.fare.backend.dto.request.UserInfoRequest;
 import share.fare.backend.dto.response.UserInfoResponse;
 import share.fare.backend.dto.response.UserResponse;
+import share.fare.backend.entity.User;
 import share.fare.backend.entity.UserInfo;
 import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.mapper.UserInfoMapper;
@@ -22,14 +24,23 @@ public class UserInfoService {
     private final UserInfoRepository userInfoRepository;
     private final UserRepository userRepository;
 
+    @Transactional
     public UserInfoResponse addOrUpdateUserInfo(UserInfoRequest userInfoRequest, Long userId) {
-        if (!Objects.equals(userId, userInfoRequest.getId())) {
-            throw new IllegalArgumentException("User ID does not match the request ID");
-        }
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
 
-        UserInfo userInfo = UserInfoMapper.toEntity(userInfoRequest);
-        UserInfo savedUserInfo = userInfoRepository.save(userInfo);
-        return UserInfoMapper.toResponse(savedUserInfo);
+        UserInfo userInfo = userInfoRepository.findByUserId(userId)
+                .orElse(new UserInfo());
+
+        userInfo.setUser(user);
+        userInfo.setFirstName(userInfoRequest.getFirstName());
+        userInfo.setLastName(userInfoRequest.getLastName());
+        userInfo.setPhoneNumber(userInfoRequest.getPhoneNumber());
+        userInfo.setBio(userInfoRequest.getBio());
+        userInfo.setDateOfBirth(userInfoRequest.getDateOfBirth());
+
+        userInfoRepository.save(userInfo);
+        return UserInfoMapper.toResponse(userInfo);
     }
 
     public List<UserInfoResponse> searchTop8Users(String name) {
@@ -43,9 +54,9 @@ public class UserInfoService {
                 .map(UserInfoMapper::toResponse);
     }
 
-    public UserInfoResponse getUserProfile(Long currentUserId, Long targetUserId) {
-        UserInfo userInfo = userInfoRepository.findByUserId(targetUserId)
-                .orElseThrow(() -> new UserNotFoundException(targetUserId));
+    public UserInfoResponse getUserProfile(Long targetUserId) {
+        UserInfo userInfo = userRepository.findById(targetUserId)
+                .orElseThrow(() -> new UserNotFoundException(targetUserId)).getUserInfo();
 
         return UserInfoMapper.toResponse(userInfo);
     }

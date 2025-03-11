@@ -16,9 +16,8 @@ public class UserInfoMapper {
                 .build();
     }
 
-    public static UserInfo toEntity(UserInfoRequest userInfoRequest) {
+    public static UserInfo toEntity(UserInfoRequest userInfoRequest, Long userId) {
         return UserInfo.builder()
-                .id(userInfoRequest.getId())
                 .firstName(userInfoRequest.getFirstName())
                 .lastName(userInfoRequest.getLastName())
                 .dateOfBirth(userInfoRequest.getDateOfBirth())

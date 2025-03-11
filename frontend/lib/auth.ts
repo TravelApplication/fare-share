@@ -2,8 +2,8 @@ import { jwtDecode } from 'jwt-decode';
 import Cookies from 'js-cookie';
 
 interface DecodedToken {
-  email: string;
-  role: string;
+  sub: string;
+  iat: number;
   exp: number;
 }
 

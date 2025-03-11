@@ -1,10 +1,10 @@
 'use client';
 import React from 'react';
 import { toast } from 'sonner';
-import { CircleAlert } from 'lucide-react';
+import { CircleAlert, Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import { getToken, logout, setToken } from '@/lib/auth';
+import { getToken, logout } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,6 @@ import {
 } from '@/validation/updateUserSchema';
 import { Alert } from '@/components/ui/alert';
 import { User, UserSchema } from '@/validation/userProfileSchemas';
-import { authApiSchema } from '@/validation/authSchemas';
 
 function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -24,6 +23,7 @@ function Page() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const fetchUserData = async () => {
     try {
@@ -84,19 +84,6 @@ function Page() {
           },
         });
 
-        // const loginWithNewEmailResponse = await axios.post(
-        //   'http://localhost:8080/auth/login',
-        //   { email: values.newEmail, password: values.currentPassword },
-        // );
-        // const parsedResult = authApiSchema.safeParse(
-        //   loginWithNewEmailResponse.data,
-        // );
-        // if (!parsedResult.success) {
-        //   setEmailError('Error updating email. Please try again.');
-        //   return;
-        // }
-        // const validToken = parsedResult.data.token;
-        // setToken(validToken);
         resetForm();
         setIsEditingEmail(false);
         setEmailError(null);
@@ -337,16 +324,24 @@ function Page() {
                       New Password
                     </label>
                   </div>
-                  <Field
-                    className={`mt-1 bg-light-1 ${
-                      errors.newPassword && touched.newPassword
-                        ? 'border-red-500'
-                        : ''
-                    }`}
-                    name="newPassword"
-                    type="text"
-                    as={Input}
-                  />
+                  <div className="flex">
+                    <Field
+                      className={`mt-1 bg-light-1 ${
+                        errors.newPassword && touched.newPassword
+                          ? 'border-red-500'
+                          : ''
+                      }`}
+                      name="newPassword"
+                      type={showPassword ? 'text' : 'password'}
+                      as={Input}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
                   <ErrorMessage
                     name="newPassword"
                     component="div"
@@ -390,7 +385,15 @@ function Page() {
           </p>
 
           <strong>Date of birth</strong>
-          <p>{user?.userInfo?.dateOfBirth}</p>
+          <p>
+            {user?.userInfo?.dateOfBirth
+              ? new Intl.DateTimeFormat('en-US', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                }).format(new Date(user.userInfo.dateOfBirth))
+              : 'N/A'}
+          </p>
 
           <strong>Phone number</strong>
           <p>{user?.userInfo?.phoneNumber}</p>

@@ -14,37 +14,22 @@ import {
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Bell, LogOut, Plane, User } from 'lucide-react';
-
-function getCookie(name: string): string | null {
-  if (typeof document === 'undefined') return null;
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) return parts.pop()?.split(';').shift() ?? null;
-  return null;
-}
-
-function deleteCookie(name: string) {
-  if (typeof document !== 'undefined') {
-    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/`;
-  }
-}
-
-function handleLogout(): void {
-  deleteCookie('token');
-  window.location.reload();
-}
+import { getToken, isLoggedIn, logout } from '@/lib/auth';
 
 function Navbar() {
   const [token, setToken] = useState<string | null>(null);
 
   useEffect(() => {
-    const tokenFromCookie = getCookie('token');
-    setToken(tokenFromCookie);
+    const token = getToken();
+    setToken(token);
   }, []);
   return (
     <nav className="navbar">
       <div className="navbar_content">
-        <Link href="/" className="-ml-1 flex items-center gap-1.5">
+        <Link
+          href={token && isLoggedIn(token) ? '/trips' : '/'}
+          className="-ml-1 flex items-center gap-1.5"
+        >
           <Image src="/assets/logo.svg" alt="logo" width={44} height={44} />
           <p className="text-heading3-bold max-xs:hidden">FareShare</p>
         </Link>
@@ -76,12 +61,8 @@ function Navbar() {
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={handleLogout}>
-                    <Link
-                      className="navbar_link"
-                      href={'/'}
-                      onClick={handleLogout}
-                    >
+                  <DropdownMenuItem>
+                    <Link className="navbar_link" href="/" onClick={logout}>
                       <LogOut />
                       <p>Log out</p>
                     </Link>
@@ -95,7 +76,7 @@ function Navbar() {
                 Sign In
               </Link>
               <Button className="bg-primary-500 hover:bg-primary-600">
-                <Link href="/sign-up">Sign Up - It`&apos;`s Free</Link>
+                <Link href="/sign-up">Sign Up - It&apos;s Free</Link>
               </Button>
             </>
           )}

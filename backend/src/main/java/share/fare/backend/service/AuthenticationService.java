@@ -17,7 +17,6 @@ import share.fare.backend.exception.UserAlreadyExistsException;
 import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.repository.UserRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Service
@@ -65,7 +64,7 @@ public class AuthenticationService {
         try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
-                            authenticationRequest.getEmail(),
+                            user.getId().toString(),
                             authenticationRequest.getPassword()
                     )
             );
@@ -73,8 +72,8 @@ public class AuthenticationService {
             throw new InvalidCredentialsException("Invalid username or password");
         }
 
-        String jwtToken = jwtService.generateToken(user);
+        String token = jwtService.generateToken(user);
 
-        return new AuthenticationResponse(jwtToken, user.getId());
+        return new AuthenticationResponse(token, user.getId());
     }
 }

@@ -1,8 +1,8 @@
 'use client';
 import React from 'react';
-import { CircleAlert } from 'lucide-react';
+import { toast } from 'sonner';
+import { CircleAlert, Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { getToken, logout } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
@@ -23,34 +23,27 @@ function Page() {
   const [emailError, setEmailError] = useState<string | null>(null);
   const [isEditingEmail, setIsEditingEmail] = useState(false);
   const [isEditingPassword, setIsEditingPassword] = useState(false);
-  const router = useRouter();
+  const [showPassword, setShowPassword] = useState(false);
 
-  useEffect(() => {
-    const token = getToken();
-    if (!token) {
+  const fetchUserData = async () => {
+    try {
+      const token = getToken();
+      if (!token) {
+        logout();
+        return;
+      }
+      const response = await axios.get('/api/v1/users', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const parsedUser = UserSchema.parse(response.data);
+      setUser(parsedUser);
+    } catch {
       logout();
     }
-    const fetchUserData = async () => {
-      try {
-        const token = getToken();
-        if (!token) {
-          logout();
-          return;
-        }
-
-        const response = await axios.get('/api/v1/users', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        const parsedUser = UserSchema.parse(response.data);
-
-        setUser(parsedUser);
-      } catch {
-        logout();
-      }
-    };
-
+  };
+  useEffect(() => {
     fetchUserData();
-  }, [router]);
+  }, []);
 
   const handleEmailUpdate = async (
     values: z.infer<typeof updateEmailSchema>,
@@ -80,6 +73,16 @@ function Page() {
           ...prevState!,
           email: response.data.email,
         }));
+
+        toast('Email updated successfully!', {
+          duration: 7000,
+          action: {
+            label: 'Close',
+            onClick: () => {
+              toast.dismiss();
+            },
+          },
+        });
 
         resetForm();
         setIsEditingEmail(false);
@@ -117,6 +120,15 @@ function Page() {
         resetForm();
         setIsEditingPassword(false);
         setPasswordError(null);
+        toast('Password updated successfully!', {
+          duration: 7000,
+          action: {
+            label: 'Close',
+            onClick: () => {
+              toast.dismiss();
+            },
+          },
+        });
       } else {
         setPasswordError('Incorrect current password. Please try again.');
       }
@@ -312,16 +324,24 @@ function Page() {
                       New Password
                     </label>
                   </div>
-                  <Field
-                    className={`mt-1 bg-light-1 ${
-                      errors.newPassword && touched.newPassword
-                        ? 'border-red-500'
-                        : ''
-                    }`}
-                    name="newPassword"
-                    type="text"
-                    as={Input}
-                  />
+                  <div className="flex">
+                    <Field
+                      className={`mt-1 bg-light-1 ${
+                        errors.newPassword && touched.newPassword
+                          ? 'border-red-500'
+                          : ''
+                      }`}
+                      name="newPassword"
+                      type={showPassword ? 'text' : 'password'}
+                      as={Input}
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                    >
+                      {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                    </button>
+                  </div>
                   <ErrorMessage
                     name="newPassword"
                     component="div"
@@ -365,7 +385,15 @@ function Page() {
           </p>
 
           <strong>Date of birth</strong>
-          <p>{user?.userInfo?.dateOfBirth}</p>
+          <p>
+            {user?.userInfo?.dateOfBirth
+              ? new Intl.DateTimeFormat('en-US', {
+                  day: '2-digit',
+                  month: 'long',
+                  year: 'numeric',
+                }).format(new Date(user.userInfo.dateOfBirth))
+              : 'N/A'}
+          </p>
 
           <strong>Phone number</strong>
           <p>{user?.userInfo?.phoneNumber}</p>

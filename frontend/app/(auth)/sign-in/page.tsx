@@ -11,6 +11,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { z } from 'zod';
 import { authApiSchema, loginFormSchema } from '@/validation/authSchemas';
 import { CircleAlert } from 'lucide-react';
+import { setToken } from '@/lib/auth';
 
 const handleSignIn = async (
   values: z.infer<typeof loginFormSchema>,
@@ -29,8 +30,8 @@ const handleSignIn = async (
       return;
     }
     const token = parsedResult.data.token;
-    document.cookie = `token=${token}; path=/; max-age=36000; secure; samesite=strict`;
-    window.location.href = '/';
+    setToken(token);
+    window.location.href = '/trips';
     resetForm();
   } catch (err: unknown) {
     setError(
@@ -114,7 +115,7 @@ function Page() {
                 Sign In
               </Button>
               <div className="mt-4 flex items-center">
-                <p className="text-center">Don`&apos;`t have an account?</p>
+                <p className="text-center">Don&apos;t have an account?</p>
                 <Link
                   href="/sign-up"
                   className="ml-2 text-primary-600 underline"

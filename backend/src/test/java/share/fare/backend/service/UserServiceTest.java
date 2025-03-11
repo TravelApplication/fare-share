@@ -74,7 +74,7 @@ class UserServiceTest {
     }
 
     @Test
-    public void testGetUser_NotFound() {
+    public void testGetUserNotFound() {
         Long userId = 999L;
         when(userRepository.findById(userId)).thenReturn(Optional.empty());
 

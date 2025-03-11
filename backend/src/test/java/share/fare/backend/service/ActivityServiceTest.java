@@ -43,9 +43,6 @@ class ActivityServiceTest {
     @Mock
     private UserRepository userRepository;
 
-    @Mock
-    private VoteRepository voteRepository;
-
     @InjectMocks
     private ActivityService activityService;
 

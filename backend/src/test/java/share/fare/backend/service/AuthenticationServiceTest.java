@@ -121,7 +121,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    public void testAuthenticate_UserNotFound() {
+    public void testAuthenticateUserNotFound() {
         when(userRepository.findByEmail(authenticationRequest.getEmail())).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> authenticationService.authenticate(authenticationRequest));
@@ -129,7 +129,7 @@ class AuthenticationServiceTest {
     }
 
     @Test
-    public void testAuthenticate_InvalidCredentials() {
+    public void testAuthenticateInvalidCredentials() {
         when(userRepository.findByEmail(authenticationRequest.getEmail())).thenReturn(Optional.of(testUser));
         doThrow(BadCredentialsException.class).when(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
 

@@ -16,6 +16,7 @@ import share.fare.backend.mapper.GroupInvitationMapper;
 import share.fare.backend.repository.GroupInvitationRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
+import share.fare.backend.util.Notification;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +30,8 @@ public class GroupInvitationService {
     private final GroupRepository groupRepository;
 
     private final GroupInvitationRepository invitationRepository;
+
+    private final NotificationService notificationService;
 
     @Transactional
     public GroupInvitationResponse sendGroupInvitation(Long senderId, Long receiverId, Long groupId) {
@@ -56,6 +59,12 @@ public class GroupInvitationService {
                 .build();
 
         invitationRepository.save(invitation);
+
+        notificationService.sendNotification(receiverId, Notification.builder()
+                        .senderId(senderId)
+                        .groupId(groupId)
+                        .message("You received invitation to group " + group.getName() + " from " + sender.getEmail())
+                .build());
 
         return GroupInvitationMapper.toResponse(invitation);
     }

@@ -15,6 +15,7 @@ import share.fare.backend.mapper.FriendInvitationMapper;
 import share.fare.backend.repository.FriendInvitationRepository;
 import share.fare.backend.repository.FriendshipRepository;
 import share.fare.backend.repository.UserRepository;
+import share.fare.backend.util.Notification;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +29,8 @@ public class FriendInvitationService {
     private final FriendInvitationRepository invitationRepository;
 
     private final FriendshipRepository friendshipRepository;
+
+    private final NotificationService notificationService;
 
     @Transactional
     public FriendInvitationResponse sendFriendInvitation(Long senderId, Long receiverId) {
@@ -51,6 +54,10 @@ public class FriendInvitationService {
                 .build();
 
         invitationRepository.save(invitation);
+        notificationService.sendNotification(receiverId, Notification.builder()
+                .senderId(senderId)
+                .message("You received a friend invitation from " + receiver.getEmail())
+                .build());
 
         return FriendInvitationMapper.toResponse(invitation);
     }
@@ -100,5 +107,4 @@ public class FriendInvitationService {
 
         invitationRepository.delete(invitation);
     }
-
 }

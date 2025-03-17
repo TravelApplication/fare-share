@@ -8,5 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @Builder
 public class Notification {
+    private Long senderId;
+    private Long groupId;
     private String message;
 }

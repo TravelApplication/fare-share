@@ -5,6 +5,7 @@ export const UserInfoSchema = z
     id: z.number(),
     firstName: z.string(),
     lastName: z.string(),
+    bio: z.string().nullable(),
     phoneNumber: z.string(),
     dateOfBirth: z.string().date(),
   })
@@ -19,3 +20,4 @@ export const UserSchema = z
   .passthrough();
 
 export type User = z.infer<typeof UserSchema>;
+export type UserInfo = z.infer<typeof UserInfoSchema>;

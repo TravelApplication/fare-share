@@ -13,15 +13,21 @@ import {
 } from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Bell, LogOut, Plane, User } from 'lucide-react';
-import { getToken, isLoggedIn, logout } from '@/lib/auth';
+import { Bell, LogOut, Plane, Settings, User } from 'lucide-react';
+import { decodeToken, getToken, isLoggedIn, logout } from '@/lib/auth';
 
 function Navbar() {
   const [token, setToken] = useState<string | null>(null);
+  const [id, setId] = useState<string | null>(null);
 
   useEffect(() => {
     const token = getToken();
     setToken(token);
+
+    if (token) {
+      const decode = decodeToken(token);
+      setId(decode?.sub ?? '');
+    }
   }, []);
   return (
     <nav className="navbar">
@@ -53,11 +59,17 @@ function Navbar() {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>Account</DropdownMenuLabel>
+                  <DropdownMenuItem>
+                    <Link className="navbar_link" href={`/account/${id}`}>
+                      <User />
+                      <p>Profile</p>
+                    </Link>
+                  </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <Link className="navbar_link" href="/account">
-                      <User />
-                      <p>Profile</p>
+                      <Settings />
+                      <p>Settings</p>
                     </Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />

@@ -9,3 +9,5 @@ export const membershipSchema = z
         joinedAt: z.string().date(),
     })
     .passthrough();
+
+export type MembershipSchema = z.infer<typeof membershipSchema>;

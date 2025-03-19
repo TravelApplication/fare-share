@@ -16,6 +16,7 @@ import {
 } from '@/validation/updateUserSchema';
 import { Alert } from '@/components/ui/alert';
 import { User, UserSchema } from '@/validation/userProfileSchemas';
+import { formatDate } from '@/lib/utils';
 
 function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -29,16 +30,20 @@ function Page() {
     try {
       const token = getToken();
       if (!token) {
-        logout();
+        // logout();
+        console.log('no token');
         return;
       }
       const response = await axios.get('/api/v1/users', {
         headers: { Authorization: `Bearer ${token}` },
       });
+      console.log(response.data);
       const parsedUser = UserSchema.parse(response.data);
+
       setUser(parsedUser);
-    } catch {
-      logout();
+    } catch (error) {
+      console.log(error);
+      // logout();
     }
   };
   useEffect(() => {
@@ -387,11 +392,7 @@ function Page() {
           <strong>Date of birth</strong>
           <p>
             {user?.userInfo?.dateOfBirth
-              ? new Intl.DateTimeFormat('en-US', {
-                  day: '2-digit',
-                  month: 'long',
-                  year: 'numeric',
-                }).format(new Date(user.userInfo.dateOfBirth))
+              ? formatDate(user.userInfo.dateOfBirth)
               : 'N/A'}
           </p>
 

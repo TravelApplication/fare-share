@@ -1,16 +1,8 @@
 import { z } from 'zod';
+import { membershipSchema } from './membershipSchema';
+import { activitySchema } from './activitySchema';
 
-const membershipSchema = z
-  .object({
-    userId: z.number(),
-    userEmail: z.string().email(),
-    groupId: z.number(),
-    role: z.string(z.enum(['MEMBER', 'OWNER', 'ADMIN'])),
-    joinedAt: z.string().date(),
-  })
-  .passthrough();
-
-export const tripSchema = z
+export const groupSchema = z
   .object({
     id: z.number(),
     name: z.string().nonempty(),
@@ -21,8 +13,10 @@ export const tripSchema = z
     tripEndDate: z.union([z.string().date(), z.null()]),
     tags: z.array(z.string()),
     groupImageUrl: z.union([z.string(), z.null()]),
+    links: z.array(z.string()),
     memberships: z.array(membershipSchema),
+    activities: z.array(activitySchema)
   })
   .passthrough();
 
-export type Trip = z.infer<typeof tripSchema>;
+export type Group = z.infer<typeof groupSchema>;

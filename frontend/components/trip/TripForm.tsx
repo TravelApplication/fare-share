@@ -4,7 +4,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import {
   createGroupFormSchema,
   TripFormPropsSchema,
-} from '@/validation/groupSchemas';
+} from '@/validation/groupFormSchemas';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';

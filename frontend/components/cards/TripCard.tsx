@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { Trip } from '@/validation/tripSchemas';
+import { Trip } from '@/validation/groupSchema';
 import { useState } from 'react';
 
 interface TripCardProps {

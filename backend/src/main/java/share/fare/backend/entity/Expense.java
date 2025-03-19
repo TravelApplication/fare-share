@@ -29,5 +29,5 @@ public class Expense extends BaseEntity {
 
     private String currency;
 
-    private String splitType;
+    private SplitType splitType;
 }

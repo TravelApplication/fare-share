@@ -38,11 +38,11 @@ const handleSignUp = async (
     window.location.href = '/trips';
     resetForm();
   } catch (err: unknown) {
-    setError(
-      `${
-        err.response?.data?.message || 'Something went wrong'
-      }. Please try again.`,
-    );
+    const errorMessage =
+      axios.isAxiosError(err) && err.response?.data?.message
+        ? err.response.data.message
+        : 'Something went wrong';
+    setError(`${errorMessage}. Please try again.`);
     resetForm();
   }
 };

@@ -20,6 +20,7 @@ import { Button } from '@/components/ui/button';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { z } from 'zod';
 import { updateProfileFormSchema } from '@/validation/authSchemas';
+import { toast } from 'sonner';
 
 function Page() {
   const { id } = useParams();
@@ -72,17 +73,27 @@ function Page() {
       setUser(newUser.data);
       resetForm();
       setIsEditing(false);
+
+      toast('User information updated successfully!', {
+        duration: 7000,
+        action: {
+          label: 'Close',
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+      });
     } catch (err: unknown) {
       setError(`Error: ${err}`);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto ">
-      <Card className="p-4 shadow-lg rounded-3xl bg-gradient-to-r from-primary-500 to-indigo-600 text-white">
+    <div className="max-w-2xl mx-auto">
+      <Card className="p-4 shadow-lg rounded-3xl  bg-gradient-to-r from-blue-500/80 to-primary-600/85 text-white">
         {userId === id && (
           <button
-            className="bg-white p-2 rounded-full shadow-md hover:bg-gray-200 transition"
+            className="bg-white p-2 m-2 rounded-full shadow-md hover:bg-gray-200 transition"
             onClick={() => setIsEditing(!isEditing)}
           >
             <Pencil className="text-primary-500 w-5 h-5" />
@@ -105,7 +116,7 @@ function Page() {
           </div>
         </CardHeader>
 
-        <CardContent className="bg-white/20 rounded-xl p-6 shadow-inner">
+        <CardContent className="bg-white/20 rounded-3xl p-6 shadow-inner">
           {isEditing ? (
             <Formik
               initialValues={user}
@@ -213,11 +224,17 @@ function Page() {
                 </div>
                 <div className="flex flex-col items-center bg-white/25 p-4 rounded-xl shadow">
                   <Calendar className="w-6 h-6 text-primary-500" />
-                  <span className="text-white mt-2">{user.dateOfBirth}</span>
+                  <span className="text-white mt-2">
+                    {new Intl.DateTimeFormat('en-US', {
+                      day: '2-digit',
+                      month: 'long',
+                      year: 'numeric',
+                    }).format(new Date(user.dateOfBirth))}
+                  </span>
                 </div>
                 {userId !== id && (
                   <button
-                    className="col-span-2 flex items-center justify-center gap-6 px-6 py-6 bg-gradient-to-r from-primary-500/85 to-indigo-700/75 text-white font-semibold rounded-xl shadow-lg hover:bg-gradient-to-r hover:from-primary-600 hover:to-indigo-800 transition-transform duration-200 hover:shadow-xl"
+                    className="col-span-2 flex items-center justify-center gap-6 px-6 py-6 bg-gradient-to-r from-blue-500/80 to-primary-600/85 text-white font-semibold rounded-xl shadow-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-primary-600 transition-transform duration-200 hover:shadow-xl"
                     onClick={() => console.log('Send friend request')}
                   >
                     <UserPlus className="w-6 h-6" />

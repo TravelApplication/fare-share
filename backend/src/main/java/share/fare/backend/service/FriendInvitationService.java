@@ -16,6 +16,7 @@ import share.fare.backend.repository.FriendInvitationRepository;
 import share.fare.backend.repository.FriendshipRepository;
 import share.fare.backend.repository.UserRepository;
 import share.fare.backend.util.Notification;
+import share.fare.backend.util.NotificationType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,6 +57,7 @@ public class FriendInvitationService {
         invitationRepository.save(invitation);
         notificationService.sendNotificationToUser(receiverId, Notification.builder()
                 .senderId(senderId)
+                .type(NotificationType.FRIEND_INVITATION)
                 .message("You received a friend invitation from " + receiver.getEmail())
                 .build());
 
@@ -99,7 +101,7 @@ public class FriendInvitationService {
 
         notificationService.sendNotificationToUser(
                 sender.getId(), Notification.builder()
-                .senderId(receiver.getId())
+                .senderId(receiver.getId()).type(NotificationType.FRIEND_INVITATION_ACCEPT)
                 .message(receiver.getEmail() + " has accepted your friend invitation")
                 .build());
     }
@@ -120,6 +122,7 @@ public class FriendInvitationService {
         notificationService.sendNotificationToUser(
                 sender.getId(), Notification.builder()
                         .senderId(receiver.getId())
+                        .type(NotificationType.FRIEND_INVITATION_REJECT)
                         .message(receiver.getEmail() + " has rejected your friend invitation")
                         .build());
     }

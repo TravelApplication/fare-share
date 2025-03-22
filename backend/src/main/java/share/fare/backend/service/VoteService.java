@@ -12,6 +12,7 @@ import share.fare.backend.repository.GroupMembershipRepository;
 import share.fare.backend.repository.UserRepository;
 import share.fare.backend.repository.VoteRepository;
 import share.fare.backend.util.Notification;
+import share.fare.backend.util.NotificationType;
 import share.fare.backend.util.VoteNotification;
 
 import java.util.List;
@@ -51,6 +52,7 @@ public class VoteService {
                         .voteId(vote.getId())
                         .activityId(activityId)
                         .groupId(group.getId())
+                        .type(NotificationType.VOTE)
                         .voteType(voteRequest.getVoteType())
                         .message(vote.getUser().getEmail() + " voted " +
                                 savedVote.getVoteType().toString().toLowerCase() + " " + activity.getName())
@@ -86,6 +88,7 @@ public class VoteService {
                 .voteId(vote.getId())
                 .activityId(activity.getId())
                 .groupId(group.getId())
+                .type(NotificationType.VOTE_CHANGE)
                 .voteType(updatedVote.getVoteType())
                 .message(vote.getUser().getEmail() + " changed vote " +
                         updatedVote.getVoteType().toString().toLowerCase() + activity.getName())

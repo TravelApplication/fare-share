@@ -18,6 +18,7 @@ import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
 import share.fare.backend.util.GroupInvitationNotification;
 import share.fare.backend.util.Notification;
+import share.fare.backend.util.NotificationType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -64,6 +65,7 @@ public class GroupInvitationService {
         notificationService.sendNotificationToUser(receiverId, GroupInvitationNotification.builder()
                         .senderId(senderId)
                         .groupId(groupId)
+                        .type(NotificationType.GROUP_INVITATION)
                         .message("You received invitation to group " + group.getName() + " from " + sender.getEmail())
                 .build());
 
@@ -107,6 +109,7 @@ public class GroupInvitationService {
 
         notificationService.sendNotificationToUser(sender.getId(), GroupInvitationNotification.builder()
                 .senderId(receiver.getId())
+                .type(NotificationType.GROUP_INVITATION_ACCEPT)
                 .groupId(group.getId())
                 .message(receiver.getEmail() + " accepted your invitation to " + group.getName())
                 .build());
@@ -131,6 +134,7 @@ public class GroupInvitationService {
         notificationService.sendNotificationToUser(sender.getId(), GroupInvitationNotification.builder()
                 .senderId(receiver.getId())
                 .groupId(group.getId())
+                .type(NotificationType.GROUP_INVITATION_REJECT)
                 .message(receiver.getEmail() + " rejected your invitation to " + group.getName())
                 .build());
     }

@@ -39,6 +39,9 @@ class GroupInvitationServiceTest {
     @Mock
     private GroupInvitationRepository invitationRepository;
 
+    @Mock
+    private NotificationService notificationService;
+
     @InjectMocks
     private GroupInvitationService groupInvitationService;
 
@@ -93,6 +96,7 @@ class GroupInvitationServiceTest {
         verify(groupRepository, times(1)).findById(1L);
         verify(invitationRepository, times(1)).existsBySenderIdAndReceiverIdAndGroupId(1L, 2L, 1L);
         verify(invitationRepository, times(1)).save(any(GroupInvitation.class));
+        verify(notificationService).sendNotificationToUser(eq(2L), argThat(notification -> notification.getSenderId() == 1L));
     }
 
     @Test
@@ -181,6 +185,7 @@ class GroupInvitationServiceTest {
         verify(groupRepository, times(1)).save(any(Group.class));
         verify(invitationRepository, times(1)).deleteAllByGroupIdAndReceiverId(1L, 2L);
         verify(invitationRepository, times(1)).delete(testInvitation);
+        verify(notificationService).sendNotificationToUser(eq(1L), argThat(notification -> notification.getSenderId() == 2L));
     }
 
     @Test
@@ -211,6 +216,7 @@ class GroupInvitationServiceTest {
 
         verify(invitationRepository, times(1)).findById(1L);
         verify(invitationRepository, times(1)).delete(testInvitation);
+        verify(notificationService).sendNotificationToUser(eq(1L), argThat(notification -> notification.getSenderId() == 2L));
     }
 
     @Test

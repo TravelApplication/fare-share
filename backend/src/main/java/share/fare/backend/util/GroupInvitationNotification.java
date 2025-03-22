@@ -8,7 +8,6 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
-public class Notification {
-    private Long senderId;
-    private String message;
+public class GroupInvitationNotification extends Notification {
+    private Long groupId;
 }

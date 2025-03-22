@@ -16,6 +16,7 @@ import share.fare.backend.mapper.GroupInvitationMapper;
 import share.fare.backend.repository.GroupInvitationRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
+import share.fare.backend.util.GroupInvitationNotification;
 import share.fare.backend.util.Notification;
 
 import java.util.List;
@@ -60,7 +61,7 @@ public class GroupInvitationService {
 
         invitationRepository.save(invitation);
 
-        notificationService.sendNotification(receiverId, Notification.builder()
+        notificationService.sendNotificationToUser(receiverId, GroupInvitationNotification.builder()
                         .senderId(senderId)
                         .groupId(groupId)
                         .message("You received invitation to group " + group.getName() + " from " + sender.getEmail())
@@ -94,6 +95,7 @@ public class GroupInvitationService {
 
         Group group = invitation.getGroup();
         User receiver = invitation.getReceiver();
+        User sender = invitation.getSender();
 
         group.addMember(receiver, GroupRole.MEMBER);
 
@@ -102,6 +104,12 @@ public class GroupInvitationService {
         groupRepository.save(group);
 
         invitationRepository.delete(invitation);
+
+        notificationService.sendNotificationToUser(sender.getId(), GroupInvitationNotification.builder()
+                .senderId(receiver.getId())
+                .groupId(group.getId())
+                .message(receiver.getEmail() + " accepted your invitation to " + group.getName())
+                .build());
     }
 
 
@@ -114,6 +122,16 @@ public class GroupInvitationService {
             throw new InvitationNotFoundException("User is not the intended receiver of this invitation");
         }
 
+        Group group = invitation.getGroup();
+        User receiver = invitation.getReceiver();
+        User sender = invitation.getSender();
+
         invitationRepository.delete(invitation);
+
+        notificationService.sendNotificationToUser(sender.getId(), GroupInvitationNotification.builder()
+                .senderId(receiver.getId())
+                .groupId(group.getId())
+                .message(receiver.getEmail() + " rejected your invitation to " + group.getName())
+                .build());
     }
 }

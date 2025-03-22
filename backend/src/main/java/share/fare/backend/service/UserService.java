@@ -25,7 +25,7 @@ public class UserService {
     }
 
     public UserResponse getUser(Long userId) {
-        notificationService.sendNotification(userId, Notification.builder()
+        notificationService.sendNotificationToUser(userId, Notification.builder()
                 .message("ktos sie o ciebie pyta").build());
         return UserMapper.toResponse(userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId)));

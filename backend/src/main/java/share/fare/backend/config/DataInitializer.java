@@ -7,10 +7,8 @@ import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import share.fare.backend.entity.*;
-import share.fare.backend.repository.FriendInvitationRepository;
-import share.fare.backend.repository.GroupInvitationRepository;
-import share.fare.backend.repository.GroupRepository;
-import share.fare.backend.repository.UserRepository;
+import share.fare.backend.repository.*;
+import share.fare.backend.service.GroupService;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,6 +23,7 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
     private final FriendInvitationRepository friendInvitationRepository;
     private final GroupRepository groupRepository;
     private final GroupInvitationRepository groupInvitationRepository;
+    private final GroupMembershipRepository groupMembershipRepository;
 
     @Override
     public void onApplicationEvent(@NotNull ContextRefreshedEvent event) {
@@ -85,6 +84,16 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                     .build();
 
             groupInvitationRepository.save(groupInvitation);
+
+            GroupMembership groupMembership = GroupMembership
+                    .builder()
+                    .group(group)
+                    .role(GroupRole.OWNER)
+                    .user(user1)
+                    .joinedAt(LocalDate.now())
+                    .build();
+
+            groupMembershipRepository.save(groupMembership);
         }
     }
 }

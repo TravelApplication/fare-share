@@ -22,6 +22,8 @@ public class SharesSplitStrategy implements SplitStrategy {
             BigDecimal shareAmount = totalAmount.multiply(userShares).divide(totalShares, 2, RoundingMode.HALF_UP);
             result.put(user, shareAmount);
         }
+        adjustLastUserShare(result, users, totalAmount);
+
         return result;
     }
 }

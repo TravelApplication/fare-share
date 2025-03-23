@@ -19,6 +19,8 @@ public class EqualSplitStrategy implements SplitStrategy {
         for (User user : users) {
             result.put(user, shareAmount);
         }
+        adjustLastUserShare(result, users, totalAmount);
+
         return result;
     }
 }

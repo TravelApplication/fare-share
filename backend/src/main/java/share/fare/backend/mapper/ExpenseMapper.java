@@ -20,7 +20,6 @@ public class ExpenseMapper {
                 .paidByUser(paidByUser)
                 .description(expenseRequest.getDescription())
                 .totalAmount(expenseRequest.getTotalAmount())
-                .currency(expenseRequest.getCurrency())
                 .splitType(expenseRequest.getSplitType())
                 .build();
     }
@@ -36,13 +35,13 @@ public class ExpenseMapper {
                 .paidByUserId(expense.getPaidByUser() != null ? expense.getPaidByUser().getId() : null)
                 .description(expense.getDescription())
                 .totalAmount(expense.getTotalAmount())
-                .currency(expense.getCurrency())
                 .splitType(expense.getSplitType())
                 .userShares(expense.getExpenseAllocations().stream()
                         .collect(Collectors.toMap(
                                 allocation -> allocation.getUser().getId(),
                                 ExpenseAllocation::getAmountOwed
                         )))
+                .createdAt(expense.getCreatedAt())
                 .build();
     }
 }

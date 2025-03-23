@@ -16,7 +16,6 @@ public class ExpenseRequest {
     private Long paidByUserId;
     private String description;
     private BigDecimal totalAmount;
-    private String currency;
     private SplitType splitType;
     private Map<Long, BigDecimal> userShares;
 }

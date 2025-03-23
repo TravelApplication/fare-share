@@ -8,10 +8,7 @@ import org.springframework.stereotype.Service;
 import share.fare.backend.dto.request.ExpenseRequest;
 import share.fare.backend.dto.response.ExpenseResponse;
 import share.fare.backend.entity.*;
-import share.fare.backend.exception.ExpenseNotFoundException;
-import share.fare.backend.exception.GroupBalanceNotFoundException;
-import share.fare.backend.exception.GroupNotFoundException;
-import share.fare.backend.exception.UserNotFoundException;
+import share.fare.backend.exception.*;
 import share.fare.backend.mapper.ExpenseMapper;
 import share.fare.backend.repository.*;
 import share.fare.backend.service.strategy.SplitStrategy;
@@ -29,32 +26,69 @@ public class ExpenseService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final ExpenseRepository expenseRepository;
-    private final ExpenseAllocationRepository expenseAllocationRepository;
     private final GroupBalanceRepository groupBalanceRepository;
     private final GroupBalanceService groupBalanceService;
 
     @Transactional
     public void addExpense(ExpenseRequest expenseRequest) {
-        Group group = groupRepository.findById(expenseRequest.getGroupId())
-                .orElseThrow(() -> new GroupNotFoundException(expenseRequest.getGroupId()));
-        User paidByUser = userRepository.findById(expenseRequest.getPaidByUserId())
-                .orElseThrow(() -> new UserNotFoundException(expenseRequest.getPaidByUserId()));
+        validateExpenseRequest(expenseRequest);
 
-        Expense expense = ExpenseMapper.toEntity(expenseRequest, group, paidByUser);
-        expenseRepository.save(expense);
+        Group group = getGroupById(expenseRequest.getGroupId());
+        User paidByUser = getUserById(expenseRequest.getPaidByUserId());
+
+        Expense expense = createExpense(expenseRequest, group, paidByUser);
 
         SplitStrategy splitStrategy = SplitStrategyFactory.getStrategy(expenseRequest.getSplitType());
+        Map<User, BigDecimal> userShares = getUserShares(expenseRequest);
+        List<User> users = new ArrayList<>(userShares.keySet());
 
+        Map<User, BigDecimal> allocations = splitStrategy.split(expense, users, userShares);
+        addAllocationsToExpense(expense, allocations, expenseRequest);
+
+        groupBalanceService.updateBalances(expense);
+        expenseRepository.save(expense);
+    }
+
+    @Transactional
+    public void removeExpense(Long expenseId) {
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
+        reverseGroupBalance(expense);
+        expenseRepository.delete(expense);
+    }
+
+    public Page<ExpenseResponse> getExpensesForGroup(Long groupId, Pageable pageable) {
+        getGroupById(groupId);
+        return expenseRepository.findByGroupId(groupId, pageable)
+                .map(ExpenseMapper::toResponse);
+    }
+
+    private Group getGroupById(Long groupId) {
+        return groupRepository.findById(groupId)
+                .orElseThrow(() -> new GroupNotFoundException(groupId));
+    }
+
+    private User getUserById(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+    }
+
+    private Expense createExpense(ExpenseRequest expenseRequest, Group group, User paidByUser) {
+        Expense expense = ExpenseMapper.toEntity(expenseRequest, group, paidByUser);
+        expenseRepository.save(expense);
+        return expense;
+    }
+
+    private Map<User, BigDecimal> getUserShares(ExpenseRequest expenseRequest) {
         Map<User, BigDecimal> userShares = new HashMap<>();
         for (Map.Entry<Long, BigDecimal> entry : expenseRequest.getUserShares().entrySet()) {
-            User user = userRepository.findById(entry.getKey())
-                    .orElseThrow(() -> new UserNotFoundException(entry.getKey()));
+            User user = getUserById(entry.getKey());
             userShares.put(user, entry.getValue());
         }
+        return userShares;
+    }
 
-        List<User> users = new ArrayList<>(userShares.keySet());
-        Map<User, BigDecimal> allocations = splitStrategy.split(expense, users, userShares);
-
+    private void addAllocationsToExpense(Expense expense, Map<User, BigDecimal> allocations, ExpenseRequest expenseRequest) {
         for (Map.Entry<User, BigDecimal> entry : allocations.entrySet()) {
             User user = entry.getKey();
             BigDecimal amountOwed = entry.getValue();
@@ -66,27 +100,6 @@ public class ExpenseService {
 
             expense.addAllocation(user, amountOwed, percentage);
         }
-
-        groupBalanceService.updateBalances(expense);
-
-        expenseRepository.save(expense);
-    }
-
-    @Transactional
-    public void removeExpense(Long expenseId) {
-        Expense expense = expenseRepository.findById(expenseId)
-                .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
-        reverseGroupBalance(expense);
-
-        expenseRepository.delete(expense);
-    }
-
-    public Page<ExpenseResponse> getExpensesForGroup(Long groupId, Pageable pageable) {
-        groupRepository.findById(groupId)
-                .orElseThrow(() -> new GroupNotFoundException(groupId));
-
-        return expenseRepository.findByGroupId(groupId, pageable)
-                .map(ExpenseMapper::toResponse);
     }
 
     private void reverseGroupBalance(Expense expense) {
@@ -110,4 +123,30 @@ public class ExpenseService {
         }
     }
 
+    private void validateExpenseRequest(ExpenseRequest expenseRequest) {
+        BigDecimal totalAmount = expenseRequest.getTotalAmount();
+        Map<Long, BigDecimal> userShares = expenseRequest.getUserShares();
+
+        switch (expenseRequest.getSplitType()) {
+            case AMOUNT:
+                BigDecimal totalUserAmount = userShares.values().stream()
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                if (totalUserAmount.compareTo(totalAmount) != 0) {
+                    throw new InvalidExpenseException("The sum of user shares must equal the total amount.");
+                }
+                break;
+            case PERCENTAGE:
+                BigDecimal totalPercentage = userShares.values().stream()
+                        .reduce(BigDecimal.ZERO, BigDecimal::add);
+                if (totalPercentage.compareTo(BigDecimal.valueOf(100)) != 0) {
+                    throw new InvalidExpenseException("The sum of user shares must equal 100%.");
+                }
+                break;
+            case EQUALLY:
+            case SHARES:
+                break;
+            default:
+                throw new InvalidExpenseException("Invalid split type: " + expenseRequest.getSplitType());
+        }
+    }
 }

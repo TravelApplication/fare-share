@@ -26,8 +26,6 @@ public class Expense extends BaseEntity {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal totalAmount;
 
-    private String currency;
-
     private SplitType splitType;
 
     @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL, orphanRemoval = true)

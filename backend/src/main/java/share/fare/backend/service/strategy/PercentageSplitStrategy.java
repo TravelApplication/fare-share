@@ -21,9 +21,8 @@ public class PercentageSplitStrategy implements SplitStrategy {
             BigDecimal shareAmount = totalAmount.multiply(percentage).divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
             result.put(user, shareAmount);
 
-            expense.addAllocation(user, shareAmount, percentage);
         }
-//        adjustLastUserShare(result, users, totalAmount);
+        adjustLastUserShare(result, users, totalAmount);
 
         return result;
     }

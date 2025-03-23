@@ -1,4 +1,4 @@
-package share.fare.backend.dto.request;
+package share.fare.backend.dto.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,7 +11,7 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TransactionRequest {
+public class TransactionResponse {
     private Long debtorId; // user who owes money
     private Long creditorId; // user who is owed money
     private BigDecimal amount;

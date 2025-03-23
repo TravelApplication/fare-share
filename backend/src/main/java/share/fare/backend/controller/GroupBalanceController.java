@@ -6,7 +6,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import share.fare.backend.dto.request.TransactionRequest;
+import share.fare.backend.dto.response.GroupBalanceResponse;
+import share.fare.backend.dto.response.TransactionResponse;
 import share.fare.backend.service.GroupBalanceService;
 
 import java.util.List;
@@ -17,8 +18,18 @@ import java.util.List;
 public class GroupBalanceController {
     private final GroupBalanceService groupBalanceService;
 
+    /**
+     * Who owes whom how much in a group
+     * @param groupId group id
+     * @return list of transactions
+     */
     @GetMapping
-    public ResponseEntity<List<TransactionRequest>> getAllTransactions(@PathVariable Long groupId) {
+    public ResponseEntity<List<TransactionResponse>> getAllTransactions(@PathVariable Long groupId) {
         return ResponseEntity.ok(groupBalanceService.getTransactions(groupId));
+    }
+
+    @GetMapping("/balances")
+    public ResponseEntity<List<GroupBalanceResponse>> getBalances(@PathVariable Long groupId) {
+        return ResponseEntity.ok(groupBalanceService.getBalances(groupId));
     }
 }

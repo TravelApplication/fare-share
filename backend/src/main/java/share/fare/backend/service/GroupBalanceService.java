@@ -3,16 +3,17 @@ package share.fare.backend.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import share.fare.backend.dto.request.TransactionRequest;
+import share.fare.backend.dto.response.GroupBalanceResponse;
+import share.fare.backend.dto.response.TransactionResponse;
 import share.fare.backend.entity.*;
 import share.fare.backend.exception.GroupNotFoundException;
+import share.fare.backend.mapper.GroupBalanceMapper;
 import share.fare.backend.repository.GroupBalanceRepository;
 import share.fare.backend.repository.GroupRepository;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -42,10 +43,16 @@ public class GroupBalanceService {
         }
     }
 
-    public List<TransactionRequest> getTransactions(Long groupIp) {
+    public List<GroupBalanceResponse> getBalances(Long groupIp) {
         Group group = groupRepository.findById(groupIp).orElseThrow(() -> new GroupNotFoundException(groupIp));
         List<GroupBalance> balances = groupBalanceRepository.findByGroup(group);
-        List<TransactionRequest> transactions = new ArrayList<>();
+        return balances.stream().map(GroupBalanceMapper::toResponse).toList();
+    }
+
+    public List<TransactionResponse> getTransactions(Long groupIp) {
+        Group group = groupRepository.findById(groupIp).orElseThrow(() -> new GroupNotFoundException(groupIp));
+        List<GroupBalance> balances = groupBalanceRepository.findByGroup(group);
+        List<TransactionResponse> transactions = new ArrayList<>();
 
         List<GroupBalance> debtors = balances.stream()
                 .filter(balance -> balance.getBalance().compareTo(BigDecimal.ZERO) < 0)
@@ -64,7 +71,7 @@ public class GroupBalanceService {
                 BigDecimal credit = creditor.getBalance();
                 BigDecimal amountToTransfer = debt.min(credit);
 
-                transactions.add(new TransactionRequest(
+                transactions.add(new TransactionResponse(
                         debtor.getUser().getId(),
                         creditor.getUser().getId(),
                         amountToTransfer

@@ -39,7 +39,7 @@ function Page() {
       const parsedUser = UserSchema.parse(response.data);
 
       setUser(parsedUser);
-    } catch (error) {
+    } catch {
       logout();
     }
   };

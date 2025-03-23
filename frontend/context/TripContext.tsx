@@ -15,7 +15,7 @@ import { Group, groupSchema } from '@/validation/groupSchema';
 interface TripContextType {
   trip: Group | null;
   loading: boolean;
-  error: string | null;
+  tripError: string | null;
   refreshTrip: () => void;
 }
 
@@ -25,7 +25,7 @@ export function TripContextProvider({ children }: { children: ReactNode }) {
   const params = useParams<{ id: string }>();
   const [trip, setTrip] = useState<Group | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [tripError, setTripError] = useState<string | null>(null);
 
   const fetchTrip = async () => {
     try {
@@ -44,14 +44,15 @@ export function TripContextProvider({ children }: { children: ReactNode }) {
           (membership) => membership.userId !== parseInt(userId),
         )
       ) {
-        setError('User is not a member of this group');
+        setTripError('User is not a member of this group');
         return;
       }
 
       setTrip(fetchedTrip);
+      console.log('Fetched trip', fetchedTrip);
     } catch (err) {
       console.error(err);
-      setError('Failed to fetch trip');
+      setTripError('Failed to fetch trip');
     } finally {
       setLoading(false);
     }
@@ -65,7 +66,7 @@ export function TripContextProvider({ children }: { children: ReactNode }) {
 
   return (
     <TripContext.Provider
-      value={{ trip, loading, error, refreshTrip: fetchTrip }}
+      value={{ trip, loading, tripError, refreshTrip: fetchTrip }}
     >
       {children}
     </TripContext.Provider>

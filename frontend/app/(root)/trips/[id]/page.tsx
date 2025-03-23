@@ -1,13 +1,13 @@
 'use client';
 
 import { useTrip } from '@/context/TripContext';
-import TripCard from '@/components/cards/TripCard';
+import TripCard from '@/components/trip/TripCard';
 import { Alert } from '@/components/ui/alert';
 import { CirclePlus } from 'lucide-react';
 import { redirect } from 'next/navigation';
 
 export default function TripPage() {
-  const { trip, loading, error } = useTrip();
+  const { trip, loading, tripError } = useTrip();
 
   if (loading)
     return (
@@ -15,10 +15,10 @@ export default function TripPage() {
         Loading...
       </Alert>
     );
-  if (error)
+  if (tripError)
     return (
       <Alert variant="destructive" className="p-4">
-        {error}
+        {tripError}
       </Alert>
     );
   if (!trip) return null;

@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import TripCard from '@/components/cards/TripCard';
+import TripCard from '@/components/trip/TripCard';
 import { getToken, logout } from '@/lib/auth';
 import axios from 'axios';
 import { useEffect, useState } from 'react';

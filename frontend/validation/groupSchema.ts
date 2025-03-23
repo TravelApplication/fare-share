@@ -15,7 +15,7 @@ export const groupSchema = z
     groupImageUrl: z.union([z.string(), z.null()]),
     links: z.array(z.string()),
     memberships: z.array(membershipSchema),
-    activities: z.array(activitySchema)
+    activities: z.array(activitySchema),
   })
   .passthrough();
 

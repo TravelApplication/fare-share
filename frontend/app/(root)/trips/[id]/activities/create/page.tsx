@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 
 export default function NewActivityPage() {
-  const { trip, tripError } = useTrip();
+  const { trip, tripError, refreshTrip } = useTrip();
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
@@ -32,8 +32,9 @@ export default function NewActivityPage() {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
-      console.log(response);
+      console.log(response.data);
       actions.resetForm();
+      refreshTrip();
       router.push(`/trips/${trip.id}`);
     } catch (err: unknown) {
       setError(err.message || 'An error occurred');
@@ -45,7 +46,7 @@ export default function NewActivityPage() {
       {trip && (
         <Button
           onClick={() => router.push(`/trips/${trip.id}`)}
-          className="bg-white text-primary-500 hover:bg-gray-100 shadow-sm  rounded-full my-4"
+          className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm  rounded-full my-4"
         >
           <ArrowLeft />
           <span>Back To Trip Summary</span>
@@ -64,7 +65,7 @@ export default function NewActivityPage() {
         )}
         {trip && (
           <>
-            <h1 className="text-heading1-bold">Add an Activity</h1>
+            <h1 className="text-heading2-bold">Add an Activity</h1>
             <ActivityForm onSubmit={handleCreateActivity} trip={trip} />
           </>
         )}

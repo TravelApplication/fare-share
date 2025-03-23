@@ -23,7 +23,7 @@ function TripCard({ trip }: TripCardProps) {
   );
 
   return (
-    <div className="section p-0 flex flex-col md:flex-row md:items-start justify-start md:justify-between bg-white shadow-lg rounded-lg">
+    <div className="section p-0 flex flex-col md:flex-row md:items-start justify-start md:justify-between border bg-white shadow-md rounded-lg">
       <div className="py-6 px-6 w-full md:w-2/3">
         <Link href={`/trips/${id}`}>
           <h4 className="text-heading3-bold text-primary-500 hover:underline">

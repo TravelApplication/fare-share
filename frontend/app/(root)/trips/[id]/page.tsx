@@ -1,65 +1,39 @@
 'use client';
-import { decodeToken, getToken } from '@/lib/auth';
-import { Group, groupSchema } from '@/validation/groupSchema';
-import axios from 'axios';
-import { useParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+
+import { useTrip } from '@/context/TripContext';
 import TripCard from '@/components/cards/TripCard';
 import { Alert } from '@/components/ui/alert';
+import { CirclePlus } from 'lucide-react';
+import { redirect } from 'next/navigation';
 
-function Page() {
-  const params = useParams<{ id: string }>();
-  const [group, setGroup] = useState<Group | null>(null);
-  const [error, setError] = useState<string | null>(null);
+export default function TripPage() {
+  const { trip, loading, error } = useTrip();
 
-  useEffect(() => {
-    if (!params.id) return;
-
-    const fetchGroup = async () => {
-      try {
-        const token = getToken();
-        const userId = token ? decodeToken(token)?.sub : '';
-
-        const response = await axios.get(`/api/v1/groups/${params.id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        const fetchedGroup = groupSchema.parse(response.data);
-        console.log(fetchedGroup);
-
-        if (
-          !userId ||
-          fetchedGroup.memberships.every(
-            (membership) => membership.userId !== parseInt(userId),
-          )
-        ) {
-          setError('User is not a member of this group');
-          return;
-        }
-
-        setGroup(groupSchema.parse(response.data));
-      } catch (err) {
-        console.error(err);
-        setError('Failed to fetch trip');
-      }
-    };
-
-    fetchGroup();
-  }, [params.id]);
+  if (loading)
+    return (
+      <Alert variant="default" className="p-4">
+        Loading...
+      </Alert>
+    );
+  if (error)
+    return (
+      <Alert variant="destructive" className="p-4">
+        {error}
+      </Alert>
+    );
+  if (!trip) return null;
 
   return (
-    <>
-      {group ? (
-        <>
-          <TripCard trip={group} />
-        </>
-      ) : (
-        <Alert variant="default" className="p-4">
-          {error || 'Loading...'}
-        </Alert>
-      )}
-    </>
+    <div>
+      <TripCard trip={trip} />
+      <button
+        onClick={() => redirect(`/trips/${trip.id}/activities/create`)}
+        className="mx-auto bg-white text-primary-500 hover:bg-gray-100 px-4 py-3 shadow-lg flex gap-2 items-center justify-center rounded-full mt-4"
+      >
+        <CirclePlus />
+        <span className="text-base-semibold">Add an Activity</span>
+      </button>
+      {trip.activities.length > 0 ? <div>activities</div> : 'No activities yet'}
+    </div>
   );
 }
-
-export default Page;

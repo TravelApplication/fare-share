@@ -34,7 +34,7 @@ function Navbar() {
           <p className="text-heading3-bold max-xs:hidden">FareShare</p>
         </Link>
         <div className="flex items-center gap-6">
-          {token != null ? (
+          {token ? (
             <>
               <Link className="navbar_link" href="/trips">
                 <Plane />

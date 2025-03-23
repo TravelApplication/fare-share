@@ -30,20 +30,17 @@ function Page() {
     try {
       const token = getToken();
       if (!token) {
-        // logout();
-        console.log('no token');
+        logout();
         return;
       }
       const response = await axios.get('/api/v1/users', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      console.log(response.data);
       const parsedUser = UserSchema.parse(response.data);
 
       setUser(parsedUser);
     } catch (error) {
-      console.log(error);
-      // logout();
+      logout();
     }
   };
   useEffect(() => {
@@ -55,7 +52,6 @@ function Page() {
     { resetForm }: FormikHelpers<z.infer<typeof updateEmailSchema>>,
   ) => {
     try {
-      console.log(values.newEmail, user?.email, values.currentPassword);
       const authResponse = await axios.post(
         'http://localhost:8080/auth/login',
         { email: user?.email, password: values.currentPassword },

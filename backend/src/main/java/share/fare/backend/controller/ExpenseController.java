@@ -31,4 +31,10 @@ public class ExpenseController {
         expenseService.addExpense(expenseRequest);
         return ResponseEntity.ok("Expense added successfully");
     }
+
+    @DeleteMapping
+    public ResponseEntity<Void> deleteExpense(@RequestParam Long expenseId) {
+        expenseService.removeExpense(expenseId);
+        return ResponseEntity.noContent().build();
+    }
 }

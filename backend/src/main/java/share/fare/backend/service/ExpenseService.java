@@ -7,10 +7,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import share.fare.backend.dto.request.ExpenseRequest;
 import share.fare.backend.dto.response.ExpenseResponse;
-import share.fare.backend.entity.Expense;
-import share.fare.backend.entity.Group;
-import share.fare.backend.entity.SplitType;
-import share.fare.backend.entity.User;
+import share.fare.backend.entity.*;
+import share.fare.backend.exception.ExpenseNotFoundException;
+import share.fare.backend.exception.GroupBalanceNotFoundException;
 import share.fare.backend.exception.GroupNotFoundException;
 import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.mapper.ExpenseMapper;
@@ -33,7 +32,6 @@ public class ExpenseService {
     private final ExpenseAllocationRepository expenseAllocationRepository;
     private final GroupBalanceRepository groupBalanceRepository;
     private final GroupBalanceService groupBalanceService;
-
 
     @Transactional
     public void addExpense(ExpenseRequest expenseRequest) {
@@ -73,12 +71,43 @@ public class ExpenseService {
 
         expenseRepository.save(expense);
     }
+
+    @Transactional
+    public void removeExpense(Long expenseId) {
+        Expense expense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
+        reverseGroupBalance(expense);
+
+        expenseRepository.delete(expense);
+    }
+
     public Page<ExpenseResponse> getExpensesForGroup(Long groupId, Pageable pageable) {
         groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
 
         return expenseRepository.findByGroupId(groupId, pageable)
                 .map(ExpenseMapper::toResponse);
+    }
+
+    private void reverseGroupBalance(Expense expense) {
+        Group group = expense.getGroup();
+        User paidByUser = expense.getPaidByUser();
+        BigDecimal totalAmount = expense.getTotalAmount();
+
+        GroupBalance paidByBalance = groupBalanceRepository.findByGroupAndUser(group, paidByUser)
+                .orElseThrow(() -> new GroupBalanceNotFoundException(group.getId(), paidByUser.getId()));
+        paidByBalance.setBalance(paidByBalance.getBalance().subtract(totalAmount));
+        groupBalanceRepository.save(paidByBalance);
+
+        for (ExpenseAllocation allocation : expense.getExpenseAllocations()) {
+            User user = allocation.getUser();
+            BigDecimal amountOwed = allocation.getAmountOwed();
+
+            GroupBalance userBalance = groupBalanceRepository.findByGroupAndUser(group, user)
+                    .orElseThrow(() -> new GroupBalanceNotFoundException(group.getId(), user.getId()));
+            userBalance.setBalance(userBalance.getBalance().add(amountOwed));
+            groupBalanceRepository.save(userBalance);
+        }
     }
 
 }

@@ -32,6 +32,7 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final ExpenseAllocationRepository expenseAllocationRepository;
     private final GroupBalanceRepository groupBalanceRepository;
+    private final GroupBalanceService groupBalanceService;
 
 
     @Transactional
@@ -67,6 +68,8 @@ public class ExpenseService {
 
             expense.addAllocation(user, amountOwed, percentage);
         }
+
+        groupBalanceService.updateBalances(expense);
 
         expenseRepository.save(expense);
     }

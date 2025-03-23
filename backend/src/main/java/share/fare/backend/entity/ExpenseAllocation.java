@@ -24,6 +24,6 @@ public class ExpenseAllocation {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal amountOwed;
 
-    @Column(precision = 5, scale = 2)
+    @Column(precision = 5, scale = 2, nullable = true)
     private BigDecimal percentage;
 }

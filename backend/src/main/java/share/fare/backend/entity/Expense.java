@@ -1,13 +1,12 @@
 package share.fare.backend.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "expenses")
 @Getter
@@ -30,4 +29,17 @@ public class Expense extends BaseEntity {
     private String currency;
 
     private SplitType splitType;
+
+    @OneToMany(mappedBy = "expense", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<ExpenseAllocation> expenseAllocations = new ArrayList<>();
+
+    public void addAllocation(User user, BigDecimal amountOwed, BigDecimal percentage) {
+        ExpenseAllocation allocation = new ExpenseAllocation();
+        allocation.setExpense(this);
+        allocation.setUser(user);
+        allocation.setAmountOwed(amountOwed);
+        allocation.setPercentage(percentage);
+        expenseAllocations.add(allocation);
+    }
 }

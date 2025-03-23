@@ -150,16 +150,15 @@ export default function ActivityForm({
             </div>
 
             <Button
-              className="bg-primary-600 hover:bg-primary-500 p-6 mt-4"
+              className="bg-primary-600 hover:bg-primary-500 px-5 py-4 mt-4 text-sm"
               type="submit"
               disabled={isSubmitting}
             >
-              {/* {isSubmitting
+              {isSubmitting
                 ? 'Submitting...'
-                : mode === 'create'
-                  ? 'Create an Activity'
-                  : 'Save Changes'} */}
-              Create an Activity
+                : initialValues.name
+                  ? 'Save Changes'
+                  : 'Create an Activity'}
             </Button>
           </Form>
         )}

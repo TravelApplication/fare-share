@@ -11,6 +11,7 @@ import { useTrip } from '@/context/TripContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
+import { toast } from 'sonner';
 
 export default function NewActivityPage() {
   const { trip, tripError, refreshTrip } = useTrip();
@@ -23,7 +24,6 @@ export default function NewActivityPage() {
   ) => {
     if (!trip) return;
     try {
-      console.log('Creating activity', values);
       const token = getToken();
       const response = await axios.post(
         `/api/v1/groups/${trip.id}/activities`,
@@ -33,8 +33,18 @@ export default function NewActivityPage() {
         },
       );
       console.log(response.data);
+      toast(`Activity ${values.name} added!`, {
+        duration: 7000,
+        action: {
+          label: 'Close',
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+      });
       actions.resetForm();
       refreshTrip();
+
       router.push(`/trips/${trip.id}`);
     } catch (err: unknown) {
       setError(err.message || 'An error occurred');
@@ -53,11 +63,6 @@ export default function NewActivityPage() {
         </Button>
       )}
       <div className="section px-12">
-        {tripError && (
-          <Alert variant="destructive" className="my-4 p-4">
-            {error}
-          </Alert>
-        )}
         {error && (
           <Alert variant="destructive" className="my-4 p-4">
             {error}

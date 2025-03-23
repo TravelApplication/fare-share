@@ -6,6 +6,7 @@ import { Alert } from '@/components/ui/alert';
 import { ArrowLeft, CirclePlus, MapPinIcon, MapPinnedIcon } from 'lucide-react';
 import { redirect, useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
+import Link from 'next/link';
 
 export default function TripPage() {
   const { trip, loading, tripError } = useTrip();
@@ -48,7 +49,10 @@ export default function TripPage() {
             {trip.activities.map((activity) => (
               <li
                 key={activity.id}
-                className="p-4 border rounded-lg shadow-md flex flex-col gap-1"
+                className="p-4 border rounded-lg shadow-md flex flex-col gap-1 hover:bg-gray-400/10 cursor-pointer transition-colors duration-300"
+                onClick={() =>
+                  router.push(`/trips/${trip.id}/activities/${activity.id}`)
+                }
               >
                 <h3 className="text-lg font-semibold">{activity.name}</h3>
                 {activity.description && (
@@ -63,14 +67,14 @@ export default function TripPage() {
                   </p>
                 )}
                 {activity.link && (
-                  <a
+                  <Link
                     href={activity.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-primary-500 underline"
+                    className="text-primary-500 underline w-min text-nowrap"
                   >
                     More info
-                  </a>
+                  </Link>
                 )}
               </li>
             ))}

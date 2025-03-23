@@ -28,6 +28,21 @@ public class GroupBalanceController {
         return ResponseEntity.ok(groupBalanceService.getTransactions(groupId));
     }
 
+    /**
+     * Who owes whom how much in a group (minimum transactions approach)
+     * @param groupId group id
+     * @return list of transactions
+     */
+    @GetMapping("/min")
+    public ResponseEntity<List<TransactionResponse>> getMinTransactions(@PathVariable Long groupId) {
+        return ResponseEntity.ok(groupBalanceService.getMinimumTransactions(groupId));
+    }
+
+    /**
+     * Get balances of all users in a group
+     * @param groupId group id
+     * @return list of balances
+     */
     @GetMapping("/balances")
     public ResponseEntity<List<GroupBalanceResponse>> getBalances(@PathVariable Long groupId) {
         return ResponseEntity.ok(groupBalanceService.getBalances(groupId));

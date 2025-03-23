@@ -36,6 +36,7 @@ public class Expense extends BaseEntity {
 
     public void addAllocation(User user, BigDecimal amountOwed, BigDecimal percentage) {
         ExpenseAllocation allocation = new ExpenseAllocation();
+        allocation.setId(new ExpenseAllocationId(this.getId(), user.getId()));
         allocation.setExpense(this);
         allocation.setUser(user);
         allocation.setAmountOwed(amountOwed);

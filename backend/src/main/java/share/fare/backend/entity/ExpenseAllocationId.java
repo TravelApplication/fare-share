@@ -1,14 +1,15 @@
 package share.fare.backend.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Embeddable;
+import lombok.*;
 
 import java.io.Serializable;
 
-@Data
+@Embeddable
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
+@Setter
 public class ExpenseAllocationId implements Serializable {
     private Long expense;
     private Long user;

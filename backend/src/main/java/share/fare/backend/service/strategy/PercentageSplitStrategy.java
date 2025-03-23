@@ -23,7 +23,7 @@ public class PercentageSplitStrategy implements SplitStrategy {
 
             expense.addAllocation(user, shareAmount, percentage);
         }
-        adjustLastUserShare(result, users, totalAmount);
+//        adjustLastUserShare(result, users, totalAmount);
 
         return result;
     }

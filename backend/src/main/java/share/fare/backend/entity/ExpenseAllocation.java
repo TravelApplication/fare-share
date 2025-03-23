@@ -11,13 +11,15 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@IdClass(ExpenseAllocation.class)
 public class ExpenseAllocation {
-    @Id
+    @EmbeddedId
+    private ExpenseAllocationId id;
+
+    @MapsId("expense")
     @ManyToOne(fetch = FetchType.LAZY)
     private Expense expense;
 
-    @Id
+    @MapsId("user")
     @ManyToOne(fetch = FetchType.LAZY)
     private User user;
 

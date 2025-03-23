@@ -67,8 +67,9 @@ public class ExpenseService {
 
             expense.addAllocation(user, amountOwed, percentage);
         }
-    }
 
+        expenseRepository.save(expense);
+    }
     public Page<ExpenseResponse> getExpensesForGroup(Long groupId, Pageable pageable) {
         groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));

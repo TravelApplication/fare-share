@@ -28,6 +28,7 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepository;
     private final GroupBalanceRepository groupBalanceRepository;
     private final GroupBalanceService groupBalanceService;
+    private final GroupMembershipRepository groupMembershipRepository;
 
     @Transactional
     public void addExpense(ExpenseRequest expenseRequest) {
@@ -36,23 +37,26 @@ public class ExpenseService {
         Group group = getGroupById(expenseRequest.getGroupId());
         User paidByUser = getUserById(expenseRequest.getPaidByUserId());
 
+        // comment this line for easier testing
+        validateUserSplitsBelongToGroup(group, expenseRequest.getUserShares());
+
         Expense expense = createExpense(expenseRequest, group, paidByUser);
 
-        SplitStrategy splitStrategy = SplitStrategyFactory.getStrategy(expenseRequest.getSplitType());
-        Map<User, BigDecimal> userShares = getUserShares(expenseRequest);
-        List<User> users = new ArrayList<>(userShares.keySet());
-
-        Map<User, BigDecimal> allocations = splitStrategy.split(expense, users, userShares);
-        addAllocationsToExpense(expense, allocations, expenseRequest);
+        resolveSplitStrategy(expense, expenseRequest);
 
         groupBalanceService.updateBalances(expense);
         expenseRepository.save(expense);
     }
 
     @Transactional
-    public void removeExpense(Long expenseId) {
+    public void removeExpense(Long expenseId, User authenticatedUser) {
         Expense expense = expenseRepository.findById(expenseId)
                 .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
+
+        if (!expense.getPaidByUser().getId().equals(authenticatedUser.getId())) {
+            throw new ActionIsNotAllowedException("You are not authorized to delete this expense.");
+        }
+
         reverseGroupBalance(expense);
         expenseRepository.delete(expense);
     }
@@ -61,6 +65,27 @@ public class ExpenseService {
         getGroupById(groupId);
         return expenseRepository.findByGroupId(groupId, pageable)
                 .map(ExpenseMapper::toResponse);
+    }
+
+    @Transactional
+    public void updateExpense(Long expenseId, ExpenseRequest expenseRequest, User authenticatedUser) {
+        Expense existingExpense = expenseRepository.findById(expenseId)
+                .orElseThrow(() -> new ExpenseNotFoundException(expenseId));
+
+        if (!existingExpense.getPaidByUser().getId().equals(authenticatedUser.getId())) {
+            throw new ActionIsNotAllowedException("You are not authorized to update this expense.");
+        }
+
+        Group group = getGroupById(expenseRequest.getGroupId());
+
+        // comment this line for easier testing
+        validateUserSplitsBelongToGroup(group, expenseRequest.getUserShares());
+
+        reverseGroupBalance(existingExpense);
+        updateExpenseFields(existingExpense, expenseRequest);
+        expenseRepository.save(existingExpense);
+
+        groupBalanceService.updateBalances(existingExpense);
     }
 
     private Group getGroupById(Long groupId) {
@@ -77,6 +102,30 @@ public class ExpenseService {
         Expense expense = ExpenseMapper.toEntity(expenseRequest, group, paidByUser);
         expenseRepository.save(expense);
         return expense;
+    }
+
+    private void updateExpenseFields(Expense expense, ExpenseRequest expenseRequest) {
+        expense.setDescription(expenseRequest.getDescription());
+        expense.setTotalAmount(expenseRequest.getTotalAmount());
+        expense.setSplitType(expenseRequest.getSplitType());
+
+        expense.getExpenseAllocations().clear();
+
+        Group group = getGroupById(expenseRequest.getGroupId());
+        User paidByUser = getUserById(expenseRequest.getPaidByUserId());
+        expense.setGroup(group);
+        expense.setPaidByUser(paidByUser);
+
+        resolveSplitStrategy(expense, expenseRequest);
+    }
+
+    private void resolveSplitStrategy(Expense expense, ExpenseRequest expenseRequest) {
+        SplitStrategy splitStrategy = SplitStrategyFactory.getStrategy(expenseRequest.getSplitType());
+        Map<User, BigDecimal> userShares = getUserShares(expenseRequest);
+        List<User> users = new ArrayList<>(userShares.keySet());
+
+        Map<User, BigDecimal> allocations = splitStrategy.split(expense, users, userShares);
+        addAllocationsToExpense(expense, allocations, expenseRequest);
     }
 
     private Map<User, BigDecimal> getUserShares(ExpenseRequest expenseRequest) {
@@ -147,6 +196,14 @@ public class ExpenseService {
                 break;
             default:
                 throw new InvalidExpenseException("Invalid split type: " + expenseRequest.getSplitType());
+        }
+    }
+
+    private void validateUserSplitsBelongToGroup(Group group, Map<Long, BigDecimal> userSplits) {
+        for (Long userId : userSplits.keySet()) {
+            if (!groupMembershipRepository.existsByGroupAndUser_Id(group, userId)) {
+                throw new InvalidExpenseException("User with ID " + userId + " is not a member of the group.");
+            }
         }
     }
 }

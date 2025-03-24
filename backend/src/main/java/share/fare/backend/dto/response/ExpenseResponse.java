@@ -21,4 +21,5 @@ public class ExpenseResponse {
     private SplitType splitType;
     private Map<Long, BigDecimal> userShares;
     private LocalDateTime createdAt;
+    private LocalDateTime expenseDate;
 }

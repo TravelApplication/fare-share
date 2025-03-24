@@ -4,6 +4,7 @@ import lombok.*;
 import share.fare.backend.entity.SplitType;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 @Getter
@@ -18,4 +19,5 @@ public class ExpenseRequest {
     private BigDecimal totalAmount;
     private SplitType splitType;
     private Map<Long, BigDecimal> userShares;
+    private LocalDateTime expenseDate;
 }

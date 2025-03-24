@@ -21,6 +21,7 @@ public class ExpenseMapper {
                 .description(expenseRequest.getDescription())
                 .totalAmount(expenseRequest.getTotalAmount())
                 .splitType(expenseRequest.getSplitType())
+                .expenseDate(expenseRequest.getExpenseDate())
                 .build();
     }
 
@@ -42,6 +43,7 @@ public class ExpenseMapper {
                                 ExpenseAllocation::getAmountOwed
                         )))
                 .createdAt(expense.getCreatedAt())
+                .expenseDate(expense.getExpenseDate())
                 .build();
     }
 }

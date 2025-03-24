@@ -19,16 +19,6 @@ public class GroupBalanceController {
     private final GroupBalanceService groupBalanceService;
 
     /**
-     * Who owes whom how much in a group
-     * @param groupId group id
-     * @return list of transactions
-     */
-    @GetMapping
-    public ResponseEntity<List<TransactionResponse>> getAllTransactions(@PathVariable Long groupId) {
-        return ResponseEntity.ok(groupBalanceService.getTransactions(groupId));
-    }
-
-    /**
      * Who owes whom how much in a group (minimum transactions approach)
      * @param groupId group id
      * @return list of transactions

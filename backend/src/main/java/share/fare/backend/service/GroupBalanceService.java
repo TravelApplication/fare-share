@@ -49,44 +49,7 @@ public class GroupBalanceService {
         return balances.stream().map(GroupBalanceMapper::toResponse).toList();
     }
 
-    // n^2
-    public List<TransactionResponse> getTransactions(Long groupIp) {
-        Group group = groupRepository.findById(groupIp).orElseThrow(() -> new GroupNotFoundException(groupIp));
-        List<GroupBalance> balances = groupBalanceRepository.findByGroup(group);
-        List<TransactionResponse> transactions = new ArrayList<>();
-
-        List<GroupBalance> debtors = balances.stream()
-                .filter(balance -> balance.getBalance().compareTo(BigDecimal.ZERO) < 0)
-                .toList();
-
-        List<GroupBalance> creditors = balances.stream()
-                .filter(balance -> balance.getBalance().compareTo(BigDecimal.ZERO) > 0)
-                .toList();
-
-        for (GroupBalance debtor : debtors) {
-            BigDecimal debt = debtor.getBalance().abs();
-
-            for (GroupBalance creditor : creditors) {
-                if (debt.compareTo(BigDecimal.ZERO) == 0) break;
-
-                BigDecimal credit = creditor.getBalance();
-                BigDecimal amountToTransfer = debt.min(credit);
-
-                transactions.add(new TransactionResponse(
-                        debtor.getUser().getId(),
-                        creditor.getUser().getId(),
-                        amountToTransfer
-                ));
-
-                debt = debt.subtract(amountToTransfer);
-                creditor.setBalance(creditor.getBalance().subtract(amountToTransfer));
-            }
-        }
-
-        return transactions;
-    }
-
-    // n log n
+   @Transactional
     public List<TransactionResponse> getMinimumTransactions(Long groupId) {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(groupId));
         List<GroupBalance> balances = groupBalanceRepository.findByGroup(group);

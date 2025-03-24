@@ -151,7 +151,7 @@ public class ExpenseService {
         }
     }
 
-    private void reverseGroupBalance(Expense expense) {
+    void reverseGroupBalance(Expense expense) {
         Group group = expense.getGroup();
         User paidByUser = expense.getPaidByUser();
         BigDecimal totalAmount = expense.getTotalAmount();
@@ -172,7 +172,7 @@ public class ExpenseService {
         }
     }
 
-    private void validateExpenseRequest(ExpenseRequest expenseRequest) {
+    void validateExpenseRequest(ExpenseRequest expenseRequest) {
         BigDecimal totalAmount = expenseRequest.getTotalAmount();
         Map<Long, BigDecimal> userShares = expenseRequest.getUserShares();
 

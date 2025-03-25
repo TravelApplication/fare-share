@@ -7,7 +7,6 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 
 @Entity(name = "payments")
 @Getter
@@ -15,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class Payment extends BaseEntity {
+public class Settlement extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     private Group group;
 

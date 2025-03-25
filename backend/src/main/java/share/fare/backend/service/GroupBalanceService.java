@@ -49,7 +49,6 @@ public class GroupBalanceService {
         return balances.stream().map(GroupBalanceMapper::toResponse).toList();
     }
 
-   @Transactional
     public List<TransactionResponse> getMinimumTransactions(Long groupId) {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new GroupNotFoundException(groupId));
         List<GroupBalance> balances = groupBalanceRepository.findByGroup(group);

@@ -1,5 +1,6 @@
 package share.fare.backend.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -29,7 +30,7 @@ public class ExpenseController {
     }
 
     @PostMapping
-    public ResponseEntity<String> addExpense(@RequestBody ExpenseRequest expenseRequest) {
+    public ResponseEntity<String> addExpense(@RequestBody @Valid ExpenseRequest expenseRequest) {
         expenseService.addExpense(expenseRequest);
         return ResponseEntity.ok("Expense added successfully");
     }
@@ -43,7 +44,7 @@ public class ExpenseController {
 
     @PutMapping("/{expenseId}")
     public ResponseEntity<Void> updateExpense(@PathVariable Long expenseId,
-                                              @RequestBody ExpenseRequest expenseRequest,
+                                              @RequestBody @Valid ExpenseRequest expenseRequest,
                                               @AuthenticationPrincipal User authenticatedUser) {
         expenseService.updateExpense(expenseId, expenseRequest, authenticatedUser);
         return ResponseEntity.noContent().build();

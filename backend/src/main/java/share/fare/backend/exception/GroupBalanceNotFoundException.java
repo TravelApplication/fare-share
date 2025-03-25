@@ -8,4 +8,8 @@ public class GroupBalanceNotFoundException extends RuntimeException {
     public GroupBalanceNotFoundException(Long groupId, Long userId) {
         super("User with ID: " + userId + " not found in group with ID: " + groupId);
     }
+
+    public GroupBalanceNotFoundException(String message) {
+        super(message);
+    }
 }

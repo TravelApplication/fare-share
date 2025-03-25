@@ -200,4 +200,16 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(InvalidPaymentException.class)
+    public final ResponseEntity<ErrorDetails> invalidPaymentException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(SettlementNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> settlementNotFoundException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
 }

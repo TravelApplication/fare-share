@@ -37,7 +37,6 @@ public class ExpenseService {
         Group group = getGroupById(expenseRequest.getGroupId());
         User paidByUser = getUserById(expenseRequest.getPaidByUserId());
 
-        // comment this line for easier testing
         validateUserSplitsBelongToGroup(group, expenseRequest.getUserShares());
 
         Expense expense = createExpense(expenseRequest, group, paidByUser);
@@ -78,7 +77,6 @@ public class ExpenseService {
 
         Group group = getGroupById(expenseRequest.getGroupId());
 
-        // comment this line for easier testing
         validateUserSplitsBelongToGroup(group, expenseRequest.getUserShares());
 
         reverseGroupBalance(existingExpense);

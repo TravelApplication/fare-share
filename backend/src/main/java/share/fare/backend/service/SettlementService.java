@@ -17,6 +17,8 @@ import share.fare.backend.repository.SettlementRepository;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -27,101 +29,45 @@ public class SettlementService {
 
     @Transactional
     public SettlementResponse createPayment(SettlementRequest request) {
-        List<Long> userIds = Arrays.asList(request.getDebtorId(), request.getCreditorId());
-        List<GroupBalance> balances = groupBalanceRepository.findWithUsersByGroupAndUserIds(request.getGroupId(), userIds);
+        Map<Long, GroupBalance> balances = getBalancesForGroup(request.getGroupId());
+        validateSettlementRequest(request, balances);
 
-        if (balances.size() != 2) {
-            throw new GroupBalanceNotFoundException("One or both of the users do not belong to the group.");
-        }
+        GroupBalance debtorBalance = balances.get(request.getDebtorId());
+        GroupBalance creditorBalance = balances.get(request.getCreditorId());
 
-        GroupBalance debtorBalance = balances.stream()
-                .filter(gb -> gb.getUser().getId().equals(request.getDebtorId()))
-                .findFirst()
-                .orElseThrow(() -> new GroupBalanceNotFoundException(request.getGroupId(), request.getDebtorId()));
+        groupBalanceRepository.updateBalance(
+                request.getGroupId(), request.getDebtorId(), request.getAmount());
+        groupBalanceRepository.updateBalance(
+                request.getGroupId(), request.getCreditorId(), request.getAmount().negate());
 
-        GroupBalance creditorBalance = balances.stream()
-                .filter(gb -> gb.getUser().getId().equals(request.getCreditorId()))
-                .findFirst()
-                .orElseThrow(() -> new GroupBalanceNotFoundException(request.getGroupId(), request.getCreditorId()));
-
-
-        if (debtorBalance.getBalance().compareTo(BigDecimal.ZERO) >= 0) {
-            throw new InvalidPaymentException("Debtor doesn't owe any money in this group.");
-        }
-
-        if (creditorBalance.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new InvalidPaymentException("Creditor doesn't have any money to receive in this group.");
-        }
-
-        BigDecimal maxPaymentAmount = debtorBalance.getBalance().abs().min(creditorBalance.getBalance().abs());
-
-        if (request.getAmount().compareTo(maxPaymentAmount) > 0) {
-            throw new InvalidPaymentException("Settlement amount exceeds the maximum possible amount.");
-        }
-
-        debtorBalance.setBalance(debtorBalance.getBalance().add(request.getAmount()));
-        creditorBalance.setBalance(creditorBalance.getBalance().subtract(request.getAmount()));
-
-        Settlement settlement = Settlement.builder()
-                .group(debtorBalance.getGroup())
-                .paidByUser(debtorBalance.getUser())
-                .paidToUser(creditorBalance.getUser())
-                .amount(request.getAmount())
-                .build();
-
-        settlementRepository.save(settlement);
-
-        return SettlementMapper.toResponse(settlement);
+        Settlement settlement = buildSettlement(debtorBalance, creditorBalance, request.getAmount());
+        return SettlementMapper.toResponse(settlementRepository.save(settlement));
     }
 
     @Transactional
     public SettlementResponse updateSettlement(Long settlementId, SettlementRequest request, User authenticatedUser) {
-        Settlement existingSettlement = settlementRepository.findById(settlementId)
-                .orElseThrow(() -> new SettlementNotFoundException(settlementId));
+        Settlement existingSettlement = getSettlementWithAuthCheck(settlementId, authenticatedUser);
+        Map<Long, GroupBalance> balances = getBalancesForGroup(request.getGroupId());
 
-        if (!authenticatedUser.getId().equals(existingSettlement.getPaidByUser().getId()) &&
-                !authenticatedUser.getId().equals(existingSettlement.getPaidToUser().getId())) {
-            throw new ActionIsNotAllowedException("You can only modify your own settlements");
-        }
-
+        validateSettlementRequest(request, balances);
         reverseSettlementEffect(existingSettlement);
 
-        List<Long> userIds = Arrays.asList(request.getDebtorId(), request.getCreditorId());
-        List<GroupBalance> balances = groupBalanceRepository.findWithUsersByGroupAndUserIds(
-                request.getGroupId(), userIds);
+        GroupBalance newDebtorBalance = balances.get(request.getDebtorId());
+        GroupBalance newCreditorBalance = balances.get(request.getCreditorId());
 
-        if (balances.size() != 2) {
-            throw new GroupBalanceNotFoundException("One or both of the users do not belong to the group.");
-        }
+        groupBalanceRepository.updateBalance(
+                request.getGroupId(), request.getDebtorId(), request.getAmount());
+        groupBalanceRepository.updateBalance(
+                request.getGroupId(), request.getCreditorId(), request.getAmount().negate());
 
-        GroupBalance debtorBalance = getBalanceFromList(balances, request.getDebtorId(), request.getGroupId());
-        GroupBalance creditorBalance = getBalanceFromList(balances, request.getCreditorId(), request.getGroupId());
-
-        validateBalancesForSettlement(debtorBalance, creditorBalance, request.getAmount());
-
-        debtorBalance.setBalance(debtorBalance.getBalance().add(request.getAmount()));
-        creditorBalance.setBalance(creditorBalance.getBalance().subtract(request.getAmount()));
-
-        existingSettlement.setGroup(debtorBalance.getGroup());
-        existingSettlement.setPaidByUser(debtorBalance.getUser());
-        existingSettlement.setPaidToUser(creditorBalance.getUser());
-        existingSettlement.setAmount(request.getAmount());
-
+        updateExistingSettlement(existingSettlement, newDebtorBalance, newCreditorBalance, request.getAmount());
         return SettlementMapper.toResponse(settlementRepository.save(existingSettlement));
     }
 
     @Transactional
     public void deleteSettlement(Long settlementId, User authenticatedUser) {
-        Settlement settlement = settlementRepository.findById(settlementId)
-                .orElseThrow(() -> new SettlementNotFoundException(settlementId));
-
-        if (!authenticatedUser.getId().equals(settlement.getPaidByUser().getId()) &&
-                !authenticatedUser.getId().equals(settlement.getPaidToUser().getId())) {
-            throw new ActionIsNotAllowedException("You can only delete your own settlements");
-        }
-
+        Settlement settlement = getSettlementWithAuthCheck(settlementId, authenticatedUser);
         reverseSettlementEffect(settlement);
-
         settlementRepository.delete(settlement);
     }
 
@@ -131,40 +77,74 @@ public class SettlementService {
                 .collect(Collectors.toList());
     }
 
-    private void reverseSettlementEffect(Settlement settlement) {
-        GroupBalance debtorBalance = groupBalanceRepository.findByGroupAndUser(
-                        settlement.getGroup(), settlement.getPaidByUser())
-                .orElseThrow(() -> new GroupBalanceNotFoundException(
-                        settlement.getGroup().getId(), settlement.getPaidByUser().getId()));
-
-        GroupBalance creditorBalance = groupBalanceRepository.findByGroupAndUser(
-                        settlement.getGroup(), settlement.getPaidToUser())
-                .orElseThrow(() -> new GroupBalanceNotFoundException(
-                        settlement.getGroup().getId(), settlement.getPaidToUser().getId()));
-
-        debtorBalance.setBalance(debtorBalance.getBalance().subtract(settlement.getAmount()));
-        creditorBalance.setBalance(creditorBalance.getBalance().add(settlement.getAmount()));
-    }
-
-    private GroupBalance getBalanceFromList(List<GroupBalance> balances, Long userId, Long groupId) {
+    private Map<Long, GroupBalance> getBalancesForGroup(Long groupId) {
+        List<GroupBalance> balances = groupBalanceRepository.findAllWithUsersByGroupId(groupId);
         return balances.stream()
-                .filter(gb -> gb.getUser().getId().equals(userId))
-                .findFirst()
-                .orElseThrow(() -> new GroupBalanceNotFoundException(groupId, userId));
+                .collect(Collectors.toMap(
+                        gb -> gb.getUser().getId(),
+                        Function.identity()
+                ));
     }
 
-    private void validateBalancesForSettlement(GroupBalance debtorBalance, GroupBalance creditorBalance, BigDecimal amount) {
+    private void validateSettlementRequest(SettlementRequest request, Map<Long, GroupBalance> balances) {
+        GroupBalance debtorBalance = balances.get(request.getDebtorId());
+        GroupBalance creditorBalance = balances.get(request.getCreditorId());
+
+        if (debtorBalance == null || creditorBalance == null) {
+            throw new GroupBalanceNotFoundException("One or both users not found in group");
+        }
+
         if (debtorBalance.getBalance().compareTo(BigDecimal.ZERO) >= 0) {
-            throw new InvalidPaymentException("Debtor doesn't owe any money in this group.");
+            throw new InvalidPaymentException("Debtor doesn't owe money in this group");
         }
 
         if (creditorBalance.getBalance().compareTo(BigDecimal.ZERO) <= 0) {
-            throw new InvalidPaymentException("Creditor doesn't have any money to receive in this group.");
+            throw new InvalidPaymentException("Creditor isn't owed money in this group");
         }
 
-        BigDecimal maxPaymentAmount = debtorBalance.getBalance().abs().min(creditorBalance.getBalance());
-        if (amount.compareTo(maxPaymentAmount) > 0) {
-            throw new InvalidPaymentException("Settlement amount exceeds the maximum possible amount.");
+        BigDecimal maxAmount = debtorBalance.getBalance().abs().min(creditorBalance.getBalance());
+        if (request.getAmount().compareTo(maxAmount) > 0) {
+            throw new InvalidPaymentException("Amount exceeds maximum possible");
         }
+    }
+
+    private void reverseSettlementEffect(Settlement settlement) {
+        groupBalanceRepository.updateBalance(
+                settlement.getGroup().getId(),
+                settlement.getPaidByUser().getId(),
+                settlement.getAmount().negate());
+
+        groupBalanceRepository.updateBalance(
+                settlement.getGroup().getId(),
+                settlement.getPaidToUser().getId(),
+                settlement.getAmount());
+    }
+
+    private Settlement getSettlementWithAuthCheck(Long settlementId, User user) {
+        Settlement settlement = settlementRepository.findById(settlementId)
+                .orElseThrow(() -> new SettlementNotFoundException(settlementId));
+
+        if (!user.getId().equals(settlement.getPaidByUser().getId()) &&
+                !user.getId().equals(settlement.getPaidToUser().getId())) {
+            throw new ActionIsNotAllowedException("Not authorized to modify this settlement");
+        }
+        return settlement;
+    }
+
+    private Settlement buildSettlement(GroupBalance debtorBalance, GroupBalance creditorBalance, BigDecimal amount) {
+        return Settlement.builder()
+                .group(debtorBalance.getGroup())
+                .paidByUser(debtorBalance.getUser())
+                .paidToUser(creditorBalance.getUser())
+                .amount(amount)
+                .build();
+    }
+
+    private void updateExistingSettlement(Settlement settlement, GroupBalance debtorBalance,
+                                          GroupBalance creditorBalance, BigDecimal amount) {
+        settlement.setGroup(debtorBalance.getGroup());
+        settlement.setPaidByUser(debtorBalance.getUser());
+        settlement.setPaidToUser(creditorBalance.getUser());
+        settlement.setAmount(amount);
     }
 }

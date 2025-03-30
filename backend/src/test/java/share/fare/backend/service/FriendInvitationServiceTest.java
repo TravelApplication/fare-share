@@ -18,6 +18,7 @@ import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.repository.FriendInvitationRepository;
 import share.fare.backend.repository.FriendshipRepository;
 import share.fare.backend.repository.UserRepository;
+import share.fare.backend.util.Notification;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +39,9 @@ class FriendInvitationServiceTest {
 
     @Mock
     private FriendshipRepository friendshipRepository;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private FriendInvitationService friendInvitationService;
@@ -89,6 +93,9 @@ class FriendInvitationServiceTest {
         verify(userRepository, times(1)).findById(2L);
         verify(invitationRepository, times(1)).existsBySenderIdAndReceiverId(1L, 2L);
         verify(invitationRepository, times(1)).save(any(FriendInvitation.class));
+        verify(notificationService, times(1)).sendNotificationToUser(eq(2L), argThat(notification ->
+                notification.getSenderId().equals(1L)
+        ));
     }
 
     @Test
@@ -162,6 +169,9 @@ class FriendInvitationServiceTest {
         verify(invitationRepository, times(1)).findById(1L);
         verify(friendshipRepository, times(1)).save(any(Friendship.class));
         verify(invitationRepository, times(1)).delete(testInvitation);
+        verify(notificationService, times(1)).sendNotificationToUser(eq(1L), argThat(notification ->
+                notification.getSenderId().equals(2L)
+        ));
     }
 
     @Test
@@ -192,6 +202,9 @@ class FriendInvitationServiceTest {
 
         verify(invitationRepository, times(1)).findById(1L);
         verify(invitationRepository, times(1)).delete(testInvitation);
+        verify(notificationService, times(1)).sendNotificationToUser(eq(1L), argThat(notification ->
+                notification.getSenderId().equals(2L)
+        ));
     }
 
     @Test

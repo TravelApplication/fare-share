@@ -16,6 +16,9 @@ import share.fare.backend.mapper.GroupInvitationMapper;
 import share.fare.backend.repository.GroupInvitationRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
+import share.fare.backend.util.GroupInvitationNotification;
+import share.fare.backend.util.Notification;
+import share.fare.backend.util.NotificationType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +32,8 @@ public class GroupInvitationService {
     private final GroupRepository groupRepository;
 
     private final GroupInvitationRepository invitationRepository;
+
+    private final NotificationService notificationService;
 
     @Transactional
     public GroupInvitationResponse sendGroupInvitation(Long senderId, Long receiverId, Long groupId) {
@@ -56,6 +61,13 @@ public class GroupInvitationService {
                 .build();
 
         invitationRepository.save(invitation);
+
+        notificationService.sendNotificationToUser(receiverId, GroupInvitationNotification.builder()
+                        .senderId(senderId)
+                        .groupId(groupId)
+                        .type(NotificationType.GROUP_INVITATION)
+                        .message("You received invitation to group " + group.getName() + " from " + sender.getEmail())
+                .build());
 
         return GroupInvitationMapper.toResponse(invitation);
     }
@@ -85,6 +97,7 @@ public class GroupInvitationService {
 
         Group group = invitation.getGroup();
         User receiver = invitation.getReceiver();
+        User sender = invitation.getSender();
 
         group.addMember(receiver, GroupRole.MEMBER);
 
@@ -93,6 +106,13 @@ public class GroupInvitationService {
         groupRepository.save(group);
 
         invitationRepository.delete(invitation);
+
+        notificationService.sendNotificationToUser(sender.getId(), GroupInvitationNotification.builder()
+                .senderId(receiver.getId())
+                .type(NotificationType.GROUP_INVITATION_ACCEPT)
+                .groupId(group.getId())
+                .message(receiver.getEmail() + " accepted your invitation to " + group.getName())
+                .build());
     }
 
 
@@ -105,6 +125,17 @@ public class GroupInvitationService {
             throw new InvitationNotFoundException("User is not the intended receiver of this invitation");
         }
 
+        Group group = invitation.getGroup();
+        User receiver = invitation.getReceiver();
+        User sender = invitation.getSender();
+
         invitationRepository.delete(invitation);
+
+        notificationService.sendNotificationToUser(sender.getId(), GroupInvitationNotification.builder()
+                .senderId(receiver.getId())
+                .groupId(group.getId())
+                .type(NotificationType.GROUP_INVITATION_REJECT)
+                .message(receiver.getEmail() + " rejected your invitation to " + group.getName())
+                .build());
     }
 }

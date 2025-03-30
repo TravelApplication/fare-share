@@ -15,6 +15,8 @@ import share.fare.backend.mapper.FriendInvitationMapper;
 import share.fare.backend.repository.FriendInvitationRepository;
 import share.fare.backend.repository.FriendshipRepository;
 import share.fare.backend.repository.UserRepository;
+import share.fare.backend.util.Notification;
+import share.fare.backend.util.NotificationType;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,6 +30,8 @@ public class FriendInvitationService {
     private final FriendInvitationRepository invitationRepository;
 
     private final FriendshipRepository friendshipRepository;
+
+    private final NotificationService notificationService;
 
     @Transactional
     public FriendInvitationResponse sendFriendInvitation(Long senderId, Long receiverId) {
@@ -51,6 +55,11 @@ public class FriendInvitationService {
                 .build();
 
         invitationRepository.save(invitation);
+        notificationService.sendNotificationToUser(receiverId, Notification.builder()
+                .senderId(senderId)
+                .type(NotificationType.FRIEND_INVITATION)
+                .message("You received a friend invitation from " + receiver.getEmail())
+                .build());
 
         return FriendInvitationMapper.toResponse(invitation);
     }
@@ -77,6 +86,8 @@ public class FriendInvitationService {
         if (!invitation.getReceiver().getId().equals(userId)) {
             throw new InvitationNotFoundException("User is not the receiver of this invitation");
         }
+        User sender = invitation.getSender();
+        User receiver = invitation.getReceiver();
 
         Friendship friendship = Friendship.builder()
                 .user1(invitation.getSender())
@@ -87,6 +98,12 @@ public class FriendInvitationService {
         friendshipRepository.save(friendship);
 
         invitationRepository.delete(invitation);
+
+        notificationService.sendNotificationToUser(
+                sender.getId(), Notification.builder()
+                .senderId(receiver.getId()).type(NotificationType.FRIEND_INVITATION_ACCEPT)
+                .message(receiver.getEmail() + " has accepted your friend invitation")
+                .build());
     }
 
     @Transactional
@@ -97,8 +114,16 @@ public class FriendInvitationService {
         if (!invitation.getReceiver().getId().equals(userId)) {
             throw new InvitationNotFoundException("User is not the receiver of this invitation");
         }
+        User sender = invitation.getSender();
+        User receiver = invitation.getReceiver();
 
         invitationRepository.delete(invitation);
-    }
 
+        notificationService.sendNotificationToUser(
+                sender.getId(), Notification.builder()
+                        .senderId(receiver.getId())
+                        .type(NotificationType.FRIEND_INVITATION_REJECT)
+                        .message(receiver.getEmail() + " has rejected your friend invitation")
+                        .build());
+    }
 }

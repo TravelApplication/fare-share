@@ -27,7 +27,7 @@ public class GroupInvitationController {
             @RequestParam Long receiverId,
             @RequestParam Long groupId) {
 
-        GroupInvitationResponse response = groupInvitationService.sendGroupInvitation(user.getId(), groupId, receiverId);
+        GroupInvitationResponse response = groupInvitationService.sendGroupInvitation(user.getId(), receiverId, groupId);
         return ResponseEntity.ok(response);
     }
 

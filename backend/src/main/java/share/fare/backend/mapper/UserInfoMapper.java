@@ -13,6 +13,7 @@ public class UserInfoMapper {
                 .dateOfBirth(userInfo.getDateOfBirth())
                 .phoneNumber(userInfo.getPhoneNumber())
                 .bio(userInfo.getBio())
+                .userId(userInfo.getUser().getId())
                 .build();
     }
 

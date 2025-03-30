@@ -85,12 +85,11 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "/api/v1/users/admin",
+							"raw": "/api/v1/users",
 							"path": [
 								"api",
 								"v1",
-								"users",
-								"admin"
+								"users"
 							]
 						}
 					},
@@ -125,7 +124,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "/api/v1/groups/1/members?userId=3",
+							"raw": "/api/v1/groups/1/members?userId=1",
 							"path": [
 								"api",
 								"v1",
@@ -136,7 +135,7 @@
 							"query": [
 								{
 									"key": "userId",
-									"value": "3"
+									"value": "1"
 								}
 							]
 						}
@@ -366,7 +365,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token-user}}",
+									"value": "{{jwt-token-user2}}",
 									"type": "string"
 								}
 							]
@@ -523,6 +522,16 @@
 				{
 					"name": "add activity",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token-user}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"body": {
@@ -586,6 +595,16 @@
 				{
 					"name": "get group activities",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt-token-user}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
@@ -646,7 +665,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token-user}}",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyODQwNjkzLCJleHAiOjE3NDI4NzY2OTN9.1hmvABeAUOfbGb24kmysdYGvDdnlZGYykrTo6VrRsLA",
 									"type": "string"
 								}
 							]
@@ -654,13 +673,13 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "/api/v1/friend-invitations/send/3",
+							"raw": "/api/v1/friend-invitations/send/1",
 							"path": [
 								"api",
 								"v1",
 								"friend-invitations",
 								"send",
-								"3"
+								"1"
 							]
 						}
 					},
@@ -674,7 +693,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token-user2}}",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQyODQwNzMzLCJleHAiOjE3NDI4NzY3MzN9.mkdLUtuVV4bQ_Ug3LjtIqyEHjw1ML4iJQ-H6YAh1vUc",
 									"type": "string"
 								}
 							]
@@ -682,13 +701,13 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "/api/v1/friend-invitations/accept/1",
+							"raw": "/api/v1/friend-invitations/accept/3",
 							"path": [
 								"api",
 								"v1",
 								"friend-invitations",
 								"accept",
-								"1"
+								"3"
 							]
 						}
 					},
@@ -702,7 +721,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyODQwNjkzLCJleHAiOjE3NDI4NzY2OTN9.1hmvABeAUOfbGb24kmysdYGvDdnlZGYykrTo6VrRsLA",
 									"type": "string"
 								}
 							]
@@ -730,7 +749,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token-user}}",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyODQwNjkzLCJleHAiOjE3NDI4NzY2OTN9.1hmvABeAUOfbGb24kmysdYGvDdnlZGYykrTo6VrRsLA",
 									"type": "string"
 								}
 							]
@@ -757,7 +776,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token-user2}}",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyODQwNjkzLCJleHAiOjE3NDI4NzY2OTN9.1hmvABeAUOfbGb24kmysdYGvDdnlZGYykrTo6VrRsLA",
 									"type": "string"
 								}
 							]
@@ -789,7 +808,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "{{jwt-token-user}}",
 									"type": "string"
 								}
 							]
@@ -797,7 +816,7 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "/api/v1/group-invitations/send?receiverId=1&groupId=1",
+							"raw": "/api/v1/group-invitations/send?receiverId=2&groupId=1",
 							"path": [
 								"api",
 								"v1",
@@ -807,7 +826,7 @@
 							"query": [
 								{
 									"key": "receiverId",
-									"value": "1"
+									"value": "2"
 								},
 								{
 									"key": "groupId",
@@ -826,7 +845,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token}}",
+									"value": "{{jwt-token-user2}}",
 									"type": "string"
 								}
 							]
@@ -941,7 +960,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4NDIzODAwLCJleHAiOjE3Mzg0NTk4MDB9.87eXmxVaVd8yeCbx-kQNZAA_QqgiP1ElsVPXn2iQB3A",
+									"value": "{{jwt-token-user}}",
 									"type": "string"
 								}
 							]
@@ -950,7 +969,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"voteType\": \"FOR\"\n}",
+							"raw": "{\n    \"voteType\": \"AGAINST\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1057,7 +1076,7 @@
 				"bearer": [
 					{
 						"key": "token",
-						"value": "{{jwt-token}}",
+						"value": "{{jwt-token-user}}",
 						"type": "string"
 					}
 				]
@@ -1197,7 +1216,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyMkBleGFtcGxlLmNvbSIsImlhdCI6MTc0MTcxODUxOSwiZXhwIjoxNzQxNzU0NTE5fQ.cK57nselYZCdg5IMuQM_6qbidtKckHFnNLMoU-NrRv0",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI0IiwiaWF0IjoxNzQyMjk5OTI5LCJleHAiOjE3NDIzMzU5Mjl9.pwbUoHu58u8Pn2tcWgl1Eb50z9m7mz3Jrxf0PuHQ8HQ",
 									"type": "string"
 								}
 							]
@@ -1219,6 +1238,474 @@
 								"api",
 								"v1",
 								"user-info"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "ws",
+			"item": [
+				{
+					"name": "New Request",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "expenses",
+			"item": [
+				{
+					"name": "fetch group expenses",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/expenses",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"expenses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add expense - equal",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyNzU4NTc4LCJleHAiOjE3NDI3OTQ1Nzh9.PhCg8TqNQ8zg55a4p8ECBOsjKpOfTgkXvaDCLeHbH7M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"groupId\": 1,\n  \"paidByUserId\": 2,\n  \"description\": \"Dinner\",\n  \"totalAmount\": 150.00,\n  \"splitType\": \"EQUALLY\",\n  \"userShares\": {\n    \"1\": 0,\n    \"2\": 0,\n    \"3\": 0\n  },\n  \"expenseDate\": \"2025-03-23T21:41:48.091796\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/expenses",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"expenses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add expense - share",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyNzU4NTc4LCJleHAiOjE3NDI3OTQ1Nzh9.PhCg8TqNQ8zg55a4p8ECBOsjKpOfTgkXvaDCLeHbH7M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"groupId\": 1,\n  \"paidByUserId\": 1,\n  \"description\": \"Dinner\",\n  \"totalAmount\": 100.00,\n  \"splitType\": \"SHARES\",\n  \"userShares\": {\n    \"1\": 10,\n    \"2\": 50,\n    \"3\": 40\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/expenses",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"expenses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add expense - percentage",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyNzU4NTc4LCJleHAiOjE3NDI3OTQ1Nzh9.PhCg8TqNQ8zg55a4p8ECBOsjKpOfTgkXvaDCLeHbH7M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"groupId\": 1,\n  \"paidByUserId\": 1,\n  \"description\": \"Dinner\",\n  \"totalAmount\": 3260.50,\n  \"splitType\": \"PERCENTAGE\",\n  \"userShares\": {\n    \"1\": 18,\n    \"2\": 32,\n    \"3\": 50\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/expenses",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"expenses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add expense - amount",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyNzU4NTc4LCJleHAiOjE3NDI3OTQ1Nzh9.PhCg8TqNQ8zg55a4p8ECBOsjKpOfTgkXvaDCLeHbH7M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"groupId\": 1,\n  \"paidByUserId\": 1,\n  \"description\": \"Dinner\",\n  \"totalAmount\": 100.00,\n  \"splitType\": \"AMOUNT\",\n  \"userShares\": {\n    \"1\": 25,\n    \"2\": 0,\n    \"3\": 75\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/expenses",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"expenses"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "remove expense",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQyODQwMTU1LCJleHAiOjE3NDI4NzYxNTV9.-oEh0Y8jhoSc3jDpUvPH0Dyo8f3ghmJO6tA60BcMKqA",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/expenses?expenseId=1",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"expenses"
+							],
+							"query": [
+								{
+									"key": "expenseId",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update expense",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyNzU4NTc4LCJleHAiOjE3NDI3OTQ1Nzh9.PhCg8TqNQ8zg55a4p8ECBOsjKpOfTgkXvaDCLeHbH7M",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"groupId\": 1,\n  \"paidByUserId\": 2,\n  \"description\": \"Dinner\",\n  \"totalAmount\": 200.00,\n  \"splitType\": \"EQUALLY\",\n  \"userShares\": {\n    \"1\": 0,\n    \"2\": 0,  // User 102 owes an equal share\n    \"3\": 0   // User 103 owes an equal share\n  }\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/expenses/1",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"expenses",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "group balance",
+			"item": [
+				{
+					"name": "fetch group net worth",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyNzM4Mjk0LCJleHAiOjE3NDI3NzQyOTR9.fS28Iiri4LF_nEgFQp9IUJnv_LcA3OrR0YGMYBrnMd4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/balance/balances",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"balance",
+								"balances"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "fetch group transactions (min)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQyOTAzMzA3LCJleHAiOjE3NDI5MzkzMDd9.tihxLIjSb1d-UCdqWHvosaPLD36BNBi0bn_JIyq2duE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/balance/min",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"balance",
+								"min"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "settlements",
+			"item": [
+				{
+					"name": "get settlements",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQyOTAzMzA3LCJleHAiOjE3NDI5MzkzMDd9.tihxLIjSb1d-UCdqWHvosaPLD36BNBi0bn_JIyq2duE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/settlements",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"settlements"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "add settlement",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQyOTAzMzA3LCJleHAiOjE3NDI5MzkzMDd9.tihxLIjSb1d-UCdqWHvosaPLD36BNBi0bn_JIyq2duE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"groupId\": \"1\",\n    \"debtorId\": \"1\",\n    \"creditorId\": \"3\",\n    \"amount\": 100\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/settlements",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"settlements"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "update settlement",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQyOTAzMzA3LCJleHAiOjE3NDI5MzkzMDd9.tihxLIjSb1d-UCdqWHvosaPLD36BNBi0bn_JIyq2duE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"groupId\": \"1\",\n    \"debtorId\": \"2\",\n    \"creditorId\": \"1\",\n    \"amount\": 100\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "/api/v1/groups/1/settlements/1",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"settlements",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "delete settlement",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQyOTAzMzA3LCJleHAiOjE3NDI5MzkzMDd9.tihxLIjSb1d-UCdqWHvosaPLD36BNBi0bn_JIyq2duE",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "/api/v1/groups/1/settlements/1",
+							"path": [
+								"api",
+								"v1",
+								"groups",
+								"1",
+								"settlements",
+								"1"
 							]
 						}
 					},

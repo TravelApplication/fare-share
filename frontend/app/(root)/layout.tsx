@@ -2,6 +2,7 @@ import React from 'react';
 import { cookies } from 'next/headers';
 import { isLoggedIn } from '@/lib/auth';
 import { redirect } from 'next/navigation';
+import { WebSocketProvider } from '@/providers/WebSocketProvider';
 
 export default async function LoggedInLayout({
   children,
@@ -15,5 +16,5 @@ export default async function LoggedInLayout({
     redirect('/sign-in');
   }
 
-  return <>{children}</>;
+  return <WebSocketProvider>{children}</WebSocketProvider>;
 }

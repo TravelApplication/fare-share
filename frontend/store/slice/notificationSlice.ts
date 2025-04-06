@@ -20,11 +20,11 @@ export type NotificationSlice = {
 export const createNotificationSlice: StateCreator<NotificationSlice, [], [], NotificationSlice> = (set) => ({
     notifications: [],
     addNotification: (notification) => set((state) => {
-        if (notification.type === 'FRIEND_INVITATION') {
+        if (notification.type === 'FRIEND_INVITATION' || notification.type === 'FRIEND_INVITATION_ACCEPT' || notification.type === 'FRIEND_INVITATION_REJECT') {
             set({ toFetchFriendInvitations: true });
         }
 
-        if (notification.type === 'GROUP_INVITATION') {
+        if (notification.type === 'GROUP_INVITATION' || notification.type === 'GROUP_INVITATION_ACCEPT' || notification.type === 'GROUP_INVITATION_REJECT') {
             set({ toFetchGroupInvitations: true });
         }
 

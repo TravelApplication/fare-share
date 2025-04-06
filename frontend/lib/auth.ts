@@ -20,7 +20,6 @@ export const decodeToken = (token: string): DecodedToken | null => {
   }
 };
 
-
 export const isLoggedIn = (token: string): boolean => {
   const decodedToken = decodeToken(token);
   if (!decodedToken) {

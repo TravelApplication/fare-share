@@ -28,7 +28,6 @@ export const WebSocketProvider = ({
           });
           const userData = response.data;
           setUser(userData);
-          console.log('user data websocket:', userData);
         } catch (err) {
           console.error('error websockeet', err);
         }
@@ -48,7 +47,6 @@ export const WebSocketProvider = ({
     });
 
     stompClient.onConnect = () => {
-      console.log('connected websocket');
       if (user) {
         stompClient.subscribe(`/user/${user.id}/notifications`, (message) => {
           const notification = JSON.parse(message.body);

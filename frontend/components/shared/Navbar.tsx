@@ -58,7 +58,7 @@ function Navbar() {
     if (token) {
       fetchNotifications();
     }
-  }, []);
+  }, [token]);
 
   useEffect(() => {
     if (toFetchFriendInvitations || toFetchGroupInvitations) {
@@ -66,7 +66,12 @@ function Navbar() {
       if (toFetchFriendInvitations) setToFetchFriendInvitations(false);
       if (toFetchGroupInvitations) setToFetchGroupInvitations(false);
     }
-  }, [toFetchFriendInvitations, toFetchGroupInvitations]);
+  }, [
+    toFetchFriendInvitations,
+    toFetchGroupInvitations,
+    setToFetchFriendInvitations,
+    setToFetchGroupInvitations,
+  ]);
 
   return (
     <nav className="navbar">

@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { getToken } from '@/lib/auth';
 import { appStore } from '@/store/appStore';
+import { set } from 'zod';
 
 interface InvitationResponse {
   id: number;
@@ -80,7 +81,7 @@ export default function InvitationsPage() {
 
   useEffect(() => {
     fetchInvitations();
-  }, []);
+  });
 
   useEffect(() => {
     if (toFetchFriendInvitations || toFetchGroupInvitations) {
@@ -88,7 +89,12 @@ export default function InvitationsPage() {
       if (toFetchFriendInvitations) setToFetchFriendInvitations(false);
       if (toFetchGroupInvitations) setToFetchGroupInvitations(false);
     }
-  }, [toFetchFriendInvitations, toFetchGroupInvitations]);
+  }, [
+    toFetchFriendInvitations,
+    toFetchGroupInvitations,
+    setToFetchFriendInvitations,
+    setToFetchGroupInvitations,
+  ]);
 
   const renderInvitationCard = (
     inv: InvitationResponse | GroupInvitationResponse,

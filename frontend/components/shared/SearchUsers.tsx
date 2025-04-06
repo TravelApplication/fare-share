@@ -18,7 +18,7 @@ function SearchUsers() {
     const fetchUsers = async () => {
       if (query.length > 0) {
         try {
-          const token = await getToken();
+          const token = getToken();
           const response = await axios.get(
             `/api/v1/user-info/search/top8?name=${query}`,
             {

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,19 +21,6 @@ import java.util.Map;
  */
 @ControllerAdvice
 public class FareShareResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
-    /**
-     * Global exception handler for all exceptions
-     * @param ex Exception
-     * @param request WebRequest
-     * @return ResponseEntity<ErrorDetails>
-     */
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<ErrorDetails> handleAllExceptions(Exception ex, WebRequest request) {
-        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
-
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
     /**
      * Global exception handler for UserNotFoundException
      * @param ex UserNotFoundException

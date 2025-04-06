@@ -17,6 +17,7 @@ import share.fare.backend.service.UserService;
 
 import java.time.LocalDateTime;
 
+import static org.hibernate.validator.internal.util.Contracts.assertTrue;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -174,5 +175,134 @@ public class UserControllerTest {
                         .with(user(testAdmin))
                         .principal(() -> String.valueOf(testAdmin.getId())))
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void deleteAdminAsUserTest() throws Exception {
+        mockMvc.perform(delete(URI + "/admin/" + testAdmin.getId())
+                        .with(user(testUser))
+                        .principal(() -> String.valueOf(testUser.getId())))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void getUserAsAdminTest() throws Exception {
+        mockMvc.perform(get(URI + "/admin/" + testUser.getId())
+                        .with(user(testAdmin))
+                        .principal(() -> String.valueOf(testAdmin.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(testUser.getId()))
+                .andExpect(jsonPath("$.email").value(testUser.getEmail()))
+                .andExpect(jsonPath("$.createdAt").value(testUser.getCreatedAt().toString()));;
+    }
+
+    @Test
+    void getNonExistingUserAsAdminTest() throws Exception {
+        Long nonExistingUserId = testUser.getId() + 10;
+        mockMvc.perform(get(URI + "/admin/" + nonExistingUserId)
+                        .with(user(testAdmin))
+                        .principal(() -> String.valueOf(testAdmin.getId())))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("User with ID " + nonExistingUserId + " not found"))
+                .andExpect(jsonPath("$.errorDescription").value("uri=/api/v1/users/admin/" + nonExistingUserId));
+    }
+
+    @Test
+    void updateUserAsAdminTest() throws Exception {
+        UserRequest userRequest = UserRequest.builder()
+                .email("newemail@test.com")
+                .password("newpassword")
+                .build();
+        mockMvc.perform(put(URI + "/admin/" + testUser.getId())
+                        .with(user(testAdmin))
+                        .principal(() -> String.valueOf(testAdmin.getId()))
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(userRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(testUser.getId()))
+                .andExpect(jsonPath("$.email").value(userRequest.getEmail()));
+    }
+
+    @Test
+    void updateUserAsNotAdminTest() throws Exception {
+        UserRequest userRequest = UserRequest.builder()
+                .email("newemail@test.com")
+                .password("newpassword")
+                .build();
+        mockMvc.perform(put(URI + "/admin/" + testUser.getId())
+                        .with(user(testUser))
+                        .principal(() -> String.valueOf(testUser.getId()))
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(userRequest)))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    void updateNonExistingUserAsAdminTest() throws Exception {
+        Long nonExistingUserId = testUser.getId() + 10;
+        UserRequest userRequest = UserRequest.builder()
+                .email("newemail@test.com")
+                .password("newpassword")
+                .build();
+        mockMvc.perform(put(URI + "/admin/" + nonExistingUserId)
+                        .with(user(testAdmin))
+                        .principal(() -> String.valueOf(testAdmin.getId()))
+                        .contentType("application/json")
+                        .content(objectMapper.writeValueAsString(userRequest)))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.message").value("User with ID " + nonExistingUserId +" not found"))
+                .andExpect(jsonPath("$.errorDescription").value("uri=/api/v1/users/admin/" + nonExistingUserId));
+    }
+
+    @Test
+    void getAllUsersDefaultTest() throws Exception {
+        mockMvc.perform(get(URI + "/admin")
+                        .with(user(testAdmin))
+                        .principal(() -> String.valueOf(testAdmin.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalPages").value(1))
+                .andExpect(jsonPath("$.totalElements").value(2))
+                .andExpect(jsonPath("$.currentPage").value(0));
+    }
+
+    @Test
+    void getAllUsersPaginationTest() throws Exception {
+        mockMvc.perform(get(URI + "/admin?page=1")
+                        .with(user(testAdmin))
+                        .principal(() -> String.valueOf(testAdmin.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalElements").value(2))
+                .andExpect(jsonPath("$.currentPage").value(1));
+    }
+
+    @Test
+    void getAllUsersSortTest() throws Exception {
+        mockMvc.perform(get(URI + "/admin?sort=id")
+                        .with(user(testAdmin))
+                        .principal(() -> String.valueOf(testAdmin.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(testUser.getId()))
+                .andExpect(jsonPath("$.content[1].id").value(testAdmin.getId()));
+        assertTrue(testAdmin.getId() > testUser.getId(), "Admin ID should be greater than user ID");
+    }
+
+    @Test
+    void getAllUsersSortDirectionTest() throws Exception {
+        mockMvc.perform(get(URI + "/admin?sort=id,DESC")
+                        .with(user(testAdmin))
+                        .principal(() -> String.valueOf(testAdmin.getId())))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content[0].id").value(testAdmin.getId()))
+                .andExpect(jsonPath("$.content[1].id").value(testUser.getId()));
+        assertTrue(testAdmin.getId() > testUser.getId(), "Admin ID should be greater than user ID");
+    }
+
+
+    @Test
+    void getAllUsersAsUserTest() throws Exception {
+        mockMvc.perform(get(URI + "/admin?sort=id,DESC")
+                        .with(user(testUser))
+                        .principal(() -> String.valueOf(testUser.getId())))
+                .andExpect(status().isForbidden());
     }
 }

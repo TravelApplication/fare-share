@@ -11,14 +11,12 @@ import share.fare.backend.entity.User;
 import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.mapper.UserMapper;
 import share.fare.backend.repository.UserRepository;
-import share.fare.backend.util.Notification;
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final NotificationService notificationService;
 
     public Page<UserResponse> getUsers(Pageable pageable) {
         return userRepository.findAll(pageable).map(UserMapper::toResponse);

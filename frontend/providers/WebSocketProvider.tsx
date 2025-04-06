@@ -52,17 +52,20 @@ export const WebSocketProvider = ({
       if (user) {
         stompClient.subscribe(`/user/${user.id}/notifications`, (message) => {
           const notification = JSON.parse(message.body);
-          console.log('Otrzymano powiadomienie:', notification);
-
-          toast(notification.message, {
-            duration: 7000,
-            action: {
-              label: 'Close',
-              onClick: () => {
-                toast.dismiss();
+          if (
+            notification.type !== 'VOTE' &&
+            notification.type !== 'VOTE_CHANGE'
+          ) {
+            toast(`${notification.message}`, {
+              duration: 7000,
+              action: {
+                label: 'Close',
+                onClick: () => {
+                  toast.dismiss();
+                },
               },
-            },
-          });
+            });
+          }
           addNotfication(notification);
         });
       }

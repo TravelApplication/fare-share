@@ -9,12 +9,12 @@ export default async function LoggedInLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // const cookieStore = await cookies();
-  // const token = cookieStore.get('token')?.value;
-  // if (!token || !isLoggedIn(token)) {
-  //   console.log('User is not logged in');
-  //   redirect('/sign-in');
-  // }
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token')?.value;
+  if (!token || !isLoggedIn(token)) {
+    console.log('User is not logged in');
+    redirect('/sign-in');
+  }
 
   return <WebSocketProvider>{children}</WebSocketProvider>;
 }

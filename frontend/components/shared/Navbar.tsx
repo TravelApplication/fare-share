@@ -15,6 +15,7 @@ import { Button } from '../ui/button';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Bell, LogOut, Plane, Settings, User } from 'lucide-react';
 import { decodeToken, getToken, isLoggedIn, logout } from '@/lib/auth';
+import SearchUsers from './SearchUsers';
 
 function Navbar() {
   const [token, setToken] = useState<string | null>(null);
@@ -42,6 +43,7 @@ function Navbar() {
         <div className="flex items-center gap-6">
           {token != null ? (
             <>
+              <SearchUsers />
               <Link className="navbar_link" href="/trips">
                 <Plane />
                 <p className="max-sm:hidden">Trips</p>

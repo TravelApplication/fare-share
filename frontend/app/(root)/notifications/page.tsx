@@ -93,29 +93,71 @@ export default function InvitationsPage() {
   const renderInvitationCard = (
     inv: InvitationResponse | GroupInvitationResponse,
     type: 'received' | 'sent',
-  ) => (
-    <Card key={inv.id} className="mb-4">
-      <CardContent className="p-4 flex flex-col gap-2">
-        <p>
-          <strong>From:</strong> {inv.senderId}
-        </p>
-        {'groupId' in inv && (
+  ) => {
+    const isGroup = 'groupId' in inv;
+    const token = getToken();
+
+    const handleAction = async (action: 'accept' | 'reject') => {
+      if (!token) return;
+      const base = isGroup ? 'group-invitations' : 'friend-invitations';
+      const url = `/api/v1/${base}/${action}/${inv.id}`;
+
+      try {
+        if (action === 'accept') {
+          await axios.post(
+            url,
+            {},
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+        } else {
+          await axios.delete(url, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+        }
+
+        if (isGroup) {
+          setToFetchGroupInvitations(true);
+        } else {
+          setToFetchFriendInvitations(true);
+        }
+      } catch (err) {
+        console.error(`Failed to ${action} invitation`, err);
+      }
+    };
+
+    return (
+      <Card key={inv.id} className="mb-4">
+        <CardContent className="p-4 flex flex-col gap-2">
           <p>
-            <strong>Trip:</strong> {inv.groupId}
+            <strong>From:</strong> {inv.senderId}
           </p>
-        )}
-        <p>
-          <strong>Sent At:</strong> {new Date(inv.createdAt).toLocaleString()}
-        </p>
-        {type === 'received' && (
-          <div className="flex gap-2 mt-2">
-            <Button variant="default">Accept</Button>
-            <Button variant="secondary">Reject</Button>
-          </div>
-        )}
-      </CardContent>
-    </Card>
-  );
+          {'groupId' in inv && (
+            <p>
+              <strong>Trip:</strong> {inv.groupId}
+            </p>
+          )}
+          <p>
+            <strong>Sent At:</strong> {new Date(inv.createdAt).toLocaleString()}
+          </p>
+          {type === 'received' && (
+            <div className="flex gap-2 mt-2">
+              <Button variant="default" onClick={() => handleAction('accept')}>
+                Accept
+              </Button>
+              <Button
+                variant="secondary"
+                onClick={() => handleAction('reject')}
+              >
+                Reject
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+    );
+  };
 
   const renderInvitationSection = (
     invitations: InvitationResponse[] | GroupInvitationResponse[],

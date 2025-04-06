@@ -5,6 +5,7 @@ import { getToken } from '@/lib/auth';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
+import { toast } from 'sonner';
 
 export const WebSocketProvider = ({
   children,
@@ -52,6 +53,16 @@ export const WebSocketProvider = ({
         stompClient.subscribe(`/user/${user.id}/notifications`, (message) => {
           const notification = JSON.parse(message.body);
           console.log('Otrzymano powiadomienie:', notification);
+
+          toast(notification.message, {
+            duration: 7000,
+            action: {
+              label: 'Close',
+              onClick: () => {
+                toast.dismiss();
+              },
+            },
+          });
           addNotfication(notification);
         });
       }

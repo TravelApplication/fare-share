@@ -174,5 +174,34 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
     public final ResponseEntity<ErrorDetails> illegalArgumentException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    
+    @ExceptionHandler(ExpenseNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> expenseNotFoundException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(GroupBalanceNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> groupBalanceNotFoundException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidExpenseException.class)
+    public final ResponseEntity<ErrorDetails> invalidExpenseException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidPaymentException.class)
+    public final ResponseEntity<ErrorDetails> invalidPaymentException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(SettlementNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> settlementNotFoundException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 }

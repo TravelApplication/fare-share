@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
@@ -166,8 +165,14 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
     }
 
     @ExceptionHandler(FriendshipNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> FriendshipNotFoundException(Exception ex, WebRequest request) {
+    public final ResponseEntity<ErrorDetails> friendshipNotFoundException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public final ResponseEntity<ErrorDetails> illegalArgumentException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 }

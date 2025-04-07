@@ -13,8 +13,6 @@ import share.fare.backend.dto.request.UserRequest;
 import share.fare.backend.entity.Role;
 import share.fare.backend.entity.User;
 import share.fare.backend.repository.UserRepository;
-import share.fare.backend.service.UserService;
-
 import java.time.LocalDateTime;
 
 import static org.hibernate.validator.internal.util.Contracts.assertTrue;
@@ -35,9 +33,6 @@ public class UserControllerTest {
 
     @Autowired
     private ObjectMapper objectMapper;
-
-    @Autowired
-    private UserService userService;
 
     @Autowired
     private UserRepository userRepository;

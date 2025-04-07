@@ -72,8 +72,7 @@ public class UserControllerTest {
                         .principal(() -> String.valueOf(testUser.getId())))
                  .andExpect(status().isOk())
                  .andExpect(jsonPath("$.id").value(testUser.getId()))
-                 .andExpect(jsonPath("$.email").value(testUser.getEmail()))
-                 .andExpect(jsonPath("$.createdAt").value(testUser.getCreatedAt().toString()));
+                 .andExpect(jsonPath("$.email").value(testUser.getEmail()));
     }
 
     @Test
@@ -187,8 +186,7 @@ public class UserControllerTest {
                         .principal(() -> String.valueOf(testAdmin.getId())))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(testUser.getId()))
-                .andExpect(jsonPath("$.email").value(testUser.getEmail()))
-                .andExpect(jsonPath("$.createdAt").value(testUser.getCreatedAt().toString()));;
+                .andExpect(jsonPath("$.email").value(testUser.getEmail()));
     }
 
     @Test

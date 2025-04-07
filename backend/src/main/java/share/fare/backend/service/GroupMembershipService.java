@@ -73,6 +73,7 @@ public class GroupMembershipService {
 
         GroupMembership membership = groupMembershipRepository.findByGroupAndUser(group, user)
                 .orElseThrow(() -> new UserIsNotInGroupException("User is not a member of the group"));
+
         membership.setRole(newRole);
         GroupMembership updatedMembership = groupMembershipRepository.save(membership);
         return GroupMembershipMapper.toResponse(updatedMembership);

@@ -34,7 +34,7 @@ public class GroupInvitationController {
     @PostMapping("/accept/{invitationId}")
     public ResponseEntity<Void> acceptGroupInvitation(@PathVariable Long invitationId, @AuthenticationPrincipal User user) {
         groupInvitationService.acceptGroupInvitation(invitationId, user.getId());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/reject/{invitationId}")

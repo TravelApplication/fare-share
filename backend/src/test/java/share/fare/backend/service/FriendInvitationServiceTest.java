@@ -12,6 +12,7 @@ import share.fare.backend.entity.FriendInvitation;
 import share.fare.backend.entity.Friendship;
 import share.fare.backend.entity.FriendshipId;
 import share.fare.backend.entity.User;
+import share.fare.backend.exception.ActionIsNotAllowedException;
 import share.fare.backend.exception.InvitationAlreadyExistsException;
 import share.fare.backend.exception.InvitationNotFoundException;
 import share.fare.backend.exception.UserNotFoundException;
@@ -101,7 +102,7 @@ class FriendInvitationServiceTest {
     @Test
     @Transactional
     public void testSendFriendInvitationSenderEqualsReceiver() {
-        assertThrows(IllegalArgumentException.class, () -> friendInvitationService.sendFriendInvitation(1L, 1L));
+        assertThrows(ActionIsNotAllowedException.class, () -> friendInvitationService.sendFriendInvitation(1L, 1L));
     }
 
     @Test
@@ -188,7 +189,7 @@ class FriendInvitationServiceTest {
     public void testAcceptFriendInvitationUserNotReceiver() {
         when(invitationRepository.findById(1L)).thenReturn(Optional.of(testInvitation));
 
-        assertThrows(InvitationNotFoundException.class, () -> friendInvitationService.acceptFriendInvitation(1L, 3L));
+        assertThrows(ActionIsNotAllowedException.class, () -> friendInvitationService.acceptFriendInvitation(1L, 3L));
         verify(invitationRepository, times(1)).findById(1L);
     }
 
@@ -221,7 +222,7 @@ class FriendInvitationServiceTest {
     public void testRejectFriendInvitationUserNotReceiver() {
         when(invitationRepository.findById(1L)).thenReturn(Optional.of(testInvitation));
 
-        assertThrows(InvitationNotFoundException.class, () -> friendInvitationService.rejectFriendInvitation(1L, 3L));
+        assertThrows(ActionIsNotAllowedException.class, () -> friendInvitationService.rejectFriendInvitation(1L, 3L));
         verify(invitationRepository, times(1)).findById(1L);
     }
 }

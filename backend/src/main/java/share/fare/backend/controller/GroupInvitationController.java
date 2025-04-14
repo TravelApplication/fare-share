@@ -27,14 +27,14 @@ public class GroupInvitationController {
             @RequestParam Long receiverId,
             @RequestParam Long groupId) {
 
-        GroupInvitationResponse response = groupInvitationService.sendGroupInvitation(user.getId(), groupId, receiverId);
+        GroupInvitationResponse response = groupInvitationService.sendGroupInvitation(user.getId(), receiverId, groupId);
         return ResponseEntity.ok(response);
     }
 
     @PostMapping("/accept/{invitationId}")
     public ResponseEntity<Void> acceptGroupInvitation(@PathVariable Long invitationId, @AuthenticationPrincipal User user) {
         groupInvitationService.acceptGroupInvitation(invitationId, user.getId());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/reject/{invitationId}")

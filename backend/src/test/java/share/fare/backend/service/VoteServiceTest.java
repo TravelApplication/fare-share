@@ -15,6 +15,7 @@ import share.fare.backend.repository.ActivityRepository;
 import share.fare.backend.repository.GroupMembershipRepository;
 import share.fare.backend.repository.UserRepository;
 import share.fare.backend.repository.VoteRepository;
+import share.fare.backend.util.NotificationType;
 
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +38,9 @@ class VoteServiceTest {
 
     @Mock
     private GroupMembershipRepository groupMembershipRepository;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private VoteService voteService;
@@ -89,6 +93,9 @@ class VoteServiceTest {
         verify(voteRepository, times(1)).existsByActivityAndUser(testActivity, testUser);
         verify(groupMembershipRepository, times(1)).existsByGroupAndUser(testActivity.getGroup(), testUser);
         verify(voteRepository, times(1)).save(any(Vote.class));
+        verify(notificationService).sendNotificationToGroup(anyLong(), argThat(notification ->
+            notification.getSenderId() == 1L
+        ));
     }
 
     @Test
@@ -168,6 +175,8 @@ class VoteServiceTest {
         assertEquals(VoteType.AGAINST, result.getVoteType());
         verify(voteRepository, times(1)).findById(1L);
         verify(voteRepository, times(1)).save(any(Vote.class));
+        verify(notificationService).sendNotificationToGroup(anyLong(), argThat(notification ->
+                notification.getSenderId() == 1L));
     }
 
 

@@ -3,6 +3,7 @@ package share.fare.backend.config;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.context.ApplicationListener;
+import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.List;
 
 @Component
 @AllArgsConstructor
+@Profile("!test")
 public class DataInitializer implements ApplicationListener<ContextRefreshedEvent> {
 
     private final UserRepository userRepository;

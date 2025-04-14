@@ -8,9 +8,7 @@ import share.fare.backend.entity.FriendInvitation;
 import share.fare.backend.entity.Friendship;
 import share.fare.backend.entity.FriendshipId;
 import share.fare.backend.entity.User;
-import share.fare.backend.exception.InvitationAlreadyExistsException;
-import share.fare.backend.exception.InvitationNotFoundException;
-import share.fare.backend.exception.UserNotFoundException;
+import share.fare.backend.exception.*;
 import share.fare.backend.mapper.FriendInvitationMapper;
 import share.fare.backend.repository.FriendInvitationRepository;
 import share.fare.backend.repository.FriendshipRepository;
@@ -36,7 +34,7 @@ public class FriendInvitationService {
     @Transactional
     public FriendInvitationResponse sendFriendInvitation(Long senderId, Long receiverId) {
         if (senderId.equals(receiverId)) {
-            throw new IllegalArgumentException("You cannot send a friend invitation to yourself.");
+            throw new ActionIsNotAllowedException("You cannot send a friend invitation to yourself.");
         }
 
         if (invitationRepository.existsBySenderIdAndReceiverId(senderId, receiverId)) {
@@ -84,7 +82,7 @@ public class FriendInvitationService {
                 .orElseThrow(() -> new InvitationNotFoundException("Friend Invitation not found"));
 
         if (!invitation.getReceiver().getId().equals(userId)) {
-            throw new InvitationNotFoundException("User is not the receiver of this invitation");
+            throw new ActionIsNotAllowedException("User is not the receiver of this invitation");
         }
         User sender = invitation.getSender();
         User receiver = invitation.getReceiver();
@@ -112,7 +110,7 @@ public class FriendInvitationService {
                 .orElseThrow(() -> new InvitationNotFoundException("Friend Invitation not found"));
 
         if (!invitation.getReceiver().getId().equals(userId)) {
-            throw new InvitationNotFoundException("User is not the receiver of this invitation");
+            throw new ActionIsNotAllowedException("User is not the receiver of this invitation");
         }
         User sender = invitation.getSender();
         User receiver = invitation.getReceiver();

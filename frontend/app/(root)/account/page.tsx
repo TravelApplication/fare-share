@@ -16,6 +16,7 @@ import {
 } from '@/validation/updateUserSchema';
 import { Alert } from '@/components/ui/alert';
 import { User, UserSchema } from '@/validation/userProfileSchemas';
+import { formatDate } from '@/lib/utils';
 
 function Page() {
   const [user, setUser] = useState<User | null>(null);
@@ -36,6 +37,7 @@ function Page() {
         headers: { Authorization: `Bearer ${token}` },
       });
       const parsedUser = UserSchema.parse(response.data);
+
       setUser(parsedUser);
     } catch {
       logout();
@@ -50,7 +52,6 @@ function Page() {
     { resetForm }: FormikHelpers<z.infer<typeof updateEmailSchema>>,
   ) => {
     try {
-      console.log(values.newEmail, user?.email, values.currentPassword);
       const authResponse = await axios.post(
         'http://localhost:8080/auth/login',
         { email: user?.email, password: values.currentPassword },
@@ -387,11 +388,7 @@ function Page() {
           <strong>Date of birth</strong>
           <p>
             {user?.userInfo?.dateOfBirth
-              ? new Intl.DateTimeFormat('en-US', {
-                  day: '2-digit',
-                  month: 'long',
-                  year: 'numeric',
-                }).format(new Date(user.userInfo.dateOfBirth))
+              ? formatDate(user.userInfo.dateOfBirth)
               : 'N/A'}
           </p>
 

@@ -1,11 +1,12 @@
 'use client';
 import React from 'react';
 import Link from 'next/link';
-import { Trip } from '@/validation/tripSchemas';
+import { Group } from '@/validation/groupSchema';
 import { useState } from 'react';
+import { formatDate } from '@/lib/utils';
 
 interface TripCardProps {
-  trip: Trip;
+  trip: Group;
 }
 function TripCard({ trip }: TripCardProps) {
   const {
@@ -22,7 +23,7 @@ function TripCard({ trip }: TripCardProps) {
   );
 
   return (
-    <div className="section p-0 flex flex-col md:flex-row md:items-start justify-start md:justify-between bg-white shadow-lg rounded-lg">
+    <div className="section p-0 flex flex-col md:flex-row md:items-start justify-start md:justify-between border bg-white shadow-md rounded-lg">
       <div className="py-6 px-6 w-full md:w-2/3">
         <Link href={`/trips/${id}`}>
           <h4 className="text-heading3-bold text-primary-500 hover:underline">
@@ -30,7 +31,8 @@ function TripCard({ trip }: TripCardProps) {
           </h4>
         </Link>
         <p className="text-small-regular text-gray-500 mb-2">
-          {tripStartDate} - {tripEndDate}
+          {tripStartDate ? formatDate(tripStartDate) : 'N/A'} -{' '}
+          {tripEndDate ? formatDate(tripEndDate) : 'N/A'}
         </p>
         <p className="text-gray-700">{description}</p>
 

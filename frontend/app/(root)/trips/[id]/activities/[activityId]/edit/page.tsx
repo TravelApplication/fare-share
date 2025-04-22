@@ -79,7 +79,7 @@ export default function EditActivityPage() {
       {trip && activity && (
         <>
           <Button
-            onClick={() => router.push(`/trips/${trip.id}`)}
+            onClick={() => router.push(`/trips/${trip.id}/activities/${params.activityId}`)}
             className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm  rounded-full my-4"
           >
             <ArrowLeft />

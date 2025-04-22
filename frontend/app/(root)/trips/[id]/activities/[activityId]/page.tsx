@@ -86,7 +86,7 @@ export default function ActivityDetailsPage() {
                 </Button>
               </div>
             </div>
-            <h1 className="text-md -mt-4 font-semibold text-gray-600">
+            <h1 className="text-md -mt-4 font-semibold text-gray-400">
               {trip.name}
               {trip.tripStartDate && trip.tripEndDate && (
                 <>

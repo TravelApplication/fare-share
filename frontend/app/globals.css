@@ -4,19 +4,19 @@
 
 @layer components {
   button {
-    @apply rounded-sm font-semibold py-1 px-4 transition-colors duration-100;
+    @apply rounded-sm font-semibold py-1 px-4 transition-colors duration-300;
   }
   body {
     @apply text-dark-4 bg-light-1;
   }
   .light-btn {
-    @apply border border-2 border-primary-500 hover:text-light-1 hover:bg-primary-500;
+    @apply border border-2 text-primary-500 border-primary-700 hover:text-light-1 hover:bg-primary-700;
   }
   .terminate-btn {
-    @apply light-btn border-terminate-color hover:bg-terminate-color;
+    @apply text-light-1 bg-red-800 hover:bg-red-900;
   }
   .primary-btn {
-    @apply bg-primary-500 text-light-1 hover:bg-primary-600;
+    @apply bg-primary-500 text-light-1 hover:bg-primary-700;
   }
   .navbar {
     @apply fixed bg-light-1 z-30 px-6 sm:px-10 w-full shadow-sm;

@@ -8,17 +8,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import share.fare.backend.dto.response.GroupInvitationResponse;
-import share.fare.backend.entity.Group;
-import share.fare.backend.entity.GroupInvitation;
-import share.fare.backend.entity.User;
-import share.fare.backend.exception.GroupNotFoundException;
-import share.fare.backend.exception.InvitationAlreadyExistsException;
-import share.fare.backend.exception.InvitationNotFoundException;
-import share.fare.backend.exception.UserNotFoundException;
+import share.fare.backend.entity.*;
+import share.fare.backend.exception.*;
 import share.fare.backend.repository.GroupInvitationRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +34,9 @@ class GroupInvitationServiceTest {
 
     @Mock
     private GroupInvitationRepository invitationRepository;
+
+    @Mock
+    private NotificationService notificationService;
 
     @InjectMocks
     private GroupInvitationService groupInvitationService;
@@ -68,6 +67,8 @@ class GroupInvitationServiceTest {
                 .memberships(new ArrayList<>())
                 .build();
 
+        testGroup.addMember(testSender, GroupRole.OWNER);
+
         testInvitation = GroupInvitation.builder()
                 .id(1L)
                 .sender(testSender)
@@ -93,12 +94,13 @@ class GroupInvitationServiceTest {
         verify(groupRepository, times(1)).findById(1L);
         verify(invitationRepository, times(1)).existsBySenderIdAndReceiverIdAndGroupId(1L, 2L, 1L);
         verify(invitationRepository, times(1)).save(any(GroupInvitation.class));
+        verify(notificationService).sendNotificationToUser(eq(2L), argThat(notification -> notification.getSenderId() == 1L));
     }
 
     @Test
     @Transactional
     public void testSendGroupInvitationSenderEqualsReceiver() {
-        assertThrows(IllegalArgumentException.class, () -> groupInvitationService.sendGroupInvitation(1L, 1L, 1L));
+        assertThrows(ActionIsNotAllowedException.class, () -> groupInvitationService.sendGroupInvitation(1L, 1L, 1L));
     }
 
     @Test
@@ -124,6 +126,7 @@ class GroupInvitationServiceTest {
     public void testSendGroupInvitationReceiverNotFound() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testSender));
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
+        when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
 
         assertThrows(UserNotFoundException.class, () -> groupInvitationService.sendGroupInvitation(1L, 2L, 1L));
         verify(userRepository, times(1)).findById(1L);
@@ -134,12 +137,10 @@ class GroupInvitationServiceTest {
     @Transactional
     public void testSendGroupInvitationGroupNotFound() {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testSender));
-        when(userRepository.findById(2L)).thenReturn(Optional.of(testReceiver));
         when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
         assertThrows(GroupNotFoundException.class, () -> groupInvitationService.sendGroupInvitation(1L, 2L, 1L));
         verify(userRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(2L);
         verify(groupRepository, times(1)).findById(1L);
     }
 
@@ -181,6 +182,7 @@ class GroupInvitationServiceTest {
         verify(groupRepository, times(1)).save(any(Group.class));
         verify(invitationRepository, times(1)).deleteAllByGroupIdAndReceiverId(1L, 2L);
         verify(invitationRepository, times(1)).delete(testInvitation);
+        verify(notificationService).sendNotificationToUser(eq(1L), argThat(notification -> notification.getSenderId() == 2L));
     }
 
     @Test
@@ -197,7 +199,7 @@ class GroupInvitationServiceTest {
     public void testAcceptGroupInvitationUserNotReceiver() {
         when(invitationRepository.findById(1L)).thenReturn(Optional.of(testInvitation));
 
-        assertThrows(InvitationNotFoundException.class, () -> groupInvitationService.acceptGroupInvitation(1L, 3L));
+        assertThrows(ActionIsNotAllowedException.class, () -> groupInvitationService.acceptGroupInvitation(1L, 3L));
         verify(invitationRepository, times(1)).findById(1L);
     }
 
@@ -211,6 +213,7 @@ class GroupInvitationServiceTest {
 
         verify(invitationRepository, times(1)).findById(1L);
         verify(invitationRepository, times(1)).delete(testInvitation);
+        verify(notificationService).sendNotificationToUser(eq(1L), argThat(notification -> notification.getSenderId() == 2L));
     }
 
     @Test
@@ -227,7 +230,7 @@ class GroupInvitationServiceTest {
     public void testRejectGroupInvitationUserNotReceiver() {
         when(invitationRepository.findById(1L)).thenReturn(Optional.of(testInvitation));
 
-        assertThrows(InvitationNotFoundException.class, () -> groupInvitationService.rejectGroupInvitation(1L, 3L));
+        assertThrows(ActionIsNotAllowedException.class, () -> groupInvitationService.rejectGroupInvitation(1L, 3L));
         verify(invitationRepository, times(1)).findById(1L);
     }
 }

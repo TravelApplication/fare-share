@@ -16,7 +16,6 @@ export default {
       },
     },
 
-
     extend: {
       fontSize: {
         'heading1-bold': [
@@ -186,6 +185,7 @@ export default {
         'primary-200': '#ADDEFF',
         'primary-500': '#0095F6',
         'primary-600': '#0087E0',
+        'primary-700': '#0079C1',
         'secondary-500': '#FFB620',
         'terminate-color': '#FF5A5A',
         'dark-1': '#000000',

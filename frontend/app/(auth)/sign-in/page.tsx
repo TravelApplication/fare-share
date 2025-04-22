@@ -13,38 +13,41 @@ import { authApiSchema, loginFormSchema } from '@/validation/authSchemas';
 import { CircleAlert } from 'lucide-react';
 import { setToken } from '@/lib/auth';
 
-const handleSignIn = async (
-  values: z.infer<typeof loginFormSchema>,
-  {
-    setError,
-    resetForm,
-  }: FormikHelpers<z.infer<typeof loginFormSchema>> & {
-    setError: (error: string) => void;
-  },
-) => {
-  try {
-    const result = await axios.post('http://localhost:8080/auth/login', values);
-    const parsedResult = authApiSchema.safeParse(result.data);
-    if (!parsedResult.success) {
-      setError('Invalid response from server. Please try again.');
-      return;
-    }
-    const token = parsedResult.data.token;
-    setToken(token);
-    window.location.href = '/trips';
-    resetForm();
-  } catch (err: unknown) {
-    setError(
-      `${
-        err.response?.data?.message || 'Something went wrong'
-      }. Please try again.`,
-    );
-    resetForm();
-  }
-};
-
 function Page() {
   const [error, setError] = useState('');
+  const handleSignIn = async (
+    values: z.infer<typeof loginFormSchema>,
+    {
+      setError,
+      resetForm,
+    }: FormikHelpers<z.infer<typeof loginFormSchema>> & {
+      setError: (error: string) => void;
+    },
+  ) => {
+    try {
+      const result = await axios.post(
+        'http://localhost:8080/auth/login',
+        values,
+      );
+      const parsedResult = authApiSchema.safeParse(result.data);
+      if (!parsedResult.success) {
+        setError('Invalid response from server. Please try again.');
+        return;
+      }
+      const token = parsedResult.data.token;
+      setToken(token);
+
+      window.location.href = '/trips';
+      resetForm();
+    } catch (err: unknown) {
+      setError(
+        `${
+          err.response?.data?.message || 'Something went wrong'
+        }. Please try again.`,
+      );
+      resetForm();
+    }
+  };
   return (
     <div className="section py-6 px-12">
       <h1 className="text-heading1-bold">Sign In</h1>

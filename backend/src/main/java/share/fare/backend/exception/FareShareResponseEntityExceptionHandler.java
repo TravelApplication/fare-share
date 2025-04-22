@@ -21,19 +21,6 @@ import java.util.Map;
 @ControllerAdvice
 public class FareShareResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
     /**
-     * Global exception handler for all exceptions
-     * @param ex Exception
-     * @param request WebRequest
-     * @return ResponseEntity<ErrorDetails>
-     */
-    @ExceptionHandler(Exception.class)
-    public final ResponseEntity<ErrorDetails> handleAllExceptions(Exception ex, WebRequest request) {
-        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
-
-        return new ResponseEntity<>(errorDetails, HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-
-    /**
      * Global exception handler for UserNotFoundException
      * @param ex UserNotFoundException
      * @param request WebRequest
@@ -178,7 +165,43 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
     }
 
     @ExceptionHandler(FriendshipNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> FriendshipNotFoundException(Exception ex, WebRequest request) {
+    public final ResponseEntity<ErrorDetails> friendshipNotFoundException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public final ResponseEntity<ErrorDetails> illegalArgumentException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+    
+    @ExceptionHandler(ExpenseNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> expenseNotFoundException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(GroupBalanceNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> groupBalanceNotFoundException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(InvalidExpenseException.class)
+    public final ResponseEntity<ErrorDetails> invalidExpenseException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(InvalidPaymentException.class)
+    public final ResponseEntity<ErrorDetails> invalidPaymentException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
+    @ExceptionHandler(SettlementNotFoundException.class)
+    public final ResponseEntity<ErrorDetails> settlementNotFoundException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }

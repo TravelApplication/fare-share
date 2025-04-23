@@ -21,6 +21,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { z } from 'zod';
 import { updateProfileFormSchema } from '@/validation/authSchemas';
 import { toast } from 'sonner';
+import { appStore } from '@/store/appStore';
 
 function Page() {
   const { id } = useParams();
@@ -28,6 +29,47 @@ function Page() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const sentFriendInvitations = appStore((s) => s.sentFriendInvitations);
+  const addSentFriendInvitation = appStore((s) => s.addSentFriendInvitation);
+  const hasSentFriendInvitation = appStore((s) => s.hasSentFriendInvitation);
+  console.log(sentFriendInvitations);
+  console.log(hasSentFriendInvitation(id));
+
+  const fetchUserData = async (token: string, id: number) => {
+    try {
+      const response = await axios.get(`/api/v1/user-info/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setUser(response.data);
+    } catch (err: unknown) {
+      setError(`Error: ${err}`);
+    }
+  };
+
+  const sendFriendRequest = async (userId: string) => {
+    try {
+      const token = getToken();
+      await axios.post(
+        `/api/v1/friend-invitations/send/${userId}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      toast('Friend request sent!', {
+        duration: 7000,
+        action: {
+          label: 'Close',
+          onClick: () => {
+            toast.dismiss();
+          },
+        },
+      });
+      addSentFriendInvitation(userId);
+    } catch (err) {
+      setError(`Error: ${err}`);
+    }
+  };
 
   useEffect(() => {
     const token = getToken();
@@ -36,17 +78,7 @@ function Page() {
       setUserId(decode?.sub ?? '');
     }
 
-    const fetchUserData = async () => {
-      try {
-        const response = await axios.get(`/api/v1/user-info/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(response.data);
-      } catch (err: unknown) {
-        setError(`Error: ${err}`);
-      }
-    };
-    fetchUserData();
+    fetchUserData(token, id);
   }, [id]);
 
   if (!user) {
@@ -234,11 +266,22 @@ function Page() {
                 </div>
                 {userId !== id && (
                   <button
-                    className="col-span-2 flex items-center justify-center gap-6 px-6 py-6 bg-gradient-to-r from-blue-500/80 to-primary-600/85 text-white font-semibold rounded-xl shadow-lg hover:bg-gradient-to-r hover:from-blue-500 hover:to-primary-600 transition-transform duration-200 hover:shadow-xl"
-                    onClick={() => console.log('Send friend request')}
+                    className={`col-span-2 flex items-center justify-center gap-6 px-6 py-6 text-white font-semibold rounded-xl shadow-lg transition-transform duration-200 ${
+                      hasSentFriendInvitation(user.userId)
+                        ? 'bg-primary-700 cursor-not-allowed'
+                        : 'bg-gradient-to-r from-blue-500/80 to-primary-600/85 hover:bg-gradient-to-r hover:from-blue-500 hover:to-primary-600 hover:shadow-xl'
+                    }`}
+                    onClick={() => sendFriendRequest(user.userId)}
+                    disabled={hasSentFriendInvitation(user.userId)}
                   >
                     <UserPlus className="w-6 h-6" />
-                    <span>Send Friend Request</span>
+                    {hasSentFriendInvitation(user.userId) ? (
+                      <span>Friend Request Sent</span>
+                    ) : (
+                      <span className="text-white font-semibold">
+                        Send Friend Request
+                      </span>
+                    )}
                   </button>
                 )}
               </div>

@@ -83,7 +83,7 @@ function SearchUsers() {
           <ul>
             {results.map((user) => (
               <UserTile
-                key={user.id}
+                key={user.userId}
                 user={user}
                 onClick={() => {
                   setIsDropdownVisible(false);

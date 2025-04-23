@@ -27,6 +27,7 @@ export const WebSocketProvider = ({
             headers: { Authorization: `Bearer ${token}` },
           });
           const userData = response.data;
+          console.log(userData);
           setUser(userData);
         } catch (err) {
           console.error('error websockeet', err);

@@ -3,7 +3,10 @@ import { StateCreator } from 'zustand';
 export type User = {
   id: number;
   email: string;
+  createdAt: string;
   userInfo: {
+    id: number;
+    userId: number;
     firstName: string | null;
     lastName: string | null;
     phoneNumber: string | null;

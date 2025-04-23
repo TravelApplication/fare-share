@@ -20,7 +20,8 @@ import { appStore } from '@/store/appStore';
 
 function Navbar() {
   const [token, setToken] = useState<string | null>(null);
-  const [id, setId] = useState<string | null>(null);
+  const user = appStore((s) => s.user);
+  const setUser = appStore((s) => s.setUser);
   const [notificationAmount, setNotificationAmount] = useState<number>(0);
 
   const toFetchFriendInvitations = appStore((s) => s.toFetchFriendInvitations);
@@ -31,6 +32,38 @@ function Navbar() {
   const setToFetchGroupInvitations = appStore(
     (s) => s.setToFetchGroupInvitations,
   );
+
+  useEffect(() => {
+    const token = getToken();
+    setToken(token);
+
+    if (token && !user) {
+      const fetchUserData = async () => {
+        try {
+          const response = await axios.get('/api/v1/users', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const userData: User = {
+            id: response.data.id,
+            email: response.data.email,
+            userInfo: response.data.userInfo,
+            memberships: response.data.memberships.map(
+              (membership: unknown) => ({
+                groupId: membership.groupId,
+              }),
+            ),
+          };
+
+          setUser(userData);
+        } catch (err) {
+          console.error('Failed to fetch user data:', err);
+        }
+      };
+
+      fetchUserData();
+    }
+  }, [token, user, setUser]);
 
   const fetchNotifications = async () => {
     const token = getToken();
@@ -109,17 +142,25 @@ function Navbar() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Avatar className="cursor-pointer">
-                    <AvatarFallback>XX</AvatarFallback>
+                    <AvatarFallback>
+                      {user?.userInfo?.firstName?.charAt(0) || 'U'}
+                      {user?.userInfo?.lastName?.charAt(0) || ''}
+                    </AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuLabel>Account</DropdownMenuLabel>
-                  <DropdownMenuItem>
-                    <Link className="navbar_link" href={`/account/${id}`}>
-                      <User />
-                      <p>Profile</p>
-                    </Link>
-                  </DropdownMenuItem>
+                  {user && (
+                    <DropdownMenuItem>
+                      <Link
+                        className="navbar_link"
+                        href={`/account/${user.id}`}
+                      >
+                        <User />
+                        <p>Profile</p>
+                      </Link>
+                    </DropdownMenuItem>
+                  )}
                   <DropdownMenuSeparator />
                   <DropdownMenuItem>
                     <Link className="navbar_link" href="/account">

@@ -2,7 +2,7 @@
 import React from 'react';
 import TripForm from '@/components/trip/TripForm';
 import { Alert } from '@/components/ui/alert';
-import { createGroupFormSchema } from '@/validation/groupSchemas';
+import { createGroupFormSchema } from '@/validation/groupFormSchemas';
 import { useState } from 'react';
 import { FormikHelpers } from 'formik';
 import { z } from 'zod';

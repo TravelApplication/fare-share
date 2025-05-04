@@ -1,10 +1,10 @@
 'use client';
 import React from 'react';
-import TripCard from '@/components/cards/TripCard';
+import TripCard from '@/components/trip/TripCard';
 import { getToken, logout } from '@/lib/auth';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-import { Trip, tripSchema } from '@/validation/tripSchemas';
+import { Group, groupSchema } from '@/validation/groupSchema';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import CustomPagination from '@/components/shared/CustomPagination';
@@ -19,7 +19,7 @@ import { Alert } from '@/components/ui/alert';
 
 function Page() {
   const [error, setError] = useState<string | null>(null);
-  const [trips, setTrips] = useState<Trip[]>([]);
+  const [trips, setTrips] = useState<Group[]>([]);
   const [totalTrips, setTotalTrips] = useState(0);
   const tripsPerPage = 3;
 
@@ -50,12 +50,12 @@ function Page() {
         const parsedTrips = response.data.content
           .map((trip: unknown) => {
             try {
-              return tripSchema.parse(trip);
+              return groupSchema.parse(trip);
             } catch {
               return null;
             }
           })
-          .filter((trip: Trip | null) => trip !== null);
+          .filter((trip: Group | null) => trip !== null);
 
         setTrips(parsedTrips);
         setTotalTrips(response.data.totalElements);

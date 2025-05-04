@@ -11,6 +11,8 @@ import {
   Pencil,
   Phone,
   Save,
+  UserCheck,
+  UserCog,
   UserPlus,
 } from 'lucide-react';
 import { UserInfo } from '@/validation/userProfileSchemas';
@@ -29,11 +31,10 @@ function Page() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
-  const sentFriendInvitations = appStore((s) => s.sentFriendInvitations);
   const addSentFriendInvitation = appStore((s) => s.addSentFriendInvitation);
   const hasSentFriendInvitation = appStore((s) => s.hasSentFriendInvitation);
-  console.log(sentFriendInvitations);
-  console.log(hasSentFriendInvitation(id));
+  const friends = appStore((s) => s.friends);
+  const isFriend = appStore((s) => s.hasFriend);
 
   const fetchUserData = async (token: string, id: number) => {
     try {
@@ -65,7 +66,7 @@ function Page() {
           },
         },
       });
-      addSentFriendInvitation(userId);
+      addSentFriendInvitation(+userId);
     } catch (err) {
       setError(`Error: ${err}`);
     }
@@ -267,20 +268,33 @@ function Page() {
                 {userId !== id && (
                   <button
                     className={`col-span-2 flex items-center justify-center gap-6 px-6 py-6 text-white font-semibold rounded-xl shadow-lg transition-transform duration-200 ${
-                      hasSentFriendInvitation(user.userId)
+                      hasSentFriendInvitation(user.userId) ||
+                      isFriend(user.userId)
                         ? 'bg-primary-700 cursor-not-allowed'
                         : 'bg-gradient-to-r from-blue-500/80 to-primary-600/85 hover:bg-gradient-to-r hover:from-blue-500 hover:to-primary-600 hover:shadow-xl'
                     }`}
                     onClick={() => sendFriendRequest(user.userId)}
                     disabled={hasSentFriendInvitation(user.userId)}
                   >
-                    <UserPlus className="w-6 h-6" />
-                    {hasSentFriendInvitation(user.userId) ? (
-                      <span>Friend Request Sent</span>
+                    {isFriend(user.userId) ? (
+                      <>
+                        <UserCheck className="w-6 h-6" />
+                        <span>Already Friends</span>
+                      </>
+                    ) : hasSentFriendInvitation(user.userId) ? (
+                      <>
+                        <UserCog className="w-6 h-6" />
+                        <span className="text-white font-semibold">
+                          Friend Request Sent
+                        </span>
+                      </>
                     ) : (
-                      <span className="text-white font-semibold">
-                        Send Friend Request
-                      </span>
+                      <>
+                        <UserPlus className="w-6 h-6" />
+                        <span className="text-white font-semibold">
+                          Send Friend Request
+                        </span>
+                      </>
                     )}
                   </button>
                 )}

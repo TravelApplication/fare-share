@@ -3,7 +3,7 @@ import { StateCreator } from 'zustand';
 export type InvitationSlice = {
   sentFriendInvitations: number[];
   addSentFriendInvitation: (userId: number) => void;
-  hasSentFriendInbitation: (userId: number) => boolean;
+  hasSentFriendInvitation: (userId: number) => boolean;
 };
 
 export const createInvitationSlice: StateCreator<InvitationSlice> = (

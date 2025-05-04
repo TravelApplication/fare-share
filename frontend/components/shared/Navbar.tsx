@@ -22,6 +22,8 @@ function Navbar() {
   const [token, setToken] = useState<string | null>(null);
   const user = appStore((s) => s.user);
   const setUser = appStore((s) => s.setUser);
+  const setFriends = appStore((s) => s.setFriends);
+
   const [notificationAmount, setNotificationAmount] = useState<number>(0);
 
   const toFetchFriendInvitations = appStore((s) => s.toFetchFriendInvitations);
@@ -61,9 +63,29 @@ function Navbar() {
         }
       };
 
+      const fetchFriends = async () => {
+        try {
+          const response = await axios.get('/api/v1/friendships', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          const friendsData = response.data.map((friend: any) => ({
+            id: friend.id,
+            firstName: friend.firstName,
+            lastName: friend.lastName,
+            email: friend.email,
+          }));
+
+          setFriends(friendsData);
+        } catch (err) {
+          console.error('Failed to fetch friends:', err);
+        }
+      };
+
+      fetchFriends();
       fetchUserData();
     }
-  }, [token, user, setUser]);
+  }, [token, user, setUser, setFriends]);
 
   const fetchNotifications = async () => {
     const token = getToken();

@@ -1,4 +1,4 @@
-package share.fare.backend.controller;
+package share.fare.backend.controller.groupchat;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -12,9 +12,11 @@ import share.fare.backend.entity.User;
 import share.fare.backend.entity.ChatMessage;
 import share.fare.backend.repository.ChatMessageRepository;
 
+import java.time.LocalDateTime;
+
 @Controller
 @RequiredArgsConstructor
-public class GroupChatController {
+public class GroupChatWSController {
     private final ChatMessageRepository chatMessageRepository;
 
     @MessageMapping("/group/{groupId}/chat.sendMessage")
@@ -27,6 +29,7 @@ public class GroupChatController {
                 .senderId(user.getId())
                 .senderEmail(user.getEmail())
                 .groupId(Long.valueOf(groupId))
+                .timestamp(LocalDateTime.now())
                 .build();
 
         chatMessageRepository.save(chatMessage);

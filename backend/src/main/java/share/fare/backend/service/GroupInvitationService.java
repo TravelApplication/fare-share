@@ -60,6 +60,7 @@ public class GroupInvitationService {
 
         notificationService.sendNotificationToUser(receiverId, GroupInvitationNotification.builder()
                         .senderId(senderId)
+                        .senderEmail(receiver.getEmail())
                         .groupId(groupId)
                         .type(NotificationType.GROUP_INVITATION)
                         .message("You received invitation to group " + group.getName() + " from " + sender.getEmail())
@@ -105,6 +106,7 @@ public class GroupInvitationService {
 
         notificationService.sendNotificationToUser(sender.getId(), GroupInvitationNotification.builder()
                 .senderId(receiver.getId())
+                .senderEmail(receiver.getEmail())
                 .type(NotificationType.GROUP_INVITATION_ACCEPT)
                 .groupId(group.getId())
                 .message(receiver.getEmail() + " accepted your invitation to " + group.getName())
@@ -129,6 +131,7 @@ public class GroupInvitationService {
 
         notificationService.sendNotificationToUser(sender.getId(), GroupInvitationNotification.builder()
                 .senderId(receiver.getId())
+                .senderEmail(receiver.getEmail())
                 .groupId(group.getId())
                 .type(NotificationType.GROUP_INVITATION_REJECT)
                 .message(receiver.getEmail() + " rejected your invitation to " + group.getName())

@@ -25,6 +25,8 @@ public class ActivityMapper {
                 .location(activity.getLocation())
                 .link(activity.getLink())
                 .groupId(activity.getGroup() != null ? activity.getGroup().getId() : null)
+                .startDate(activity.getStartDate())
+                .endDate(activity.getEndDate())
                 .createdAt(activity.getCreatedAt())
                 .votes(mapVotes(activity.getVotes()))
                 .build();
@@ -40,6 +42,8 @@ public class ActivityMapper {
                 .description(request.getDescription())
                 .location(request.getLocation())
                 .link(request.getLink())
+                .startDate(request.getStartDate())
+                .endDate(request.getEndDate())
                 .group(group)
                 .votes(new ArrayList<>())
                 .build();

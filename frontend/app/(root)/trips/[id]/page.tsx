@@ -57,8 +57,6 @@ export default function TripPage() {
     
   }, [trip, toFetchGroup]);
 
-
-
   const castVote = async (activityId: number, type: 'FOR' | 'AGAINST') => {
     const token = getToken();
     const currentActivity = trip?.activities.find((a) => a.id === activityId);
@@ -179,10 +177,10 @@ export default function TripPage() {
                   <div className="flex h-min">
                   <button
                     onClick={() => castVote(activity.id, 'FOR')}
-                    className={`pl-4 pr-3 py-3 shadow-md flex items-center justify-center gap-2 rounded-l-full border
+                    className={`pl-4 pr-3 py-3 shadow-md flex items-center justify-center gap-2 rounded-l-full border text-primary-600 hover:bg-primary-500/20
                       ${votes[activity.id]?.userVote === 'FOR'
-                        ? 'bg-primary-500/15 text-primary-600'
-                        : 'bg-white text-primary-500 border hover:bg-primary-600/15'
+                        ? 'bg-primary-500/10'
+                        : 'bg-white'
                       }`}
                   >
                         <motion.div
@@ -196,10 +194,10 @@ export default function TripPage() {
                     </button>
                     <button
                       onClick={() => castVote(activity.id, 'AGAINST')}
-                      className={`pr-4 pl-3 py-3 shadow-md flex items-center justify-center gap-2 rounded-r-full border
+                      className={`pr-4 pl-3 py-3 shadow-md flex items-center justify-center gap-2 text-red-800 rounded-r-full border hover:bg-red-400/20
                         ${votes[activity.id]?.userVote === 'AGAINST'
-                          ? 'bg-red-300/25 text-red-700'
-                          : 'bg-white text-red-800 border hover:bg-red-300/20'
+                          ? 'bg-red-400/10'
+                          : 'bg-white'
                         }`}
                     >
                       <span>{votes[activity.id]?.against || 0}</span>

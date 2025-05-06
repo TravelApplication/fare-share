@@ -63,7 +63,7 @@ export default function ActivityDetailsPage() {
 
           <div className="section p-6 bg-white border flex flex-col gap-3">
             <div className="flex justify-between items-center">
-              <h1 className="text-2xl font-bold">{activity.name}</h1>
+              <h1 className="text-2xl font-bold text-primary-500">{activity.name}</h1>
               <div className="flex gap-4">
                 <Button
                   onClick={() =>

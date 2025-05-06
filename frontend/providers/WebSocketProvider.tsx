@@ -6,6 +6,7 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axios from 'axios';
 import { toast } from 'sonner';
+import { MembershipSchema } from '@/validation/membershipSchema';
 
 export const WebSocketProvider = ({
   children,
@@ -15,6 +16,7 @@ export const WebSocketProvider = ({
   const user = appStore((state) => state.user);
   const setUser = appStore((state) => state.setUser);
   const addNotfication = appStore((state) => state.addNotification);
+  const setToFetchGroup = appStore((state) => state.setToFetchGroup)
 
   useEffect(() => {
     const token = getToken();
@@ -50,10 +52,6 @@ export const WebSocketProvider = ({
       if (user) {
         stompClient.subscribe(`/user/${user.id}/notifications`, (message) => {
           const notification = JSON.parse(message.body);
-          if (
-            notification.type !== 'VOTE' &&
-            notification.type !== 'VOTE_CHANGE'
-          ) {
             toast(`${notification.message}`, {
               duration: 7000,
               action: {
@@ -63,9 +61,14 @@ export const WebSocketProvider = ({
                 },
               },
             });
-          }
           addNotfication(notification);
         });
+
+        user.memberships.forEach((memb: MembershipSchema) => {
+          stompClient.subscribe(`/group/${memb.groupId}/notifications`, (vote) => {
+            setToFetchGroup(true);
+          })
+        })
       }
     };
 

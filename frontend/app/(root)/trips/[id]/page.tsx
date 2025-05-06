@@ -24,14 +24,19 @@ import {
 export default function TripPage() {
   const { trip, loading, tripError, refreshTrip } = useTrip();
   const router = useRouter();
+  const toFetchGroup = appStore((s) => s.toFetchGroup);
+  const setToFetchGroup = appStore((s) => s.setToFetchGroup)
 
   const [votes, setVotes] = useState<Record<number, { for: number; against: number; userVote?: 'FOR' | 'AGAINST' }>>({});
 
   const user = appStore((state) => state.user);
   useEffect(() => {
-    if (!trip) return;
+    if (toFetchGroup) {
+      refreshTrip();
+      setToFetchGroup(false);
+    }
+    if (trip) {
     const voteData: typeof votes = {};
-
     trip.activities.forEach((activity) => {
       const forVotes = activity.votes.filter((v: Vote) => v.voteType === 'FOR');
       const againstVotes = activity.votes.filter((v: Vote) => v.voteType === 'AGAINST');
@@ -45,10 +50,14 @@ export default function TripPage() {
         against: againstVotes.length,
         userVote: isValidVoteType ? voteType : undefined,
       };
-    });
+      });
+      setVotes(voteData);
+    }
 
-    setVotes(voteData);
-  }, [trip]);
+    
+  }, [trip, toFetchGroup]);
+
+
 
   const castVote = async (activityId: number, type: 'FOR' | 'AGAINST') => {
     const token = getToken();
@@ -121,7 +130,7 @@ export default function TripPage() {
                 key={activity.id}
                 className="p-4 border rounded-lg shadow-md flex justify-between"
               >
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-col gap-2">
                   <h3
                     className="text-lg font-semibold cursor-pointer"
                     onClick={() => router.push(`/trips/${trip.id}/activities/${activity.id}`)}
@@ -168,12 +177,14 @@ export default function TripPage() {
                     </DropdownMenuContent>
                   </DropdownMenu>
                   <div className="flex h-min">
-                    <button
-                      onClick={() => castVote(activity.id, 'FOR')}
-                      className={`bg-white border text-primary-500 hover:bg-primary-500/15 pl-4 pr-3 py-3 shadow-md flex items-center justify-center gap-2 rounded-l-full border-r-transparent ${
-                        votes[activity.id]?.userVote === 'FOR' ? 'bg-primary-500/10' : ''
+                  <button
+                    onClick={() => castVote(activity.id, 'FOR')}
+                    className={`pl-4 pr-3 py-3 shadow-md flex items-center justify-center gap-2 rounded-l-full border
+                      ${votes[activity.id]?.userVote === 'FOR'
+                        ? 'bg-primary-500/15 text-primary-600'
+                        : 'bg-white text-primary-500 border hover:bg-primary-600/15'
                       }`}
-                    >
+                  >
                         <motion.div
                           key={votes[activity.id]?.userVote}
                           animate={votes[activity.id]?.userVote === 'FOR' ? { rotate: [0, -15, 15, -10, 10, 0] } : {}}
@@ -185,9 +196,11 @@ export default function TripPage() {
                     </button>
                     <button
                       onClick={() => castVote(activity.id, 'AGAINST')}
-                      className={`bg-white border text-red-800 hover:bg-red-300/20 pr-4 pl-3 py-3 shadow-md flex items-center justify-center gap-2 rounded-r-full ${
-                        votes[activity.id]?.userVote === 'AGAINST' ? 'bg-red-300/10' : ''
-                      }`}
+                      className={`pr-4 pl-3 py-3 shadow-md flex items-center justify-center gap-2 rounded-r-full border
+                        ${votes[activity.id]?.userVote === 'AGAINST'
+                          ? 'bg-red-300/25 text-red-700'
+                          : 'bg-white text-red-800 border hover:bg-red-300/20'
+                        }`}
                     >
                       <span>{votes[activity.id]?.against || 0}</span>
                       <motion.div

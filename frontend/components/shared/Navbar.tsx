@@ -14,7 +14,7 @@ import { Button } from '../ui/button';
 import { Avatar, AvatarFallback } from '../ui/avatar';
 import { Bell, LogOut, Plane, User } from 'lucide-react';
 import { getToken, isLoggedIn, logout } from '@/lib/auth';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { appStore } from '@/store/appStore';
 
 function Navbar() {
@@ -31,17 +31,10 @@ function Navbar() {
   );
 
   const fetchNotifications = async () => {
-    const token = getToken();
-    if (!token) return;
-
     try {
       const [friendsRes, groupsRes] = await Promise.all([
-        axios.get('/api/v1/friend-invitations/received', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get('/api/v1/group-invitations/received', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        axiosInstance.get('friend-invitations/received'),
+        axiosInstance.get('/group-invitations/received'),
       ]);
 
       const count =

@@ -7,10 +7,11 @@ import { useState } from 'react';
 import { FormikHelpers } from 'formik';
 import { z } from 'zod';
 import axiosInstance from '@/lib/axiosInstance';
+import { useRouter } from 'next/navigation';
 
 const NewTripPage = () => {
   const [error, setError] = useState<string | null>(null);
-
+  const router = useRouter();
   const handleCreateTrip = async (
     values: z.infer<typeof createGroupFormSchema>,
     actions: FormikHelpers<z.infer<typeof createGroupFormSchema>>,
@@ -18,7 +19,7 @@ const NewTripPage = () => {
     try {
       const response = await axiosInstance.post('groups', values);
       actions.resetForm();
-      window.location.href = '/trips';
+      router.push('/trips');
     } catch (err: unknown) {
       setError(err.message || 'An error occurred');
     }

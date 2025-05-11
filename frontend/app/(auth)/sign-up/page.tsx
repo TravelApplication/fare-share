@@ -23,7 +23,6 @@ const handleSignUp = async (
   },
 ) => {
   try {
-    console.log(values);
     const result = await axios.post('/auth/register', values);
     const parsedResult = authApiSchema.safeParse(result.data);
     if (!parsedResult.success) {

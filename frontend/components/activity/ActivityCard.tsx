@@ -22,9 +22,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { useTrip } from '@/context/TripContext';
-import { getToken } from '@/lib/auth';
 import { appStore } from '@/store/appStore';
 import { useEffect, useState } from 'react';
 import { Vote } from '@/validation/voteSchema';
@@ -52,7 +51,6 @@ export default function ActivityCard({
   }, [trip, user?.id, getVotes, user]);
 
   const castVote = async (activityId: number, type: 'FOR' | 'AGAINST') => {
-    const token = getToken();
     const currentActivity = trip?.activities.find((a) => a.id === activityId);
     const existingVote = currentActivity?.votes.find(
       (v: Vote) => v.userId === user?.id,
@@ -60,21 +58,18 @@ export default function ActivityCard({
 
     try {
       if (existingVote && existingVote.voteType === type) {
-        await axios.delete(
-          `/api/v1/groups/${trip!.id}/activities/${activityId}/votes/${existingVote.id}`,
-          { headers: { Authorization: `Bearer ${token}` } },
+        await axiosInstance.delete(
+          `groups/${trip!.id}/activities/${activityId}/votes/${existingVote.id}`,
         );
       } else if (existingVote) {
-        await axios.put(
-          `/api/v1/groups/${trip!.id}/activities/${activityId}/votes/${existingVote.id}`,
+        await axiosInstance.put(
+          `groups/${trip!.id}/activities/${activityId}/votes/${existingVote.id}`,
           { voteType: type },
-          { headers: { Authorization: `Bearer ${token}` } },
         );
       } else {
-        await axios.post(
-          `/api/v1/groups/${trip!.id}/activities/${activityId}/votes`,
+        await axiosInstance.post(
+          `groups/${trip!.id}/activities/${activityId}/votes`,
           { voteType: type },
-          { headers: { Authorization: `Bearer ${token}` } },
         );
       }
 
@@ -87,12 +82,8 @@ export default function ActivityCard({
   const handleDelete = async () => {
     try {
       if (activity && trip) {
-        const token = getToken();
-        await axios.delete(
-          `/api/v1/groups/${trip.id}/activities/${activity.id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
+        await axiosInstance.delete(
+          `groups/${trip.id}/activities/${activity.id}`,
         );
         toast(`Activity ${activity.name} deleted!`, {
           duration: 7000,

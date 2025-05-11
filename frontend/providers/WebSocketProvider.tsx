@@ -4,7 +4,7 @@ import { appStore } from '@/store/appStore';
 import { getToken } from '@/lib/auth';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'sonner';
 import { MembershipSchema } from '@/validation/membershipSchema';
 
@@ -25,9 +25,7 @@ export const WebSocketProvider = ({
     const fetchUserData = async () => {
       if (!user) {
         try {
-          const response = await axios.get('/api/v1/users', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axiosInstance.get('users');
           const userData = response.data;
           setUser(userData);
         } catch (err) {

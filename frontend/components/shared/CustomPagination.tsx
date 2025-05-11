@@ -12,12 +12,12 @@ import {
 import { useSearchParams } from 'next/navigation';
 
 interface CustomPaginationProps {
-  totalTrips: number;
-  tripsPerPage: number;
+  totalItems: number;
+  itemsPerPage: number;
 }
 
-function CustomPagination({ totalTrips, tripsPerPage }: CustomPaginationProps) {
-  const totalPages = Math.ceil(totalTrips / tripsPerPage);
+function CustomPagination({ totalItems, itemsPerPage }: CustomPaginationProps) {
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
   const searchParams = useSearchParams();
   const currentPage = Number(searchParams.get('page')) || 1;
 

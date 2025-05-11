@@ -186,7 +186,9 @@ export default function InvitationsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-primary-500">Invitations</CardTitle>
+        <CardTitle className="text-2xl font-bold text-primary-500">
+          Invitations
+        </CardTitle>
         <CardDescription>
           Manage your friend and trip invitations.
         </CardDescription>

@@ -11,3 +11,5 @@ export const activitySchema = z.object({
   createdAt: z.union([z.string(), z.null()]),
   votes: z.array(voteSchema),
 });
+
+export type ActivitySchema = z.infer<typeof activitySchema>;

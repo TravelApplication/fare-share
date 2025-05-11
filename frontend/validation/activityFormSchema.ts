@@ -14,4 +14,3 @@ export const activityFormSchema = z.object({
     .optional(),
   link: z.string().url({ message: 'Invalid URL format' }).optional(),
 });
-

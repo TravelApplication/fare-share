@@ -14,7 +14,7 @@ import { ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function NewActivityPage() {
-  const { trip, tripError, refreshTrip } = useTrip();
+  const { trip, refreshTrip } = useTrip();
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 

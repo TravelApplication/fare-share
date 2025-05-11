@@ -56,7 +56,7 @@ export default function ActivityForm({
           onSubmit(values, actions);
         }}
       >
-        {({ errors, touched, values, setFieldValue, setFieldError }) => (
+        {({ errors, touched }) => (
           <Form>
             <div className="mt-4">
               <label className="font-semibold" htmlFor="name">

@@ -49,7 +49,7 @@ export const createNotificationSlice: StateCreator<
       ) {
         set({ toFetchGroupInvitations: true });
       } else {
-        set({ toFetchGroup: true})
+        set({ toFetchGroup: true });
       }
 
       return { notifications: [...state.notifications, notification] };
@@ -61,5 +61,5 @@ export const createNotificationSlice: StateCreator<
     set({ toFetchFriendInvitations: value }),
   setToFetchGroupInvitations: (value) =>
     set({ toFetchGroupInvitations: value }),
-  setToFetchGroup: (value) => set({toFetchGroup: value})
+  setToFetchGroup: (value) => set({ toFetchGroup: value }),
 });

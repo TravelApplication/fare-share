@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { membershipSchema } from './membershipSchema';
 
 export const UserInfoSchema = z
   .object({
@@ -15,6 +16,7 @@ export const UserSchema = z
     id: z.number(),
     email: z.string().email(),
     userInfo: UserInfoSchema,
+    memberships: z.array(membershipSchema),
   })
   .passthrough();
 

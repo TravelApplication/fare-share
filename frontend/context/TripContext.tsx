@@ -17,6 +17,12 @@ interface TripContextType {
   loading: boolean;
   tripError: string | null;
   refreshTrip: () => void;
+  getVotes: (
+    userId: number,
+  ) => Record<
+    number,
+    { for: number; against: number; userVote?: 'FOR' | 'AGAINST' }
+  >;
 }
 
 const TripContext = createContext<TripContextType | undefined>(undefined);
@@ -26,6 +32,12 @@ export function TripContextProvider({ children }: { children: ReactNode }) {
   const [trip, setTrip] = useState<Group | null>(null);
   const [loading, setLoading] = useState(true);
   const [tripError, setTripError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!params.id) return;
+
+    fetchTrip();
+  }, [params.id]);
 
   const fetchTrip = async () => {
     try {
@@ -58,15 +70,34 @@ export function TripContextProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  useEffect(() => {
-    if (!params.id) return;
-
-    fetchTrip();
-  }, [params.id]);
+  const getVotes = (userId: number) => {
+    const voteData: Record<
+      number,
+      { for: number; against: number; userVote?: 'FOR' | 'AGAINST' }
+    > = {};
+    if (trip) {
+      trip.activities.forEach((activity) => {
+        const forVotes = activity.votes.filter((v) => v.voteType === 'FOR');
+        const againstVotes = activity.votes.filter(
+          (v) => v.voteType === 'AGAINST',
+        );
+        const userVote = activity.votes.find((v) => v.userId === userId);
+        voteData[activity.id] = {
+          for: forVotes.length,
+          against: againstVotes.length,
+          userVote:
+            userVote?.voteType === 'FOR' || userVote?.voteType === 'AGAINST'
+              ? userVote.voteType
+              : undefined,
+        };
+      });
+    }
+    return voteData;
+  };
 
   return (
     <TripContext.Provider
-      value={{ trip, loading, tripError, refreshTrip: fetchTrip }}
+      value={{ trip, loading, tripError, refreshTrip: fetchTrip, getVotes }}
     >
       {children}
     </TripContext.Provider>

@@ -13,7 +13,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { getToken } from '@/lib/auth';
 import { appStore } from '@/store/appStore';
-import { set } from 'zod';
 
 interface InvitationResponse {
   id: number;
@@ -187,7 +186,9 @@ export default function InvitationsPage() {
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="text-2xl">Invitations</CardTitle>
+        <CardTitle className="text-2xl font-bold text-primary-500">
+          Invitations
+        </CardTitle>
         <CardDescription>
           Manage your friend and trip invitations.
         </CardDescription>

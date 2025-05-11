@@ -135,8 +135,8 @@ function Page() {
             ))}
           </div>
           <CustomPagination
-            totalTrips={totalTrips}
-            tripsPerPage={tripsPerPage}
+            totalItems={totalTrips}
+            itemsPerPage={tripsPerPage}
           />
         </>
       ) : (

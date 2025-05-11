@@ -4,7 +4,6 @@ import ActivityForm from '@/components/activity/ActivityForm';
 import { useTrip } from '@/context/TripContext';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
-import { FormikHelpers } from 'formik';
 import { activityFormSchema } from '@/validation/activityFormSchema';
 import { getToken } from '@/lib/auth';
 import axios from 'axios';
@@ -44,13 +43,12 @@ export default function EditActivityPage() {
 
   const handleEditActivity = async (
     values: z.infer<typeof activityFormSchema>,
-    actions: FormikHelpers<z.infer<typeof activityFormSchema>>,
   ) => {
     if (!trip) return;
     try {
       if (activity && trip) {
         const token = getToken();
-        const response = await axios.put(
+        await axios.put(
           `/api/v1/groups/${trip.id}/activities/${params.activityId}`,
           values,
           {
@@ -79,11 +77,13 @@ export default function EditActivityPage() {
       {trip && activity && (
         <>
           <Button
-            onClick={() => router.push(`/trips/${trip.id}`)}
+            onClick={() =>
+              router.push(`/trips/${trip.id}/activities/${params.activityId}`)
+            }
             className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm  rounded-full my-4"
           >
             <ArrowLeft />
-            <span>Back To Activity Summary</span>
+            <span>Back to Activity Summary</span>
           </Button>
           <div className="section px-12">
             {error && (

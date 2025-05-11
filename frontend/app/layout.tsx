@@ -5,6 +5,8 @@ import './globals.css';
 import Navbar from '@/components/shared/Navbar';
 import { Suspense } from 'react';
 import { Toaster } from '@/components/ui/sonner';
+import { TooltipProvider } from '@/components/ui/tooltip';
+
 const geistSans = Geist({
   variable: '--font-geist-sans',
   subsets: ['latin'],
@@ -33,7 +35,9 @@ export default function RootLayout({
         <Navbar />
         <Suspense>
           <section className="main-container">
-            <div className="w-full max-w-4xl">{children}</div>
+            <div className="w-full max-w-4xl">
+              <TooltipProvider>{children}</TooltipProvider>
+            </div>
             <Toaster />
           </section>
         </Suspense>

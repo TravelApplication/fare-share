@@ -12,6 +12,8 @@ import {
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { appStore } from '@/store/appStore';
+import YesNoModal from '@/components/shared/YesNoModal';
+import { toast } from 'sonner';
 
 interface InvitationResponse {
   id: number;
@@ -37,6 +39,11 @@ export default function InvitationsPage() {
   const [groupInvitesSent, setGroupInvitesSent] = useState<
     GroupInvitationResponse[]
   >([]);
+  const [currentAction, setCurrentAction] = useState<{
+    id: number;
+    type: 'friend' | 'group';
+    action: 'accept' | 'reject';
+  } | null>(null);
 
   const toFetchFriendInvitations = appStore((s) => s.toFetchFriendInvitations);
   const setToFetchFriendInvitations = appStore(
@@ -63,12 +70,20 @@ export default function InvitationsPage() {
       setGroupInvitesSent(groupsSent.data);
     } catch (err) {
       console.error('error with invitations', err);
+      toast('Failed to load invitations', {
+        description: 'Please try again later',
+        duration: 5000,
+        action: {
+          label: 'Close',
+          onClick: () => toast.dismiss(),
+        },
+      });
     }
   };
 
   useEffect(() => {
     fetchInvitations();
-  });
+  }, []);
 
   useEffect(() => {
     if (toFetchFriendInvitations || toFetchGroupInvitations) {
@@ -83,32 +98,62 @@ export default function InvitationsPage() {
     setToFetchGroupInvitations,
   ]);
 
+  const handleActionConfirmation = async () => {
+    if (!currentAction) return;
+
+    const { id, type, action } = currentAction;
+    const base = type === 'group' ? 'group-invitations' : 'friend-invitations';
+    const url = `${base}/${action}/${id}`;
+
+    const toastId = toast.loading(
+      `${action === 'accept' ? 'Accepting' : 'Rejecting'} invitation...`,
+    );
+
+    try {
+      if (action === 'accept') {
+        await axiosInstance.post(url, {});
+      } else {
+        await axiosInstance.delete(url);
+      }
+
+      toast.success(
+        `Invitation ${action === 'accept' ? 'accepted' : 'rejected'} successfully`,
+        {
+          id: toastId,
+          duration: 5000,
+          action: {
+            label: 'Close',
+            onClick: () => toast.dismiss(toastId),
+          },
+        },
+      );
+
+      if (type === 'group') {
+        setToFetchGroupInvitations(true);
+      } else {
+        setToFetchFriendInvitations(true);
+      }
+    } catch (err) {
+      console.error(`Failed to ${action} invitation`, err);
+      toast.error(`Failed to ${action} invitation`, {
+        id: toastId,
+        description: 'Please try again later',
+        duration: 5000,
+        action: {
+          label: 'Close',
+          onClick: () => toast.dismiss(toastId),
+        },
+      });
+    } finally {
+      setCurrentAction(null);
+    }
+  };
+
   const renderInvitationCard = (
     inv: InvitationResponse | GroupInvitationResponse,
     type: 'received' | 'sent',
   ) => {
     const isGroup = 'groupId' in inv;
-
-    const handleAction = async (action: 'accept' | 'reject') => {
-      const base = isGroup ? 'group-invitations' : 'friend-invitations';
-      const url = `${base}/${action}/${inv.id}`;
-
-      try {
-        if (action === 'accept') {
-          await axiosInstance.post(url, {});
-        } else {
-          await axiosInstance.delete(url);
-        }
-
-        if (isGroup) {
-          setToFetchGroupInvitations(true);
-        } else {
-          setToFetchFriendInvitations(true);
-        }
-      } catch (err) {
-        console.error(`Failed to ${action} invitation`, err);
-      }
-    };
 
     return (
       <Card key={inv.id} className="mb-4">
@@ -126,15 +171,50 @@ export default function InvitationsPage() {
           </p>
           {type === 'received' && (
             <div className="flex gap-2 mt-2">
-              <Button variant="default" onClick={() => handleAction('accept')}>
-                Accept
-              </Button>
-              <Button
-                variant="secondary"
-                onClick={() => handleAction('reject')}
-              >
-                Reject
-              </Button>
+              <YesNoModal
+                title={`Accept ${isGroup ? 'trip' : 'friend'} invitation`}
+                description={`Are you sure you want to accept this ${
+                  isGroup ? 'trip' : 'friend'
+                } invitation?`}
+                actionName="Accept"
+                onConfirm={handleActionConfirmation}
+                trigger={
+                  <Button
+                    className="bg-primary-500 hover:bg-primary-600"
+                    onClick={() =>
+                      setCurrentAction({
+                        id: inv.id,
+                        type: isGroup ? 'group' : 'friend',
+                        action: 'accept',
+                      })
+                    }
+                  >
+                    Accept
+                  </Button>
+                }
+              />
+              <YesNoModal
+                title={`Reject ${isGroup ? 'trip' : 'friend'} invitation`}
+                description={`Are you sure you want to reject this ${
+                  isGroup ? 'trip' : 'friend'
+                } invitation?`}
+                actionName="Reject"
+                onConfirm={handleActionConfirmation}
+                trigger={
+                  <Button
+                    className="border border-primary-500 text-primary-500 bg-white hover:text-white hover:bg-primary-600 hover:border-primary-600"
+                    onClick={() =>
+                      setCurrentAction({
+                        id: inv.id,
+                        type: isGroup ? 'group' : 'friend',
+                        action: 'reject',
+                      })
+                    }
+                  >
+                    Reject
+                  </Button>
+                }
+              />
             </div>
           )}
         </CardContent>

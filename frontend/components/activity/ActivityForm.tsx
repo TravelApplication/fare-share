@@ -9,6 +9,7 @@ import { Button } from '../ui/button';
 import { Textarea } from '../ui/textarea';
 import { Group } from '@/validation/groupSchema';
 import { formatDate } from '@/lib/utils';
+import YesNoModal from '../shared/YesNoModal';
 
 type ActivityFormValues = z.infer<typeof activityFormSchema>;
 
@@ -56,7 +57,7 @@ export default function ActivityForm({
           onSubmit(values, actions);
         }}
       >
-        {({ errors, touched }) => (
+        {({ errors, touched, submitForm }) => (
           <Form>
             <div className="mt-4">
               <label className="font-semibold" htmlFor="name">
@@ -148,18 +149,34 @@ export default function ActivityForm({
                 )}
               />
             </div>
-
-            <Button
-              className="bg-primary-600 hover:bg-primary-500 px-5 py-4 mt-4 text-sm"
-              type="submit"
-              disabled={isSubmitting}
-            >
-              {isSubmitting
-                ? 'Submitting...'
-                : initialValues.name
-                  ? 'Save Changes'
-                  : 'Create an Activity'}
-            </Button>
+            {initialValues.name ? (
+              <>
+                <YesNoModal
+                  title="Are you sure you want to edit this activity?"
+                  description=""
+                  cancelName="Cancel"
+                  actionName="Confirm"
+                  onConfirm={submitForm}
+                  trigger={
+                    <Button
+                      className="bg-primary-600 hover:bg-primary-500 px-5 py-4 mt-4 text-sm"
+                      disabled={isSubmitting}
+                      type="button"
+                    >
+                      {isSubmitting ? 'Submitting...' : 'Save Changes'}
+                    </Button>
+                  }
+                />
+              </>
+            ) : (
+              <Button
+                className="bg-primary-600 hover:bg-primary-500 px-5 py-4 mt-4 text-sm"
+                type="submit"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? 'Submitting...' : 'Submit'}
+              </Button>
+            )}
           </Form>
         )}
       </Formik>

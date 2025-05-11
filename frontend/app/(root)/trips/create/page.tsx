@@ -6,8 +6,7 @@ import { createGroupFormSchema } from '@/validation/groupFormSchemas';
 import { useState } from 'react';
 import { FormikHelpers } from 'formik';
 import { z } from 'zod';
-import { getToken } from '@/lib/auth';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 
 const NewTripPage = () => {
   const [error, setError] = useState<string | null>(null);
@@ -17,11 +16,7 @@ const NewTripPage = () => {
     actions: FormikHelpers<z.infer<typeof createGroupFormSchema>>,
   ) => {
     try {
-      const token = getToken();
-      const response = await axios.post('/api/v1/groups', values, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      console.log(response);
+      const response = await axiosInstance.post('groups', values);
       actions.resetForm();
       window.location.href = '/trips';
     } catch (err: unknown) {

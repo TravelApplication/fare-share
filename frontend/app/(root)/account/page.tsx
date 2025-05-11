@@ -3,8 +3,9 @@ import React from 'react';
 import { toast } from 'sonner';
 import { CircleAlert, Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
+import axiosInstance from '@/lib/axiosInstance';
+import { logout } from '@/lib/auth';
 import axios from 'axios';
-import { getToken, logout } from '@/lib/auth';
 import { Button } from '@/components/ui/button';
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
 import { Input } from '@/components/ui/input';
@@ -28,14 +29,7 @@ function Page() {
 
   const fetchUserData = async () => {
     try {
-      const token = getToken();
-      if (!token) {
-        logout();
-        return;
-      }
-      const response = await axios.get('/api/v1/users', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axiosInstance.get('users');
       const parsedUser = UserSchema.parse(response.data);
 
       setUser(parsedUser);
@@ -52,23 +46,18 @@ function Page() {
     { resetForm }: FormikHelpers<z.infer<typeof updateEmailSchema>>,
   ) => {
     try {
-      const authResponse = await axios.post(
-        'http://localhost:8080/auth/login',
-        { email: user?.email, password: values.currentPassword },
-      );
+      const authResponse = await axios.post('/auth/login', {
+        email: user?.email,
+        password: values.currentPassword,
+      });
 
       if (authResponse.status === 200) {
         const newToken = authResponse.data.token;
 
-        const response = await axios.put(
-          '/api/v1/users',
-          { email: values.newEmail, password: values.currentPassword },
-          {
-            headers: {
-              Authorization: `Bearer ${newToken}`,
-            },
-          },
-        );
+        const response = await axiosInstance.put('users', {
+          email: values.newEmail,
+          password: values.currentPassword,
+        });
 
         setUser((prevState) => ({
           ...prevState!,
@@ -101,22 +90,17 @@ function Page() {
     { resetForm }: FormikHelpers<z.infer<typeof updatePasswordSchema>>,
   ) => {
     try {
-      const authResponse = await axios.post(
-        'http://localhost:8080/auth/login',
-        { email: user?.email, password: values.currentPassword },
-      );
+      const authResponse = await axios.post('/auth/login', {
+        email: user?.email,
+        password: values.currentPassword,
+      });
       if (authResponse.status === 200) {
         const newToken = authResponse.data.token;
 
-        await axios.put(
-          '/api/v1/users',
-          { email: user?.email, password: values.newPassword },
-          {
-            headers: {
-              Authorization: `Bearer ${newToken}`,
-            },
-          },
-        );
+        await axiosInstance.put('users', {
+          email: user?.email,
+          password: values.newPassword,
+        });
 
         resetForm();
         setIsEditingPassword(false);

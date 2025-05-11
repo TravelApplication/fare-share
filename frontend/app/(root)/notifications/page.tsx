@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import {
   Card,
@@ -11,7 +11,6 @@ import {
   CardContent,
 } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { getToken } from '@/lib/auth';
 import { appStore } from '@/store/appStore';
 
 interface InvitationResponse {
@@ -49,24 +48,13 @@ export default function InvitationsPage() {
   );
 
   const fetchInvitations = async () => {
-    const token = getToken();
-    if (!token) return;
-
     try {
       const [friendsReceived, friendsSent, groupsReceived, groupsSent] =
         await Promise.all([
-          axios.get('/api/v1/friend-invitations/received', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get('/api/v1/friend-invitations/sent', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get('/api/v1/group-invitations/received', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get('/api/v1/group-invitations/sent', {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          axiosInstance.get('friend-invitations/received'),
+          axiosInstance.get('friend-invitations/sent'),
+          axiosInstance.get('group-invitations/received'),
+          axiosInstance.get('group-invitations/sent'),
         ]);
 
       setFriendInvitesReceived(friendsReceived.data);
@@ -100,26 +88,16 @@ export default function InvitationsPage() {
     type: 'received' | 'sent',
   ) => {
     const isGroup = 'groupId' in inv;
-    const token = getToken();
 
     const handleAction = async (action: 'accept' | 'reject') => {
-      if (!token) return;
       const base = isGroup ? 'group-invitations' : 'friend-invitations';
-      const url = `/api/v1/${base}/${action}/${inv.id}`;
+      const url = `${base}/${action}/${inv.id}`;
 
       try {
         if (action === 'accept') {
-          await axios.post(
-            url,
-            {},
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
-          );
+          await axiosInstance.post(url, {});
         } else {
-          await axios.delete(url, {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          await axiosInstance.delete(url);
         }
 
         if (isGroup) {

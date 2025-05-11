@@ -5,8 +5,7 @@ import { useTrip } from '@/context/TripContext';
 import { useRouter } from 'next/navigation';
 import { z } from 'zod';
 import { activityFormSchema } from '@/validation/activityFormSchema';
-import { getToken } from '@/lib/auth';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { useParams } from 'next/navigation';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
@@ -47,13 +46,9 @@ export default function EditActivityPage() {
     if (!trip) return;
     try {
       if (activity && trip) {
-        const token = getToken();
-        await axios.put(
-          `/api/v1/groups/${trip.id}/activities/${params.activityId}`,
+        await axiosInstance.put(
+          `groups/${trip.id}/activities/${params.activityId}`,
           values,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
         );
 
         toast('Activity updated!', {

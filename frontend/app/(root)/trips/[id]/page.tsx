@@ -45,7 +45,6 @@ export default function TripPage() {
       setToFetchGroup(false);
     }
     if (trip && user && user.id) {
-      console.log('getujemy vote');
       setVotes(getVotes(user.id));
     }
   }, [trip, toFetchGroup, refreshTrip, setToFetchGroup]);

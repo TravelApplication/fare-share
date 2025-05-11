@@ -7,7 +7,7 @@ import {
   useState,
   ReactNode,
 } from 'react';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { useParams } from 'next/navigation';
 import { getToken, decodeToken } from '@/lib/auth';
 import { Group, groupSchema } from '@/validation/groupSchema';
@@ -44,9 +44,7 @@ export function TripContextProvider({ children }: { children: ReactNode }) {
       const token = getToken();
       const userId = token ? decodeToken(token)?.sub : '';
 
-      const response = await axios.get(`/api/v1/groups/${params.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axiosInstance.get(`groups/${params.id}`);
 
       const fetchedTrip = groupSchema.parse(response.data);
 

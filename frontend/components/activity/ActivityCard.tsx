@@ -1,5 +1,6 @@
 'use client';
 import { ActivitySchema } from '@/validation/activitySchema';
+import YesNoModal from '../shared/YesNoModal';
 import {
   EllipsisVertical,
   MapPinIcon,
@@ -159,11 +160,24 @@ export default function ActivityCard({
               <span>Edit</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="cursor-pointer !text-red-800 hover:!bg-red-500/10 flex items-center gap-2"
-              onClick={() => handleDelete()}
+              className="cursor-pointer !text-red-800 hover:!bg-red-500/10"
+              onSelect={(e) => e.preventDefault()}
             >
-              <Trash width={16} height={16} />
-              <span>Delete</span>
+              <div>
+                <YesNoModal
+                  title="Are you sure you want to delete this activity?"
+                  description={`Activity "${activity.name}" will be permanently removed.`}
+                  cancelName="Cancel"
+                  actionName="Delete"
+                  onConfirm={handleDelete}
+                  trigger={
+                    <div className="flex items-center gap-2">
+                      <Trash width={16} height={16} />
+                      <span>Delete</span>
+                    </div>
+                  }
+                />
+              </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

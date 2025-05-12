@@ -15,31 +15,16 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Global exception handler for all exceptions
- */
+
 @ControllerAdvice
 public class FareShareResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
-    /**
-     * Global exception handler for UserNotFoundException
-     * @param ex UserNotFoundException
-     * @param request WebRequest
-     * @return ResponseEntity<ErrorDetails>
-     */
+
     @ExceptionHandler(UserNotFoundException.class)
     public final ResponseEntity<ErrorDetails> handleUserNotFoundException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    /**
-     * Global exception handler for MethodArgumentNotValidException
-     * @param ex MethodArgumentNotValidException
-     * @param headers HttpHeaders
-     * @param status HttpStatusCode
-     * @param request WebRequest
-     * @return ResponseEntity<Object>
-     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(
             MethodArgumentNotValidException ex,
@@ -63,54 +48,30 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * Global exception handler for InvalidCredentialsException
-     * @param ex InvalidCredentialsException
-     * @param request WebRequest
-     * @return ResponseEntity<ErrorDetails>
-     */
     @ExceptionHandler(InvalidCredentialsException.class)
     public final ResponseEntity<ErrorDetails> handleInvalidCredentialsException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.UNAUTHORIZED);
     }
 
-    /**
-     * Global exception handler for UserAlreadyExistsException
-     * @param ex UserAlreadyExistsException
-     * @param request WebRequest
-     * @return ResponseEntity<ErrorDetails>
-     */
     @ExceptionHandler(UserAlreadyExistsException.class)
     public final ResponseEntity<ErrorDetails> userAlreadyExistsException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
-    /**
-     * Global exception handler for UserAlreadyInGroupException
-     * @param ex UserAlreadyInGroupException
-     * @param request WebRequest
-     * @return ResponseEntity<ErrorDetails>
-     */
     @ExceptionHandler(UserAlreadyInGroupException.class)
     public final ResponseEntity<ErrorDetails> userAlreadyInGroupException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
-    /**
-     * Global exception handler for GroupNotFoundException
-     */
     @ExceptionHandler(UserIsNotInGroupException.class)
     public final ResponseEntity<ErrorDetails> userIsNotInGroupException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
-    /**
-     * Global exception for trying to delete the owner of a group
-     */
     @ExceptionHandler(OwnerDeletionException.class)
     public final ResponseEntity<ErrorDetails> ownerDeletionException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
@@ -122,18 +83,13 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
-    /**
-     * Global exception for not found activity
-     */
+
     @ExceptionHandler(ActivityNotFoundException.class)
     public final ResponseEntity<ErrorDetails> activityNotFoundException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    /**
-     * Global exception for duplicate vote
-     */
     @ExceptionHandler(DuplicateVoteException.class)
     public final ResponseEntity<ErrorDetails> duplicateVoteException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
@@ -146,18 +102,12 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    /**
-     * Global exception for vote not found
-     */
     @ExceptionHandler(VoteNotFoundException.class)
     public final ResponseEntity<ErrorDetails> voteNotFoundException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    /**
-     * Global exception for action not allowed
-     */
     @ExceptionHandler(ActionIsNotAllowedException.class)
     public final ResponseEntity<ErrorDetails> actionNotAllowedException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);

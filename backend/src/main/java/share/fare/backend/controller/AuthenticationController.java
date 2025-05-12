@@ -14,9 +14,6 @@ import share.fare.backend.dto.request.RegisterRequest;
 import share.fare.backend.dto.response.AuthenticationResponse;
 import share.fare.backend.service.AuthenticationService;
 
-/**
- * Controller for handling authentication requests.
- */
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor

@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class TransactionResponse {
-    private Long debtorId; // user who owes money
-    private Long creditorId; // user who is owed money
+    private Long debtorId;
+    private Long creditorId;
     private BigDecimal amount;
 }

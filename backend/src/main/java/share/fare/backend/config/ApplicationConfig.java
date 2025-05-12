@@ -21,10 +21,8 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailsService() {
-        return username -> {
-            return userRepository.findById(Long.parseLong(username))
-                    .orElseThrow(() -> new UsernameNotFoundException("User with ID " + username + " not found"));
-        };
+        return username -> userRepository.findById(Long.parseLong(username))
+                .orElseThrow(() -> new UsernameNotFoundException("User with ID " + username + " not found"));
     }
 
     @Bean

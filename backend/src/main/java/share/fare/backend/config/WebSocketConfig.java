@@ -2,6 +2,7 @@ package share.fare.backend.config;
 
 import lombok.RequiredArgsConstructor;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.converter.DefaultContentTypeResolver;
 import org.springframework.messaging.converter.MappingJackson2MessageConverter;
@@ -21,10 +22,19 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Configuration
 @EnableWebSocketMessageBroker
-@RequiredArgsConstructor
 public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     private final WebSocketChannelInterceptor webSocketChannelInterceptor;
+
+    private final String allowedOrigin;
+
+    public WebSocketConfig(
+            WebSocketChannelInterceptor webSocketChannelInterceptor,
+            @Value("${websocket.allowed-origin}") String allowedOrigin) {
+        this.webSocketChannelInterceptor = webSocketChannelInterceptor;
+        this.allowedOrigin = allowedOrigin;
+    }
+
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry registry) {
@@ -37,7 +47,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry
                 .addEndpoint("/ws/api/v1")
-                .setAllowedOrigins("http://localhost:3000")
+                .setAllowedOrigins(allowedOrigin)
                 .withSockJS();
     }
 

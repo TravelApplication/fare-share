@@ -49,6 +49,7 @@ public class VoteService {
 
         notificationService.sendNotificationToGroup(group.getId(), VoteNotification.builder()
                         .senderId(userId)
+                        .senderEmail(user.getEmail())
                         .voteId(vote.getId())
                         .activityId(activityId)
                         .groupId(group.getId())
@@ -74,6 +75,9 @@ public class VoteService {
         Vote vote = voteRepository.findById(voteId)
                 .orElseThrow(() -> new VoteNotFoundException("Vote not found with ID: " + voteId));
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
         if (!vote.getUser().getId().equals(userId)) {
             throw new ActionIsNotAllowedException("You are not authorized to update this vote");
         }
@@ -85,13 +89,14 @@ public class VoteService {
 
         notificationService.sendNotificationToGroup(group.getId(), VoteNotification.builder()
                 .senderId(userId)
+                .senderEmail(user.getEmail())
                 .voteId(vote.getId())
                 .activityId(activity.getId())
                 .groupId(group.getId())
                 .type(NotificationType.VOTE_CHANGE)
                 .voteType(updatedVote.getVoteType())
                 .message(vote.getUser().getEmail() + " changed vote " +
-                        updatedVote.getVoteType().toString().toLowerCase() + activity.getName())
+                        updatedVote.getVoteType().toString().toLowerCase() + " " + activity.getName())
                 .build());
 
         return VoteMapper.toResponse(updatedVote);
@@ -101,10 +106,28 @@ public class VoteService {
         Vote vote = voteRepository.findById(voteId)
                 .orElseThrow(() -> new VoteNotFoundException("Vote not found with ID: " + voteId));
 
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(userId));
+
         if (!vote.getUser().getId().equals(userId)) {
             throw new ActionIsNotAllowedException("You are not authorized to delete this vote");
         }
 
+        Activity activity = vote.getActivity();
+        Group group = activity.getGroup();
+
         voteRepository.delete(vote);
+
+        notificationService.sendNotificationToGroup(vote.getActivity().getGroup().getId(), VoteNotification.builder()
+                .senderId(userId)
+                .senderEmail(user.getEmail())
+                .voteId(vote.getId())
+                .activityId(activity.getId())
+                .groupId(group.getId())
+                .type(NotificationType.VOTE_CHANGE)
+                .voteType(vote.getVoteType())
+                .message(vote.getUser().getEmail() + " removed vote " +
+                        vote.getVoteType().toString().toLowerCase() + " " + activity.getName())
+                .build());
     }
 }

@@ -168,6 +168,7 @@ class VoteServiceTest {
     public void testUpdateVoteSuccess() {
         when(voteRepository.findById(1L)).thenReturn(Optional.of(testVote));
         when(voteRepository.save(any(Vote.class))).thenReturn(testVote);
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
 
         VoteResponse result = voteService.updateVote(1L, 1L, testVoteRequest);
 
@@ -191,6 +192,7 @@ class VoteServiceTest {
     @Test
     public void testUpdateVoteUnauthorizedUser() {
         when(voteRepository.findById(1L)).thenReturn(Optional.of(testVote));
+        when(userRepository.findById(2L)).thenThrow(ActionIsNotAllowedException.class);
 
         assertThrows(ActionIsNotAllowedException.class, () -> voteService.updateVote(1L, 2L, testVoteRequest));
         verify(voteRepository, times(1)).findById(1L);
@@ -199,6 +201,7 @@ class VoteServiceTest {
     @Test
     public void testDeleteVoteSuccess() {
         when(voteRepository.findById(1L)).thenReturn(Optional.of(testVote));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         doNothing().when(voteRepository).delete(testVote);
 
         voteService.deleteVote(1L, 1L);
@@ -218,6 +221,7 @@ class VoteServiceTest {
     @Test
     public void testDeleteVote_UnauthorizedUser() {
         when(voteRepository.findById(1L)).thenReturn(Optional.of(testVote));
+        when(userRepository.findById(2L)).thenThrow(ActionIsNotAllowedException.class);
 
         assertThrows(ActionIsNotAllowedException.class, () -> voteService.deleteVote(1L, 2L));
         verify(voteRepository, times(1)).findById(1L);

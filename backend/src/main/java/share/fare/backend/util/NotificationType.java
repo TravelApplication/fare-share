@@ -3,6 +3,7 @@ package share.fare.backend.util;
 public enum NotificationType {
     VOTE,
     VOTE_CHANGE,
+    VOTE_DELETE,
     FRIEND_INVITATION,
     GROUP_INVITATION,
     FRIEND_INVITATION_ACCEPT,

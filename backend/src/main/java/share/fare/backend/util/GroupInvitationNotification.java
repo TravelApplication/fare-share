@@ -10,4 +10,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class GroupInvitationNotification extends Notification {
     private Long groupId;
+    private String groupName;
 }

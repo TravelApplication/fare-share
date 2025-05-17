@@ -9,10 +9,21 @@ import { useRouter } from 'next/navigation';
 
 function SearchUsers() {
   const [query, setQuery] = useState<string>('');
+  const [debouncedQuery, setDebouncedQuery] = useState<string>('');
   const [results, setResults] = useState<UserSearch[]>([]);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedQuery(query);
+    }, 300);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [query]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -35,7 +46,7 @@ function SearchUsers() {
     };
 
     fetchUsers();
-  }, [query]);
+  }, [debouncedQuery]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

@@ -1,4 +1,5 @@
 import { StateCreator } from 'zustand';
+import { User } from '@/validation/userProfileSchemas';
 
 export type User = {
   id: number;
@@ -21,8 +22,6 @@ export type User = {
 export type UserSlice = {
   user: User | null;
   setUser: (user: User) => void;
-  addMembership: (groupId: number) => void;
-  removeMembership: (groupId: number) => void;
 };
 
 export const createUserSlice: StateCreator<UserSlice, [], [], UserSlice> = (
@@ -30,28 +29,4 @@ export const createUserSlice: StateCreator<UserSlice, [], [], UserSlice> = (
 ) => ({
   user: null,
   setUser: (user) => set({ user }),
-  addMembership: (groupId) =>
-    set((state) =>
-      state.user
-        ? {
-            user: {
-              ...state.user,
-              memberships: [...state.user.memberships, { groupId }],
-            },
-          }
-        : state,
-    ),
-  removeMembership: (groupId) =>
-    set((state) =>
-      state.user
-        ? {
-            user: {
-              ...state.user,
-              memberships: state.user.memberships.filter(
-                (membership) => membership.groupId !== groupId,
-              ),
-            },
-          }
-        : state,
-    ),
 });

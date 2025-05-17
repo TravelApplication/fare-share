@@ -7,3 +7,5 @@ export const voteSchema = z.object({
   activityId: z.number(),
   voteType: z.string(z.enum(['FOR', 'AGAINST'])),
 });
+
+export type Vote = z.infer<typeof voteSchema>;

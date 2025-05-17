@@ -21,8 +21,10 @@ export type NotificationSlice = {
   addNotification: (notification: Notification) => void;
   toFetchFriendInvitations: boolean;
   toFetchGroupInvitations: boolean;
+  toFetchGroup: boolean;
   setToFetchFriendInvitations: (value: boolean) => void;
   setToFetchGroupInvitations: (value: boolean) => void;
+  setToFetchGroup: (value: boolean) => void;
 };
 
 export const createNotificationSlice: StateCreator<
@@ -40,22 +42,24 @@ export const createNotificationSlice: StateCreator<
         notification.type === 'FRIEND_INVITATION_REJECT'
       ) {
         set({ toFetchFriendInvitations: true });
-      }
-
-      if (
+      } else if (
         notification.type === 'GROUP_INVITATION' ||
         notification.type === 'GROUP_INVITATION_ACCEPT' ||
         notification.type === 'GROUP_INVITATION_REJECT'
       ) {
         set({ toFetchGroupInvitations: true });
+      } else {
+        set({ toFetchGroup: true });
       }
 
       return { notifications: [...state.notifications, notification] };
     }),
   toFetchFriendInvitations: false,
   toFetchGroupInvitations: false,
+  toFetchGroup: true,
   setToFetchFriendInvitations: (value) =>
     set({ toFetchFriendInvitations: value }),
   setToFetchGroupInvitations: (value) =>
     set({ toFetchGroupInvitations: value }),
+  setToFetchGroup: (value) => set({ toFetchGroup: value }),
 });

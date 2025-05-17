@@ -2,21 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
-import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Bell, LogOut, Plane, Settings, User } from 'lucide-react';
-import { getToken, isLoggedIn, logout } from '@/lib/auth';
+import { Bell, Plane, User } from 'lucide-react';
+import { getToken, isLoggedIn } from '@/lib/auth';
 import SearchUsers from './SearchUsers';
 import axios from 'axios';
 import { appStore } from '@/store/appStore';
+import { ProfileMenu } from './ProfileMenu';
 
 function Navbar() {
   const [token, setToken] = useState<string | null>(null);
@@ -161,44 +153,7 @@ function Navbar() {
                 <p className="max-sm:hidden">Invitations</p>
               </Link>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Avatar className="cursor-pointer">
-                    <AvatarFallback>
-                      {user?.userInfo?.firstName?.charAt(0) || 'U'}
-                      {user?.userInfo?.lastName?.charAt(0) || ''}
-                    </AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuLabel>Account</DropdownMenuLabel>
-                  {user && (
-                    <DropdownMenuItem>
-                      <Link
-                        className="navbar_link"
-                        href={`/account/${user.id}`}
-                      >
-                        <User />
-                        <p>Profile</p>
-                      </Link>
-                    </DropdownMenuItem>
-                  )}
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link className="navbar_link" href="/account">
-                      <Settings />
-                      <p>Settings</p>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link className="navbar_link" href="/" onClick={logout}>
-                      <LogOut />
-                      <p>Log out</p>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <ProfileMenu user={user} />
             </>
           ) : (
             <>

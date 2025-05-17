@@ -35,6 +35,12 @@ export const registerFormSchema = loginFormSchema.extend({
     .max(9, 'Phone number must have 9 digits'),
 });
 
+export const updateProfileFormSchema = registerFormSchema
+  .omit({ email: true, password: true })
+  .extend({
+    bio: z.string().max(255, 'Bio must be less than 255 characters').optional(),
+  });
+
 export const authApiSchema = z.object({
   token: z.string(),
   userId: z.number(),

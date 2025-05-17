@@ -93,7 +93,7 @@ export const WebSocketProvider = ({
     return () => {
       stompClient.deactivate();
     };
-  }, [user, sentFriendInvitations]);
+  }, [user]);
 
   return <>{children}</>;
 };

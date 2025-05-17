@@ -77,9 +77,8 @@ function Page() {
     if (token) {
       const decode = decodeToken(token);
       setUserId(decode?.sub ?? '');
+      fetchUserData(token, Number(id));
     }
-
-    fetchUserData(token, id);
   }, [id]);
 
   if (!user) {

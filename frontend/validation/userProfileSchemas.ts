@@ -8,7 +8,7 @@ export const UserInfoSchema = z
     lastName: z.string(),
     bio: z.string().nullable(),
     phoneNumber: z.string(),
-    dateOfBirth: z.string().date(),
+    dateOfBirth: z.date(),
   })
   .passthrough();
 

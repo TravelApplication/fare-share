@@ -43,7 +43,6 @@ const handleSignUp = async (
         ? err.response.data.message
         : 'Something went wrong';
     setError(`${errorMessage}. Please try again.`);
-    resetForm();
   }
 };
 

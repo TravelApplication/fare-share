@@ -20,6 +20,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import ActivityCard from '@/components/activity/ActivityCard';
+import ExpensesDashboard from '@/components/bill-splitting/ExpensesDashboard';
 const ITEMS_PER_PAGE = 3;
 
 export default function TripPage() {
@@ -107,6 +108,7 @@ export default function TripPage() {
       </Button>
 
       <TripCard trip={trip} />
+      <ExpensesDashboard trip={trip} />
 
       <button
         onClick={() => redirect(`/trips/${trip.id}/activities/create`)}

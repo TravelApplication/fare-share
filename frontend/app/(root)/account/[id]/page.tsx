@@ -14,6 +14,7 @@ import {
   UserCheck,
   UserCog,
   UserPlus,
+  X,
 } from 'lucide-react';
 import { UserInfo } from '@/validation/userProfileSchemas';
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
@@ -128,7 +129,11 @@ function Page() {
             className="bg-white p-2 m-2 rounded-full shadow-md hover:bg-gray-200 transition"
             onClick={() => setIsEditing(!isEditing)}
           >
-            <Pencil className="text-primary-500 w-5 h-5" />
+            {isEditing ? (
+              <X className="text-red-500 w-5 h-5" />
+            ) : (
+              <Pencil className="text-primary-500 w-5 h-5" />
+            )}
           </button>
         )}
         <CardHeader className="flex items-center gap-2">
@@ -163,7 +168,7 @@ function Page() {
                 <Form>
                   <div className="mb-4">
                     <label className="font-semibold">First Name</label>
-                    <Field name="firstName" as={Input} />
+                    <Field name="firstName" className="text-black" as={Input} />
                     <ErrorMessage
                       name="firstName"
                       render={(msg) => (
@@ -176,7 +181,7 @@ function Page() {
                   </div>
                   <div className="mb-4">
                     <label className="font-semibold">Last Name</label>
-                    <Field name="lastName" as={Input} />
+                    <Field name="lastName" className="text-black" as={Input} />
                     <ErrorMessage
                       name="lastName"
                       render={(msg) => (
@@ -189,11 +194,15 @@ function Page() {
                   </div>
                   <div className="mb-4">
                     <label className="font-semibold">Bio</label>
-                    <Field name="bio" as={Input} />
+                    <Field name="bio" className="text-black" as={Input} />
                   </div>
                   <div className="mb-4">
                     <label className="font-semibold">Phone Number</label>
-                    <Field name="phoneNumber" as={Input} />
+                    <Field
+                      name="phoneNumber"
+                      className="text-black"
+                      as={Input}
+                    />
                     <ErrorMessage
                       name="phoneNumber"
                       render={(msg) => (
@@ -221,7 +230,7 @@ function Page() {
                         const date = e.target.value;
                         setFieldValue('dateOfBirth', date);
                       }}
-                      className={`mt-1 ${
+                      className={`mt-1 text-black ${
                         errors.dateOfBirth && touched.dateOfBirth
                           ? 'border-red-500'
                           : ''

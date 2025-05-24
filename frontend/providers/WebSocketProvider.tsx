@@ -16,6 +16,10 @@ export const WebSocketProvider = ({
   const user = appStore((state) => state.user);
   const setUser = appStore((state) => state.setUser);
   const addNotfication = appStore((state) => state.addNotification);
+  const addSentFriendInvitation = appStore(
+    (state) => state.addSentFriendInvitation,
+  );
+  const sentFriendInvitations = appStore((s) => s.sentFriendInvitations);
   const setToFetchGroup = appStore((state) => state.setToFetchGroup);
 
   useEffect(() => {
@@ -29,7 +33,17 @@ export const WebSocketProvider = ({
             headers: { Authorization: `Bearer ${token}` },
           });
           const userData = response.data;
+          console.log(userData);
           setUser(userData);
+
+          const response2 = await axios.get('/api/v1/friend-invitations/sent', {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const lala = response2.data;
+          lala.forEach((invitation) => {
+            console.log(invitation.receiverId);
+            addSentFriendInvitation(invitation.receiverId);
+          });
         } catch (err) {
           console.error('error websockeet', err);
         }

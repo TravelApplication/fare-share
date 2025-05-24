@@ -38,12 +38,11 @@ const handleSignUp = async (
     window.location.href = '/trips';
     resetForm();
   } catch (err: unknown) {
-    setError(
-      `${
-        err.response?.data?.message || 'Something went wrong'
-      }. Please try again.`,
-    );
-    resetForm();
+    const errorMessage =
+      axios.isAxiosError(err) && err.response?.data?.message
+        ? err.response.data.message
+        : 'Something went wrong';
+    setError(`${errorMessage}. Please try again.`);
   }
 };
 
@@ -172,13 +171,14 @@ function Page() {
                 type="date"
                 as={Input}
                 value={
-                  values.dateOfBirth
+                  values.dateOfBirth instanceof Date &&
+                  !isNaN(values.dateOfBirth.getTime())
                     ? values.dateOfBirth.toISOString().split('T')[0]
                     : ''
                 }
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                  const date = e.target.value;
-                  setFieldValue('dateOfBirth', new Date(date));
+                  const date = new Date(e.target.value);
+                  setFieldValue('dateOfBirth', date);
                 }}
                 className={`mt-1 ${
                   errors.dateOfBirth && touched.dateOfBirth

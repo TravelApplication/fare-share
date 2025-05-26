@@ -41,6 +41,10 @@ public class FriendInvitationService {
             throw new InvitationAlreadyExistsException("Friend invitation already exists.");
         }
 
+        if (invitationRepository.existsBySenderIdAndReceiverId(receiverId, senderId)) {
+            throw new InvitationAlreadyExistsException("Friend invitation already exists.");
+        }
+
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new UserNotFoundException(senderId));
 

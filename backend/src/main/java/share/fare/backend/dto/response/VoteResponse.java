@@ -3,8 +3,6 @@ package share.fare.backend.dto.response;
 import lombok.*;
 import share.fare.backend.entity.VoteType;
 
-import java.time.LocalDateTime;
-
 @Getter
 @Setter
 @NoArgsConstructor

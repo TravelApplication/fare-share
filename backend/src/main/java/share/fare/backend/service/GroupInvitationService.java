@@ -37,6 +37,7 @@ public class GroupInvitationService {
         if (invitationRepository.existsBySenderIdAndReceiverIdAndGroupId(senderId, receiverId, groupId)) {
             throw new InvitationAlreadyExistsException("Group invitation already exists.");
         }
+
         User sender = userRepository.findById(senderId)
                 .orElseThrow(() -> new UserNotFoundException(senderId));
         Group group = groupRepository.findById(groupId)
@@ -48,6 +49,12 @@ public class GroupInvitationService {
         if (!group.getMemberships().stream()
                 .map(GroupMembership::getUser).toList().contains(sender)) {
             throw new UserIsNotInGroupException("Sender does not belong to group.");
+        }
+
+        if (group.getMemberships().stream()
+                .map(GroupMembership::getUser)
+                .toList().contains(receiver)) {
+            throw new ActionIsNotAllowedException("Receiver is already a member of the group.");
         }
 
         GroupInvitation invitation = GroupInvitation.builder()

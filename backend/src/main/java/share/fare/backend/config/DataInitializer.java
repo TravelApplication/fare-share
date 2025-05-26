@@ -53,12 +53,28 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
                     .createdAt(LocalDateTime.now())
                     .build();
 
+            UserInfo userInfo2 = UserInfo.builder()
+                    .firstName("Test2")
+                    .lastName("User2")
+                    .user(user2)
+                    .build();
+
+            user2.setUserInfo(userInfo2);
+
             User user3 = User.builder()
                     .email("user3@example.com")
                     .password(passwordEncoder.encode("password3"))
                     .role(Role.USER)
                     .createdAt(LocalDateTime.now())
                     .build();
+
+            UserInfo userInfo3 = UserInfo.builder()
+                    .firstName("Test3")
+                    .lastName("User3")
+                    .user(user3)
+                    .build();
+
+            user3.setUserInfo(userInfo3);
 
             userRepository.saveAll(List.of(user1, user2, user3));
 

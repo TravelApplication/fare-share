@@ -4,10 +4,11 @@ import { membershipSchema } from './membershipSchema';
 export const UserInfoSchema = z
   .object({
     id: z.number(),
-    firstName: z.union([z.string(), z.null()]),
-    lastName: z.union([z.string(), z.null()]),
-    phoneNumber: z.union([z.string(), z.null()]),
-    dateOfBirth: z.union([z.string().date(), z.null()]),
+    firstName: z.string(),
+    lastName: z.string(),
+    bio: z.string().nullable(),
+    phoneNumber: z.string(),
+    dateOfBirth: z.date(),
   })
   .passthrough();
 
@@ -20,4 +21,13 @@ export const UserSchema = z
   })
   .passthrough();
 
+export const UserSearchSchema = z.object({
+  id: z.number(),
+  firstName: z.string(),
+  lastName: z.string(),
+  bio: z.string(),
+});
+
 export type User = z.infer<typeof UserSchema>;
+export type UserInfo = z.infer<typeof UserInfoSchema>;
+export type UserSearch = z.infer<typeof UserSearchSchema>;

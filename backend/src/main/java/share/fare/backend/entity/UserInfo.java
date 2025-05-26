@@ -25,4 +25,8 @@ public class UserInfo {
     private LocalDate dateOfBirth;
     private String phoneNumber;
     private String bio;
+
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
 }

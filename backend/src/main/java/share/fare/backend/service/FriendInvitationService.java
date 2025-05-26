@@ -55,6 +55,7 @@ public class FriendInvitationService {
         invitationRepository.save(invitation);
         notificationService.sendNotificationToUser(receiverId, Notification.builder()
                 .senderId(senderId)
+                .senderEmail(sender.getEmail())
                 .type(NotificationType.FRIEND_INVITATION)
                 .message("You received a friend invitation from " + receiver.getEmail())
                 .build());
@@ -99,9 +100,12 @@ public class FriendInvitationService {
 
         notificationService.sendNotificationToUser(
                 sender.getId(), Notification.builder()
-                .senderId(receiver.getId()).type(NotificationType.FRIEND_INVITATION_ACCEPT)
-                .message(receiver.getEmail() + " has accepted your friend invitation")
-                .build());
+                        .senderId(receiver.getId())
+                        .senderEmail(receiver.getEmail())
+                        .type(NotificationType.FRIEND_INVITATION_ACCEPT)
+                        .message(receiver.getEmail() + " has accepted your friend invitation")
+                        .build()
+        );
     }
 
     @Transactional
@@ -120,6 +124,7 @@ public class FriendInvitationService {
         notificationService.sendNotificationToUser(
                 sender.getId(), Notification.builder()
                         .senderId(receiver.getId())
+                        .senderEmail(receiver.getEmail())
                         .type(NotificationType.FRIEND_INVITATION_REJECT)
                         .message(receiver.getEmail() + " has rejected your friend invitation")
                         .build());

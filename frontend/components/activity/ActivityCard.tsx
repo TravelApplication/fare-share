@@ -144,7 +144,7 @@ export default function ActivityCard({
           </Link>
         )}
       </div>
-      <div className="flex flex-col justify-between items-end">
+      <div className="flex flex-col justify-between gap-2 items-end">
         <DropdownMenu>
           <DropdownMenuTrigger className="text-gray-400 rounded-full hover:bg-gray-100 p-1.5 h-min w-min">
             <EllipsisVertical width={20} height={20} />

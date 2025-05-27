@@ -99,13 +99,20 @@ export default function TripPage() {
     <div>
       <Button
         onClick={() => router.push('/trips')}
-        className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full my-4"
+        className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full mb-4"
       >
         <ArrowLeft />
         <span>Back To Trips</span>
       </Button>
 
-      <TripCard trip={trip} />
+      <TripCard
+        trip={trip}
+        showDropdownOptions={
+          !!trip.memberships.find(
+            (m) => m.userId === user?.id && m.role === 'OWNER',
+          )
+        }
+      />
 
       <button
         onClick={() => redirect(`/trips/${trip.id}/activities/create`)}

@@ -9,5 +9,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class GroupInvitationResponse extends InvitationResponse {
     private Long groupId;
+    private String groupName;
 }
 

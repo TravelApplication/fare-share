@@ -144,7 +144,7 @@ function Page() {
         <CardContent className="bg-white/20 rounded-3xl p-6 shadow-inner">
           {isEditing ? (
             <Formik
-              initialValues={user}
+              initialValues={{ user }}
               validationSchema={toFormikValidationSchema(
                 updateProfileFormSchema,
               )}

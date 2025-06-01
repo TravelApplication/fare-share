@@ -42,7 +42,6 @@ public class GroupInvitationService {
                 .orElseThrow(() -> new UserNotFoundException(senderId));
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
-
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new UserNotFoundException(receiverId));
 

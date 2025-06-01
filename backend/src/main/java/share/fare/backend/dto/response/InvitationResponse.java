@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @SuperBuilder
 public class InvitationResponse {
     private Long id;
-    private Long senderId;
-    private Long receiverId;
+    private UserGeneralResponse sender;
+    private UserGeneralResponse receiver;
     private LocalDateTime createdAt;
 }

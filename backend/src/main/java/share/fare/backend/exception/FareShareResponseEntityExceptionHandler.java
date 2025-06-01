@@ -84,6 +84,12 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
         return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
     }
 
+    @ExceptionHandler(FriendshipAlreadyExistsException.class)
+    public final ResponseEntity<ErrorDetails> handleFriendshipAlreadyExistsException(Exception ex, WebRequest request) {
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
+        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+    }
+
     @ExceptionHandler(ActivityNotFoundException.class)
     public final ResponseEntity<ErrorDetails> activityNotFoundException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);

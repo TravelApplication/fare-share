@@ -7,9 +7,10 @@ public class GroupInvitationMapper {
     public static GroupInvitationResponse toResponse(GroupInvitation invitation) {
         return GroupInvitationResponse.builder()
                 .id(invitation.getId())
-                .senderId(invitation.getSender().getId())
-                .receiverId(invitation.getReceiver().getId())
+                .sender(UserMapper.toGeneralResponse(invitation.getSender()))
+                .receiver(UserMapper.toGeneralResponse(invitation.getReceiver()))
                 .groupId(invitation.getGroup().getId())
+                .groupName(invitation.getGroup().getName())
                 .createdAt(invitation.getCreatedAt())
                 .build();
     }

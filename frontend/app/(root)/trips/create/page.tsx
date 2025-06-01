@@ -19,11 +19,11 @@ const NewTripPage = () => {
     actions: FormikHelpers<z.infer<typeof createGroupFormSchema>>,
   ) => {
     try {
-      const response = await axiosInstance.post('groups', values);
+      await axiosInstance.post('groups', values);
       actions.resetForm();
       router.push('/trips');
-    } catch (err: unknown) {
-      setError(err.message || 'An error occurred');
+    } catch {
+      setError('An error occurred');
     }
   };
 

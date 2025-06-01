@@ -47,7 +47,7 @@ export default function TripPage() {
     if (trip && user && user.id) {
       setVotes(getVotes(user.id));
     }
-  }, [trip, toFetchGroup, refreshTrip, setToFetchGroup]);
+  }, [trip, toFetchGroup, refreshTrip, setToFetchGroup, getVotes, user]);
 
   if (!trip) return null;
 

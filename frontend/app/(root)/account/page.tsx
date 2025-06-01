@@ -52,8 +52,6 @@ function Page() {
       });
 
       if (authResponse.status === 200) {
-        const newToken = authResponse.data.token;
-
         const response = await axiosInstance.put('users', {
           email: values.newEmail,
           password: values.currentPassword,
@@ -95,8 +93,6 @@ function Page() {
         password: values.currentPassword,
       });
       if (authResponse.status === 200) {
-        const newToken = authResponse.data.token;
-
         await axiosInstance.put('users', {
           email: user?.email,
           password: values.newPassword,

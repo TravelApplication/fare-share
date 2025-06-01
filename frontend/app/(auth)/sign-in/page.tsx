@@ -36,12 +36,8 @@ function Page() {
 
       window.location.href = '/trips';
       resetForm();
-    } catch (err: unknown) {
-      setError(
-        `${
-          err.response?.data?.message || 'Something went wrong'
-        }. Please try again.`,
-      );
+    } catch {
+      setError('Something went wrong');
       resetForm();
     }
   };

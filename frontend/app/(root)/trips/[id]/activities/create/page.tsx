@@ -41,8 +41,8 @@ export default function NewActivityPage() {
       refreshTrip();
 
       router.push(`/trips/${trip.id}`);
-    } catch (err: unknown) {
-      setError(err.message || 'An error occurred');
+    } catch {
+      setError('An error occurred');
     }
   };
 

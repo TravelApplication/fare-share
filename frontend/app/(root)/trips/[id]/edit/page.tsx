@@ -1,6 +1,6 @@
 'use client';
-import React, { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import React, { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import TripForm from '@/components/trip/TripForm';
 import { Alert } from '@/components/ui/alert';
 import axiosInstance from '@/lib/axiosInstance';
@@ -13,7 +13,7 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
-const page = () => {
+const Page = () => {
   const router = useRouter();
   const { trip } = useTrip();
   const [error, setError] = useState<string | null>(null);
@@ -42,7 +42,7 @@ const page = () => {
         await axiosInstance.put(`/groups/${trip.id}`, values);
         actions.setSubmitting(false);
         router.push('/trips');
-      } catch (err: unknown) {
+      } catch {
         setError('Failed to update the trip.');
         actions.setSubmitting(false);
       }
@@ -93,4 +93,4 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;

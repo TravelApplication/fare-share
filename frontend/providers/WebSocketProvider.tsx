@@ -29,16 +29,15 @@ export const WebSocketProvider = ({
     const fetchUserData = async () => {
       if (!user) {
         try {
-          const response = await axiosInstance.get('users');
-          const userData = response.data;
-          console.log(userData);
+          const userResponse = await axiosInstance.get('users');
+          const userData = userResponse.data;
           setUser(userData);
 
-          const response2 = await axios.get('/api/v1/friend-invitations/sent', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const lala = response2.data;
-          lala.forEach((invitation) => {
+          const invitationsResponse = await axiosInstance.get(
+            'friend-invitations/sent',
+          );
+          const invitationsData = invitationsResponse.data;
+          invitationsData.forEach((invitation) => {
             console.log(invitation.receiverId);
             addSentFriendInvitation(invitation.receiverId);
           });

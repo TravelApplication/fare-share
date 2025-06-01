@@ -5,6 +5,7 @@ import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.hibernate.validator.constraints.URL;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +19,8 @@ public class Activity extends BaseEntity {
     private String name;
     private String description;
     private String location;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
     @URL
     private String link;

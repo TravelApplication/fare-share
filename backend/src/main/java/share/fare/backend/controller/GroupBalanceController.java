@@ -18,21 +18,11 @@ import java.util.List;
 public class GroupBalanceController {
     private final GroupBalanceService groupBalanceService;
 
-    /**
-     * Who owes whom how much in a group (minimum transactions approach)
-     * @param groupId group id
-     * @return list of transactions
-     */
-    @GetMapping("/min")
+    @GetMapping("/minimum-transactions")
     public ResponseEntity<List<TransactionResponse>> getMinTransactions(@PathVariable Long groupId) {
         return ResponseEntity.ok(groupBalanceService.getMinimumTransactions(groupId));
     }
 
-    /**
-     * Get balances of all users in a group
-     * @param groupId group id
-     * @return list of balances
-     */
     @GetMapping("/balances")
     public ResponseEntity<List<GroupBalanceResponse>> getBalances(@PathVariable Long groupId) {
         return ResponseEntity.ok(groupBalanceService.getBalances(groupId));

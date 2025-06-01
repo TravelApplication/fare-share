@@ -121,10 +121,10 @@ function Page() {
   if (!user) return <p>Loading...</p>;
 
   return (
-    <div className="section py-6 px-12">
-      <h1 className="text-heading1-bold">User Summary</h1>
+    <div className="section py-6 px-12 text-white shadow-lg rounded-3xl bg-gradient-to-r from-blue-500/80 to-primary-600/85">
+      <h1 className="text-heading1-bold pb-2">User Summary</h1>
 
-      <div className="mb-2 border-y border-gray-200 py-4">
+      <div className="mb-2  bg-white/20 p-4 rounded-3xl">
         <h2 className="text-heading3-bold mb-4">Login Details</h2>
         {!isEditingEmail ? (
           <>
@@ -132,7 +132,7 @@ function Page() {
               <strong className="col-span-1">E-mail</strong>
               <p className="col-span-4">{user?.email}</p>
               <Button
-                className="bg-blue-500 hover:bg-blue-400 col-span-1"
+                className="bg-white text-primary-500 hover:bg-gray-100 col-span-1"
                 onClick={() => {
                   setIsEditingEmail(true);
                   setEmailError(null);
@@ -143,7 +143,7 @@ function Page() {
             </div>
           </>
         ) : (
-          <div className="mb-4 rounded-lg p-4 bg-gray-100">
+          <div className="mb-4  bg-white/25 p-4 rounded-3xl">
             {emailError && (
               <Alert variant="destructive" className="my-4 p-4">
                 {emailError}
@@ -168,20 +168,14 @@ function Page() {
                   <label className="font-semibold" htmlFor="currentEmail">
                     Current e-mail
                   </label>
-                  <Field
-                    className="mt-1 bg-light-1"
-                    name="currentEmail"
-                    type="email"
-                    as={Input}
-                    disabled
-                  />
+                  <Field name="currentEmail" type="email" as={Input} disabled />
                   <div className="mt-4">
                     <label className="font-semibold" htmlFor="password">
                       New e-mail
                     </label>
                   </div>
                   <Field
-                    className={`mt-1 bg-light-1 ${
+                    className={`mt-1 ${
                       errors.newEmail && touched.newEmail
                         ? 'border-red-500'
                         : ''
@@ -206,7 +200,7 @@ function Page() {
                     </label>
                   </div>
                   <Field
-                    className={`mt-1 bg-light-1 ${
+                    className={`mt-1 ${
                       errors.currentPassword && touched.currentPassword
                         ? 'border-red-500'
                         : ''
@@ -226,14 +220,14 @@ function Page() {
                     )}
                   />
                   <Button
-                    className="mt-4 bg-blue-500 hover:bg-blue-400"
+                    className="mt-4 bg-white text-primary-500 hover:bg-gray-100"
                     type="submit"
                     disabled={isSubmitting}
                   >
                     Update Email
                   </Button>
                   <Button
-                    className="mt-4 ml-2 bg-gray-500 hover:bg-gray-400"
+                    className="mt-4 ml-2  bg-terminate-color hover:bg-red-400"
                     onClick={() => setIsEditingEmail(false)}
                   >
                     Cancel
@@ -249,7 +243,7 @@ function Page() {
               <strong className="col-span-1">Password</strong>{' '}
               <p className="col-span-4">************</p>
               <Button
-                className="bg-blue-500 hover:bg-blue-400 col-span-1"
+                className="bg-white text-primary-500 hover:bg-gray-100 col-span-1"
                 onClick={() => setIsEditingPassword(true)}
               >
                 Edit
@@ -257,7 +251,7 @@ function Page() {
             </div>
           </>
         ) : (
-          <div className="mb-4 rounded-lg p-4 bg-gray-100">
+          <div className="mb-4 bg-white/20 p-4 rounded-3xl">
             {passwordError && (
               <Alert variant="destructive" className="my-4 p-4">
                 {passwordError}
@@ -281,7 +275,7 @@ function Page() {
                     Current Password
                   </label>
                   <Field
-                    className={`mt-1 bg-light-1 ${
+                    className={`mt-1 ${
                       errors.currentPassword && touched.currentPassword
                         ? 'border-red-500'
                         : ''
@@ -307,7 +301,7 @@ function Page() {
                   </div>
                   <div className="flex">
                     <Field
-                      className={`mt-1 bg-light-1 ${
+                      className={`mt-1 ${
                         errors.newPassword && touched.newPassword
                           ? 'border-red-500'
                           : ''
@@ -335,14 +329,14 @@ function Page() {
                   />
 
                   <Button
-                    className="mt-4 bg-blue-500 hover:bg-blue-400"
+                    className="mt-4 bg-white text-primary-500 hover:bg-gray-100"
                     type="submit"
                     disabled={isSubmitting}
                   >
                     Update Password
                   </Button>
                   <Button
-                    className="mt-4 ml-2 bg-gray-500 hover:bg-gray-400"
+                    className="mt-4 ml-2 bg-terminate-color hover:bg-red-400"
                     onClick={() => {
                       setIsEditingPassword(false);
                       setPasswordError(null);
@@ -357,7 +351,7 @@ function Page() {
         )}
       </div>
 
-      <div className="mb-2 border-b border-gray-200 py-4">
+      <div className="mb-2 bg-white/20 p-4 rounded-3xl">
         <h2 className="text-heading3-bold mb-4">Personal Data</h2>
         <div className="grid grid-cols-2 gap-x-4 gap-y-4">
           <strong>Name</strong>
@@ -376,10 +370,6 @@ function Page() {
           <p>{user?.userInfo?.phoneNumber}</p>
         </div>
       </div>
-
-      <Button className="mt-4 bg-red-500 hover:bg-red-400" onClick={logout}>
-        Log Out
-      </Button>
     </div>
   );
 }

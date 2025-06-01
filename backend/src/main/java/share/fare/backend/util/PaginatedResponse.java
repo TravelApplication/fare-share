@@ -5,11 +5,6 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-/**
- * A generic class representing a paginated response.
- *
- * @param <T> the type of the content in the paginated response
- */
 @Data
 public class PaginatedResponse<T> {
     private List<T> content;

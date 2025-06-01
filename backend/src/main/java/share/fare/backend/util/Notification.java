@@ -11,5 +11,6 @@ import lombok.experimental.SuperBuilder;
 public class Notification {
     private NotificationType type;
     private Long senderId;
+    private String senderEmail;
     private String message;
 }

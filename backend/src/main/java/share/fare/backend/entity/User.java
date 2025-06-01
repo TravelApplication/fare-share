@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -36,6 +37,18 @@ public class User extends BaseEntity implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + role.name()));
     }
+
+    @OneToMany(mappedBy = "sender", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invitation> invitationsSent = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Invitation> invitationsReceived = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user1", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Friendship> friendshipsInitiated = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user2", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Friendship> friendshipsAccepted = new ArrayList<>();
 
     @Override
     public String getUsername() {

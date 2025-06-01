@@ -37,12 +37,13 @@ public class FriendInvitationService {
             throw new ActionIsNotAllowedException("You cannot send a friend invitation to yourself.");
         }
 
-        if (invitationRepository.existsBySenderIdAndReceiverId(senderId, receiverId)) {
+        if (invitationRepository.existsBySenderIdAndReceiverId(senderId, receiverId) ||
+                invitationRepository.existsBySenderIdAndReceiverId(receiverId, senderId)) {
             throw new InvitationAlreadyExistsException("Friend invitation already exists.");
         }
 
-        if (invitationRepository.existsBySenderIdAndReceiverId(receiverId, senderId)) {
-            throw new InvitationAlreadyExistsException("Friend invitation already exists.");
+        if (friendshipRepository.existsById(new FriendshipId(senderId, receiverId))) {
+            throw new FriendshipAlreadyExistsException("Friendship already exists.");
         }
 
         User sender = userRepository.findById(senderId)

@@ -2,23 +2,23 @@
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
 import { Button } from '../ui/button';
-import { Avatar, AvatarFallback } from '../ui/avatar';
-import { Bell, LogOut, Plane, User } from 'lucide-react';
-import { getToken, isLoggedIn, logout } from '@/lib/auth';
-import axiosInstance from '@/lib/axiosInstance';
+import { Bell, Plane } from 'lucide-react';
+import { getToken, isLoggedIn } from '@/lib/auth';
+import SearchUsers from './SearchUsers';
 import { appStore } from '@/store/appStore';
+import { ProfileMenu } from './ProfileMenu';
+import { User } from '@/validation/userProfileSchemas';
+import { Membership } from '@/validation/membershipSchema';
+import axiosInstance from '@/lib/axiosInstance';
+import { Friend } from '@/validation/friendSchema';
 
 function Navbar() {
   const [token, setToken] = useState<string | null>(null);
+  const user = appStore((s) => s.user);
+  const setUser = appStore((s) => s.setUser);
+  const setFriends = appStore((s) => s.setFriends);
+
   const [notificationAmount, setNotificationAmount] = useState<number>(0);
 
   const toFetchFriendInvitations = appStore((s) => s.toFetchFriendInvitations);
@@ -30,11 +30,56 @@ function Navbar() {
     (s) => s.setToFetchGroupInvitations,
   );
 
+  useEffect(() => {
+    const token = getToken();
+    setToken(token);
+
+    if (token && !user) {
+      const fetchUserData = async () => {
+        try {
+          const response = await axiosInstance.get('users');
+
+          const userData: User = {
+            id: response.data.id,
+            email: response.data.email,
+            userInfo: response.data.userInfo,
+            memberships: response.data.memberships.map(
+              (membership: Membership) => ({
+                groupId: membership.groupId,
+              }),
+            ),
+          };
+
+          setUser(userData);
+        } catch (err) {
+          console.error('Failed to fetch user data:', err);
+        }
+      };
+
+      const fetchFriends = async () => {
+        try {
+          const response = await axiosInstance.get('friendships');
+          const friendsData = response.data.map((friend: Friend) => friend.id);
+
+          setFriends(friendsData);
+        } catch (err) {
+          console.error('Failed to fetch friends:', err);
+        }
+      };
+
+      fetchFriends();
+      fetchUserData();
+    }
+  }, [token, user, setUser, setFriends]);
+
   const fetchNotifications = async () => {
+    const token = getToken();
+    if (!token) return;
+
     try {
       const [friendsRes, groupsRes] = await Promise.all([
         axiosInstance.get('friend-invitations/received'),
-        axiosInstance.get('/group-invitations/received'),
+        axiosInstance.get('group-invitations/received'),
       ]);
 
       const count =
@@ -79,6 +124,7 @@ function Navbar() {
         <div className="flex items-center gap-6">
           {token ? (
             <>
+              <SearchUsers />
               <Link className="navbar_link" href="/trips">
                 <Plane />
                 <p className="max-sm:hidden">Trips</p>
@@ -96,30 +142,7 @@ function Navbar() {
                 <p className="max-sm:hidden">Invitations</p>
               </Link>
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Avatar className="cursor-pointer">
-                    <AvatarFallback>XX</AvatarFallback>
-                  </Avatar>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuLabel>Account</DropdownMenuLabel>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link className="navbar_link" href="/account">
-                      <User />
-                      <p>Profile</p>
-                    </Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem>
-                    <Link className="navbar_link" href="/" onClick={logout}>
-                      <LogOut />
-                      <p>Log out</p>
-                    </Link>
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              <ProfileMenu user={user} />
             </>
           ) : (
             <>

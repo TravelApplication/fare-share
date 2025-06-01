@@ -1,7 +1,6 @@
 import { UserSearch } from '@/validation/userProfileSchemas';
 import { useEffect, useState, useRef } from 'react';
-import axios from 'axios';
-import { getToken } from '@/lib/auth';
+import axiosInstance from '@/lib/axiosInstance';
 import { Input } from '@/components/ui/input';
 import UserTile from './UserTile';
 import { Search } from 'lucide-react';
@@ -29,12 +28,8 @@ function SearchUsers() {
     const fetchUsers = async () => {
       if (query.length > 0) {
         try {
-          const token = getToken();
-          const response = await axios.get(
-            `/api/v1/user-info/search/top8?name=${query}`,
-            {
-              headers: { Authorization: `Bearer ${token}` },
-            },
+          const response = await axiosInstance.get(
+            `user-info/search/top8?name=${query}`,
           );
           setResults(response.data);
         } catch (error) {
@@ -46,7 +41,7 @@ function SearchUsers() {
     };
 
     fetchUsers();
-  }, [debouncedQuery]);
+  }, [debouncedQuery, query]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -94,7 +89,7 @@ function SearchUsers() {
           <ul>
             {results.map((user) => (
               <UserTile
-                key={user.userId}
+                key={user.id}
                 user={user}
                 onClick={() => {
                   setIsDropdownVisible(false);

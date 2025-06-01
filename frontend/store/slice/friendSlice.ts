@@ -26,7 +26,7 @@ export const createFriendSlice: StateCreator<FriendSlice> = (set, get) => ({
     }),
   hasFriend: (userId: number) => {
     const friends = get().friends;
-    const res = friends.filter((u) => u.id == userId);
+    const res = friends.filter((friendId) => friendId == userId);
     return res.length > 0;
   },
 });

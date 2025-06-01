@@ -6,7 +6,7 @@ import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
 import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'sonner';
-import { MembershipSchema } from '@/validation/membershipSchema';
+import { Membership } from '@/validation/membershipSchema';
 
 export const WebSocketProvider = ({
   children,
@@ -75,7 +75,7 @@ export const WebSocketProvider = ({
           addNotfication(notification);
         });
 
-        user.memberships.forEach((memb: MembershipSchema) => {
+        user.memberships.forEach((memb: Membership) => {
           stompClient.subscribe(
             `/group/${memb.groupId}/notifications`,
             (vote) => {

@@ -10,9 +10,8 @@ function UserTile({
   user: UserSearch;
   onClick: () => void;
 }) {
-  console.log(user);
   return (
-    <Link href={`/account/${user.userId}`} onClick={onClick}>
+    <Link href={`/account/${user.id}`} onClick={onClick}>
       <div className="flex p-2 rounded-lg cursor-pointer hover:bg-gray-100">
         <Avatar className="w-12 h-12 shadow-md mr-2">
           <AvatarImage src="" />

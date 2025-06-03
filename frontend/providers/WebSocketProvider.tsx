@@ -38,7 +38,6 @@ export const WebSocketProvider = ({
           );
           const invitationsData = invitationsResponse.data;
           invitationsData.forEach((invitation) => {
-            console.log(invitation.receiverId);
             addSentFriendInvitation(invitation.receiverId);
           });
         } catch (err) {

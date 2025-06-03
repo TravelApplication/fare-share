@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import axios from 'axios';
 import { UserSearch } from '@/validation/userProfileSchemas';
 import UserTile from '@/components/shared/UserTile';
 import { getToken, logout } from '@/lib/auth';
+import axiosInstance from '@/lib/axiosInstance';
 
 const SearchPage = () => {
   const searchParams = useSearchParams();
@@ -26,11 +26,10 @@ const SearchPage = () => {
         return;
       }
       try {
-        const response = await axios.get(`/api/v1/user-info/search`, {
+        const response = await axiosInstance.get(`user-info/search`, {
           params: { name: query, page: 0, size: 20 },
           headers: { Authorization: `Bearer ${token}` },
         });
-        console.log(response);
         setResults(response.data.content || []);
       } catch (error) {
         console.error('Error fetching search results:', error);

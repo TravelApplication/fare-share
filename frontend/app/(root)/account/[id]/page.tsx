@@ -1,10 +1,10 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
-import axios from 'axios';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { decodeToken, getToken } from '@/lib/auth';
+import axiosInstance from '@/lib/axiosInstance';
 import {
   Calendar,
   CircleAlert,
@@ -28,36 +28,26 @@ import { appStore } from '@/store/appStore';
 
 function Page() {
   const { id } = useParams();
-  const [userId, setUserId] = useState<string | null>(null);
+  const [loggedUserId, setLoggedUserId] = useState<string | null>(null);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
   const addSentFriendInvitation = appStore((s) => s.addSentFriendInvitation);
   const hasSentFriendInvitation = appStore((s) => s.hasSentFriendInvitation);
-  const friends = appStore((s) => s.friends);
   const isFriend = appStore((s) => s.hasFriend);
 
-  const fetchUserData = async (token: string, id: number) => {
+  const fetchUserData = async (id: number) => {
     try {
-      const response = await axios.get(`/api/v1/user-info/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const response = await axiosInstance.get(`user-info/${id}`);
       setUser(response.data);
-    } catch (err: unknown) {
-      setError(`Error: ${err}`);
+    } catch {
+      setError('An error occured');
     }
   };
 
-  const sendFriendRequest = async (userId: string) => {
+  const sendFriendRequest = async (userId: number) => {
     try {
-      const token = getToken();
-      await axios.post(
-        `/api/v1/friend-invitations/send/${userId}`,
-        {},
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
-      );
+      await axiosInstance.post(`friend-invitations/send/${userId}`);
       toast('Friend request sent!', {
         duration: 7000,
         action: {
@@ -67,9 +57,9 @@ function Page() {
           },
         },
       });
-      addSentFriendInvitation(+userId);
-    } catch (err) {
-      setError(`Error: ${err}`);
+      addSentFriendInvitation(userId);
+    } catch {
+      setError('An error occured.');
     }
   };
 
@@ -77,8 +67,8 @@ function Page() {
     const token = getToken();
     if (token) {
       const decode = decodeToken(token);
-      setUserId(decode?.sub ?? '');
-      fetchUserData(token, Number(id));
+      setLoggedUserId(decode?.sub ?? '');
+      fetchUserData(Number(id));
     }
   }, [id]);
 
@@ -100,9 +90,7 @@ function Page() {
     },
   ) => {
     try {
-      const newUser = await axios.put(`/api/v1/user-info`, values, {
-        headers: { Authorization: `Bearer ${getToken()}` },
-      });
+      const newUser = await axiosInstance.put(`user-info`, values);
       setUser(newUser.data);
       resetForm();
       setIsEditing(false);
@@ -116,15 +104,15 @@ function Page() {
           },
         },
       });
-    } catch (err: unknown) {
-      setError(`Error: ${err}`);
+    } catch {
+      setError('An error occured');
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto">
       <Card className="p-4 shadow-lg rounded-3xl  bg-gradient-to-r from-blue-500/80 to-primary-600/85 text-white">
-        {userId === id && (
+        {loggedUserId === id && (
           <button
             className="bg-white p-2 m-2 rounded-full shadow-md hover:bg-gray-200 transition"
             onClick={() => setIsEditing(!isEditing)}
@@ -140,7 +128,7 @@ function Page() {
           <Avatar className="w-28 h-28 shadow-md">
             <AvatarImage src="" />
             <AvatarFallback className="text-primary-500 text-[2.5rem]">
-              {user.firstName.charAt(0)}
+              {user.firstName?.charAt(0) || 'X'}
             </AvatarFallback>
           </Avatar>
           <div>
@@ -156,7 +144,7 @@ function Page() {
         <CardContent className="bg-white/20 rounded-3xl p-6 shadow-inner">
           {isEditing ? (
             <Formik
-              initialValues={user}
+              initialValues={{ user }}
               validationSchema={toFormikValidationSchema(
                 updateProfileFormSchema,
               )}
@@ -273,23 +261,22 @@ function Page() {
                     }).format(new Date(user.dateOfBirth))}
                   </span>
                 </div>
-                {userId !== id && (
+                {loggedUserId !== id && (
                   <button
                     className={`col-span-2 flex items-center justify-center gap-6 px-6 py-6 text-white font-semibold rounded-xl shadow-lg transition-transform duration-200 ${
-                      hasSentFriendInvitation(user.userId) ||
-                      isFriend(user.userId)
+                      hasSentFriendInvitation(user.id) || isFriend(user.id)
                         ? 'bg-primary-700 cursor-not-allowed'
                         : 'bg-gradient-to-r from-blue-500/80 to-primary-600/85 hover:bg-gradient-to-r hover:from-blue-500 hover:to-primary-600 hover:shadow-xl'
                     }`}
-                    onClick={() => sendFriendRequest(user.userId)}
-                    disabled={hasSentFriendInvitation(user.userId)}
+                    onClick={() => sendFriendRequest(user.id)}
+                    disabled={hasSentFriendInvitation(user.id)}
                   >
-                    {isFriend(user.userId) ? (
+                    {isFriend(user.id) ? (
                       <>
                         <UserCheck className="w-6 h-6" />
                         <span>Already Friends</span>
                       </>
-                    ) : hasSentFriendInvitation(user.userId) ? (
+                    ) : hasSentFriendInvitation(user.id) ? (
                       <>
                         <UserCog className="w-6 h-6" />
                         <span className="text-white font-semibold">

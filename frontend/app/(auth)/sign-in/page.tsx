@@ -25,10 +25,7 @@ function Page() {
     },
   ) => {
     try {
-      const result = await axios.post(
-        'http://localhost:8080/auth/login',
-        values,
-      );
+      const result = await axios.post('/auth/login', values);
       const parsedResult = authApiSchema.safeParse(result.data);
       if (!parsedResult.success) {
         setError('Invalid response from server. Please try again.');
@@ -39,12 +36,8 @@ function Page() {
 
       window.location.href = '/trips';
       resetForm();
-    } catch (err: unknown) {
-      setError(
-        `${
-          err.response?.data?.message || 'Something went wrong'
-        }. Please try again.`,
-      );
+    } catch {
+      setError('Something went wrong');
       resetForm();
     }
   };

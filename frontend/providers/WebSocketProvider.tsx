@@ -4,9 +4,9 @@ import { appStore } from '@/store/appStore';
 import { getToken } from '@/lib/auth';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'sonner';
-import { MembershipSchema } from '@/validation/membershipSchema';
+import { Membership } from '@/validation/membershipSchema';
 
 export const WebSocketProvider = ({
   children,
@@ -29,19 +29,15 @@ export const WebSocketProvider = ({
     const fetchUserData = async () => {
       if (!user) {
         try {
-          const response = await axios.get('/api/v1/users', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const userData = response.data;
-          console.log(userData);
+          const userResponse = await axiosInstance.get('users');
+          const userData = userResponse.data;
           setUser(userData);
 
-          const response2 = await axios.get('/api/v1/friend-invitations/sent', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const lala = response2.data;
-          lala.forEach((invitation) => {
-            console.log(invitation.receiverId);
+          const invitationsResponse = await axiosInstance.get(
+            'friend-invitations/sent',
+          );
+          const invitationsData = invitationsResponse.data;
+          invitationsData.forEach((invitation) => {
             addSentFriendInvitation(invitation.receiverId);
           });
         } catch (err) {
@@ -78,7 +74,7 @@ export const WebSocketProvider = ({
           addNotfication(notification);
         });
 
-        user.memberships.forEach((memb: MembershipSchema) => {
+        user.memberships.forEach((memb: Membership) => {
           stompClient.subscribe(
             `/group/${memb.groupId}/notifications`,
             (vote) => {

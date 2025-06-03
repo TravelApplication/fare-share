@@ -3,12 +3,15 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../ui/button';
-import { Bell, Plane, User } from 'lucide-react';
+import { Bell, Plane } from 'lucide-react';
 import { getToken, isLoggedIn } from '@/lib/auth';
 import SearchUsers from './SearchUsers';
-import axios from 'axios';
 import { appStore } from '@/store/appStore';
 import { ProfileMenu } from './ProfileMenu';
+import { User } from '@/validation/userProfileSchemas';
+import { Membership } from '@/validation/membershipSchema';
+import axiosInstance from '@/lib/axiosInstance';
+import { Friend } from '@/validation/friendSchema';
 
 function Navbar() {
   const [token, setToken] = useState<string | null>(null);
@@ -34,16 +37,14 @@ function Navbar() {
     if (token && !user) {
       const fetchUserData = async () => {
         try {
-          const response = await axios.get('/api/v1/users', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
+          const response = await axiosInstance.get('users');
 
           const userData: User = {
             id: response.data.id,
             email: response.data.email,
             userInfo: response.data.userInfo,
             memberships: response.data.memberships.map(
-              (membership: unknown) => ({
+              (membership: Membership) => ({
                 groupId: membership.groupId,
               }),
             ),
@@ -57,16 +58,8 @@ function Navbar() {
 
       const fetchFriends = async () => {
         try {
-          const response = await axios.get('/api/v1/friendships', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-
-          const friendsData = response.data.map((friend: any) => ({
-            id: friend.id,
-            firstName: friend.firstName,
-            lastName: friend.lastName,
-            email: friend.email,
-          }));
+          const response = await axiosInstance.get('friendships');
+          const friendsData = response.data.map((friend: Friend) => friend.id);
 
           setFriends(friendsData);
         } catch (err) {
@@ -85,12 +78,8 @@ function Navbar() {
 
     try {
       const [friendsRes, groupsRes] = await Promise.all([
-        axios.get('/api/v1/friend-invitations/received', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
-        axios.get('/api/v1/group-invitations/received', {
-          headers: { Authorization: `Bearer ${token}` },
-        }),
+        axiosInstance.get('friend-invitations/received'),
+        axiosInstance.get('group-invitations/received'),
       ]);
 
       const count =

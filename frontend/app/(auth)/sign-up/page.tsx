@@ -23,11 +23,7 @@ const handleSignUp = async (
   },
 ) => {
   try {
-    console.log(values);
-    const result = await axios.post(
-      'http://localhost:8080/auth/register',
-      values,
-    );
+    const result = await axios.post('/auth/register', values);
     const parsedResult = authApiSchema.safeParse(result.data);
     if (!parsedResult.success) {
       setError('Invalid response from server. Please try again.');
@@ -37,12 +33,9 @@ const handleSignUp = async (
     setToken(token);
     window.location.href = '/trips';
     resetForm();
-  } catch (err: unknown) {
-    const errorMessage =
-      axios.isAxiosError(err) && err.response?.data?.message
-        ? err.response.data.message
-        : 'Something went wrong';
-    setError(`${errorMessage}. Please try again.`);
+  } catch {
+    setError('Something went wrong.');
+    resetForm();
   }
 };
 

@@ -4,7 +4,6 @@ import { toast } from 'sonner';
 import { CircleAlert, Eye, EyeOff } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import axiosInstance from '@/lib/axiosInstance';
-import { logout } from '@/lib/auth';
 import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
@@ -23,18 +22,18 @@ function Page() {
   const [user, setUser] = useState<User | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
-  const [isEditingEmail, setIsEditingEmail] = useState(false);
-  const [isEditingPassword, setIsEditingPassword] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+  const [isEditingEmail, setIsEditingEmail] = useState<boolean>(false);
+  const [isEditingPassword, setIsEditingPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchUserData = async () => {
     try {
       const response = await axiosInstance.get('users');
       const parsedUser = UserSchema.parse(response.data);
-
       setUser(parsedUser);
     } catch {
-      logout();
+      setError('An error occured.');
     }
   };
   useEffect(() => {
@@ -119,7 +118,12 @@ function Page() {
   };
 
   if (!user) return <p>Loading...</p>;
-
+  if (error)
+    return (
+      <Alert variant="destructive" className="my-4 p-4">
+        {error}
+      </Alert>
+    );
   return (
     <div className="section py-6 px-12 text-white shadow-lg rounded-3xl bg-gradient-to-r from-blue-500/80 to-primary-600/85">
       <h1 className="text-heading1-bold pb-2">User Summary</h1>

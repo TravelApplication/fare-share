@@ -116,7 +116,7 @@ export default function TripPage() {
 
       <button
         onClick={() => redirect(`/trips/${trip.id}/activities/create`)}
-        className="mx-auto relative -mb-6 z-50 bg-white border text-primary-500 hover:bg-gray-100 px-4 py-3 shadow-md flex gap-2 items-center justify-center rounded-full mt-4"
+        className="mx-auto relative -mb-6 z-20 bg-white border text-primary-500 hover:bg-gray-100 px-4 py-3 shadow-md flex gap-2 items-center justify-center rounded-full mt-4"
       >
         <CirclePlus />
         <span className="text-base-semibold">Add an Activity</span>

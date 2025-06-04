@@ -111,13 +111,6 @@ export default function TripPage() {
           <ArrowLeft />
           <span>Back To Trips</span>
         </Button>
-        <Button
-          onClick={() => router.push(``)}
-          className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full mb-4"
-        >
-          <MessageCircle />
-          <span>Group Chat</span>
-        </Button>
       </div>
 
       <TripCard

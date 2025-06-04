@@ -145,10 +145,10 @@ export default function InvitationsPage() {
 
     return (
       <Card key={inv.id} className="mb-4">
-        <CardContent className="p-4 flex justify-between items-center">
+        <CardContent className="p-4 flex justify-between flex-col gap-2 sm:flex-row sm:items-center ">
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <div className="text-gray-700 text-sm flex gap-2 items-center">
+              <div className="text-gray-700 text-sm flex flex-col gap-1 sm:gap-2 sm:flex-row sm:items-center">
                 {type === 'received' ? 'From user' : 'Sent to '}
                 <div className="text-primary-500 text-base font-bold">
                   {type === 'received'
@@ -186,7 +186,7 @@ export default function InvitationsPage() {
                 onConfirm={handleActionConfirmation}
                 trigger={
                   <Button
-                    className="bg-primary-500 hover:bg-primary-600 rounded-xl"
+                    className="bg-primary-500 hover:bg-primary-600 w-full rounded-xl"
                     onClick={() =>
                       setCurrentAction({
                         id: inv.id,
@@ -208,7 +208,7 @@ export default function InvitationsPage() {
                 onConfirm={handleActionConfirmation}
                 trigger={
                   <Button
-                    className="border border-primary-500 text-primary-500 bg-white hover:text-white hover:bg-primary-600 hover:border-primary-600 rounded-xl"
+                    className="border w-full border-primary-500 text-primary-500 bg-white hover:text-white hover:bg-primary-600 hover:border-primary-600 rounded-xl"
                     onClick={() =>
                       setCurrentAction({
                         id: inv.id,
@@ -262,8 +262,8 @@ export default function InvitationsPage() {
       <CardContent>
         <Tabs defaultValue="friends" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="friends">Friend Invitations</TabsTrigger>
-            <TabsTrigger value="groups">Trip Invitations</TabsTrigger>
+            <TabsTrigger value="friends">Friends</TabsTrigger>
+            <TabsTrigger value="groups">Trips</TabsTrigger>
           </TabsList>
 
           <TabsContent value="friends">

@@ -4,7 +4,13 @@ import Link from 'next/link';
 import { Group } from '@/validation/groupSchema';
 import { useState } from 'react';
 import { formatDate } from '@/lib/utils';
-import { Ellipsis, Pencil, Trash } from 'lucide-react';
+import {
+  Ellipsis,
+  MessageCircle,
+  Pencil,
+  Trash,
+  UsersRound,
+} from 'lucide-react';
 import YesNoModal from '../shared/YesNoModal';
 import {
   DropdownMenu,
@@ -104,7 +110,7 @@ function TripCard({ trip, showDropdownOptions = false }: TripCardProps) {
 
   return (
     <div className="section p-0 flex flex-col md:flex-row md:items-start justify-start md:justify-between border bg-white shadow-md rounded-lg">
-      <div className="py-6 px-6 w-full md:w-2/3">
+      <div className="p-6 w-full md:w-2/3">
         <div className="flex justify-between">
           <Link href={`/trips/${id}`}>
             <h4 className="text-heading3-bold text-primary-500 hover:underline">
@@ -125,7 +131,7 @@ function TripCard({ trip, showDropdownOptions = false }: TripCardProps) {
         <p className="text-gray-700">{description}</p>
 
         {tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 mt-2">
+          <div className="flex flex-wrap gap-2 mt-3">
             {tags.map((tag, index) => (
               <span
                 key={index}
@@ -136,11 +142,22 @@ function TripCard({ trip, showDropdownOptions = false }: TripCardProps) {
             ))}
           </div>
         )}
-        <Link href="/">
-          <button className="p-0 text-small-regular text-primary-500 hover:underline mt-3">
-            Manage Group Members
+        <div className="flex gap-3 mt-6">
+          <button
+            className="text-primary-500 text-sm border shadow-sm flex gap-2 py-2 px-4 rounded-full items-center hover:bg-gray-100"
+            onClick={() => router.push(`/trips/${id}/members`)}
+          >
+            <UsersRound size={20} />
+            <div>Members</div>
           </button>
-        </Link>
+          <button
+            className="text-primary-500 text-sm border shadow-sm flex gap-2 py-2 px-4 rounded-full items-center hover:bg-gray-100"
+            onClick={() => router.push(`/trips/${id}/members`)}
+          >
+            <MessageCircle size={20} />
+            <div>Chat</div>
+          </button>
+        </div>
       </div>
       <div className="relative w-48 h-48 md:w-60 md:h-60 hidden md:block overflow-hidden rounded-r-lg">
         {showDropdownOptions && (

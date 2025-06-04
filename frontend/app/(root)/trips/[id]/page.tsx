@@ -3,7 +3,13 @@
 import { useTrip } from '@/context/TripContext';
 import TripCard from '@/components/trip/TripCard';
 import { Alert } from '@/components/ui/alert';
-import { ArrowLeft, CirclePlus, ThumbsDown, ThumbsUp } from 'lucide-react';
+import {
+  ArrowLeft,
+  CirclePlus,
+  MessageCircle,
+  ThumbsDown,
+  ThumbsUp,
+} from 'lucide-react';
 import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';
@@ -96,14 +102,23 @@ export default function TripPage() {
   );
 
   return (
-    <div>
-      <Button
-        onClick={() => router.push('/trips')}
-        className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full mb-4"
-      >
-        <ArrowLeft />
-        <span>Back To Trips</span>
-      </Button>
+    <>
+      <div className="flex justify-between">
+        <Button
+          onClick={() => router.push('/trips')}
+          className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full mb-4"
+        >
+          <ArrowLeft />
+          <span>Back To Trips</span>
+        </Button>
+        <Button
+          onClick={() => router.push(``)}
+          className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full mb-4"
+        >
+          <MessageCircle />
+          <span>Group Chat</span>
+        </Button>
+      </div>
 
       <TripCard
         trip={trip}
@@ -124,7 +139,9 @@ export default function TripPage() {
 
       <div className="p-5 z-0 border rounded-lg shadow-md">
         <div>
-          <h2 className="text-heading3-bold text-primary-500">Activities</h2>
+          <h2 className="text-heading3-bold text-primary-500 mt-4 md:mt-0">
+            Activities
+          </h2>
           {trip.activities.length > 0 && (
             <div className="grid grid-cols-[2fr_1fr] flex gap-4 my-4">
               <div>
@@ -196,6 +213,6 @@ export default function TripPage() {
           itemsPerPage={ITEMS_PER_PAGE}
         />
       </div>
-    </div>
+    </>
   );
 }

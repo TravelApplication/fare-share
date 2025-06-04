@@ -77,7 +77,7 @@ const Page = () => {
     <>
       {isUserOwner ? (
         <>
-          <div className="flex items-center justify-between">
+          <div className="flex gap-4 items-start flex-col md:flex-row md:justify-between md:items-center">
             <Button
               onClick={() => router.push(`/trips/${trip.id}`)}
               className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm  rounded-full mb-4"
@@ -86,7 +86,7 @@ const Page = () => {
               <span>Back to Trip Summary</span>
             </Button>
 
-            <div className="text-md -mt-4 font-semibold text-gray-400">
+            <div className="text-md -mt-4 font-semibold text-gray-400 mb-4 md:mb-0">
               {trip.name}
               {trip.tripStartDate && trip.tripEndDate && (
                 <>
@@ -97,7 +97,7 @@ const Page = () => {
               )}
             </div>
           </div>
-          <div className="section py-6 px-12 border">
+          <div className="section py-6 md:px-12 px-6 border">
             <h1 className="text-heading1-bold">Edit Trip</h1>
             {error && (
               <Alert variant="destructive" className="my-4 p-4">

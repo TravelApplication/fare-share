@@ -393,12 +393,9 @@ export default function TripMembersPage() {
                                     membership.role as MembershipRole,
                                   );
                                 }}
-                                disabled={editingUserId !== null}
-                                className={`flex items-center gap-1 px-4 py-1.5 rounded-full border ${
-                                  editingUserId !== null
-                                    ? 'cursor-not-allowed opacity-50'
-                                    : 'cursor-pointer text-primary-500 hover:bg-primary-500/10'
-                                }`}
+                                disabled={editingUserId === null}
+                                className="flex items-center gap-1 px-4 py-1.5 rounded-full border 
+                                  disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-primary-500 hover:bg-primary-500/10"
                               >
                                 <Pencil width={18} height={18} />
                                 <span>Edit</span>
@@ -455,12 +452,18 @@ export default function TripMembersPage() {
                                   membership.role as MembershipRole,
                                 );
                               }}
-                              disabled={editingUserId !== null}
-                              className={`flex items-center gap-1 px-2 py-1 rounded ${
-                                editingUserId !== null
-                                  ? 'cursor-not-allowed opacity-50'
-                                  : 'cursor-pointer text-primary-500 hover:bg-primary-500/10'
-                              }`}
+                              disabled={
+                                editingUserId !== null ||
+                                (membership.role === 'OWNER' &&
+                                  memberships &&
+                                  memberships.filter(
+                                    (el) => el.role === 'OWNER',
+                                  ).length <= 1)
+                              }
+                              className="flex items-center gap-1 px-2 py-1 rounded 
+                              cursor-pointer text-primary-500 hover:bg-primary-500/10
+                              disabled:cursor-not-allowed disabled:text-gray-300 disabled:hover:bg-transparent
+                              "
                             >
                               <Pencil width={18} height={18} />
                             </button>

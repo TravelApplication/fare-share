@@ -7,6 +7,7 @@ import SockJS from 'sockjs-client';
 import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'sonner';
 import { Membership } from '@/validation/membershipSchema';
+import { Invitation } from '@/validation/invitationsSchema';
 
 export const WebSocketProvider = ({
   children,
@@ -19,7 +20,6 @@ export const WebSocketProvider = ({
   const addSentFriendInvitation = appStore(
     (state) => state.addSentFriendInvitation,
   );
-  const sentFriendInvitations = appStore((s) => s.sentFriendInvitations);
   const setToFetchGroup = appStore((state) => state.setToFetchGroup);
 
   useEffect(() => {
@@ -37,11 +37,11 @@ export const WebSocketProvider = ({
             'friend-invitations/sent',
           );
           const invitationsData = invitationsResponse.data;
-          invitationsData.forEach((invitation) => {
-            addSentFriendInvitation(invitation.receiverId);
+          invitationsData.forEach((invitation: Invitation) => {
+            addSentFriendInvitation(invitation.receiver.id);
           });
-        } catch (err) {
-          console.error('error websockeet', err);
+        } catch {
+          console.error('Error fetching user data.');
         }
       }
     };
@@ -75,12 +75,9 @@ export const WebSocketProvider = ({
         });
 
         user.memberships.forEach((memb: Membership) => {
-          stompClient.subscribe(
-            `/group/${memb.groupId}/notifications`,
-            (vote) => {
-              setToFetchGroup(true);
-            },
-          );
+          stompClient.subscribe(`/group/${memb.groupId}/notifications`, () => {
+            setToFetchGroup(true);
+          });
         });
       }
     };

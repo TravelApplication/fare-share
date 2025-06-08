@@ -37,7 +37,7 @@ const NewTripPage = () => {
         <span>Back to Trips</span>
       </Button>
       <div className="section py-6 px-12 border">
-        <h1 className="text-heading1-bold">Create Trip</h1>
+        <h1 className="text-heading1-bold">Create a Trip</h1>
         {error && (
           <Alert variant="destructive" className="my-4 p-4">
             {error}

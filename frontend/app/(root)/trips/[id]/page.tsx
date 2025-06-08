@@ -3,13 +3,7 @@
 import { useTrip } from '@/context/TripContext';
 import TripCard from '@/components/trip/TripCard';
 import { Alert } from '@/components/ui/alert';
-import {
-  ArrowLeft,
-  CirclePlus,
-  MessageCircle,
-  ThumbsDown,
-  ThumbsUp,
-} from 'lucide-react';
+import { ArrowLeft, CirclePlus, ThumbsDown, ThumbsUp } from 'lucide-react';
 import { redirect, useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useEffect, useState } from 'react';

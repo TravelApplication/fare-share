@@ -218,7 +218,7 @@ export default function TripMembersPage() {
       </div>
 
       <div className="section p-6 flex flex-col gap-8 border bg-white shadow-md rounded-lg">
-        <div className="flex justify-between">
+        <div className="flex justify-between md:flex-row flex-col gap-4">
           <h2 className="text-heading3-bold text-primary-500">Group Members</h2>
           <div className="flex gap-4">
             <Dialog>
@@ -245,7 +245,7 @@ export default function TripMembersPage() {
               </DialogContent>
             </Dialog>
 
-            {currentUserRole !== 'MEMBER' && (
+            {currentUserRole === 'MEMBER' && (
               <YesNoModal
                 title="Leave Group"
                 description={`Are you sure you want to leave group ${trip.name}?`}

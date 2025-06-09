@@ -19,6 +19,7 @@ import share.fare.backend.entity.Group;
 import share.fare.backend.entity.User;
 import share.fare.backend.exception.ActivityNotFoundException;
 import share.fare.backend.exception.GroupNotFoundException;
+import share.fare.backend.exception.UserIsNotInGroupException;
 import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.repository.ActivityRepository;
 import share.fare.backend.repository.GroupRepository;
@@ -42,6 +43,9 @@ class ActivityServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private SecurityService securityService;
 
     @InjectMocks
     private ActivityService activityService;
@@ -83,15 +87,13 @@ class ActivityServiceTest {
     @Test
     public void testCreateActivitySuccess() {
         when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(activityRepository.save(any(Activity.class))).thenReturn(testActivity);
 
-        ActivityResponse result = activityService.createActivity(testActivityRequest, 1L, 1L);
+        ActivityResponse result = activityService.createActivity(testActivityRequest, testUser, 1L);
 
         assertNotNull(result);
         assertEquals("Test Activity", result.getName());
         verify(groupRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(1L);
         verify(activityRepository, times(1)).save(any(Activity.class));
     }
 
@@ -99,18 +101,8 @@ class ActivityServiceTest {
     public void testCreateActivityGroupNotFound() {
         when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(GroupNotFoundException.class, () -> activityService.createActivity(testActivityRequest, 1L, 1L));
+        assertThrows(GroupNotFoundException.class, () -> activityService.createActivity(testActivityRequest, testUser, 1L));
         verify(groupRepository, times(1)).findById(1L);
-    }
-
-    @Test
-    public void testCreateActivityUserNotFound() {
-        when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class, () -> activityService.createActivity(testActivityRequest, 1L, 1L));
-        verify(groupRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(1L);
     }
 
     @Test
@@ -118,7 +110,7 @@ class ActivityServiceTest {
         when(activityRepository.findById(1L)).thenReturn(Optional.of(testActivity));
         when(activityRepository.save(any(Activity.class))).thenReturn(testActivity);
 
-        ActivityResponse result = activityService.updateActivity(testActivityRequest, 1L);
+        ActivityResponse result = activityService.updateActivity(testActivityRequest, 1L, testUser);
 
         assertNotNull(result);
         assertEquals("Test Activity", result.getName());
@@ -130,18 +122,34 @@ class ActivityServiceTest {
     public void testUpdateActivityActivityNotFound() {
         when(activityRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(ActivityNotFoundException.class, () -> activityService.updateActivity(testActivityRequest, 1L));
+        assertThrows(ActivityNotFoundException.class, () -> activityService.updateActivity(testActivityRequest, 1L, testUser));
         verify(activityRepository, times(1)).findById(1L);
     }
 
     @Test
     public void testDeleteActivitySuccess() {
+        when(activityRepository.findById(1L)).thenReturn(Optional.of(testActivity));
         doNothing().when(activityRepository).deleteById(1L);
 
-        activityService.deleteActivity(1L);
+        activityService.deleteActivity(1L, testUser);
 
         verify(activityRepository, times(1)).deleteById(1L);
     }
+
+    @Test
+    public void testDeleteActivityUserNotGroupMember() {
+        when(activityRepository.findById(1L)).thenReturn(Optional.of(testActivity));
+
+        doThrow(new UserIsNotInGroupException("User with ID " + testUser.getId() + " is not in group"))
+                .when(securityService).checkIfUserIsInGroup(testUser, testGroup);
+
+        assertThrows(UserIsNotInGroupException.class, () -> {
+            activityService.deleteActivity(1L, testUser);
+        });
+
+        verify(activityRepository, never()).deleteById(anyLong());
+    }
+
 
     @Test
     public void testGetActivitiesForGroupSuccess() {
@@ -156,5 +164,4 @@ class ActivityServiceTest {
         assertEquals("Test Activity", result.getContent().getFirst().getName());
         verify(activityRepository, times(1)).findByGroup_Id(1L, pageable);
     }
-
 }

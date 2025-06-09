@@ -11,20 +11,18 @@ import share.fare.backend.entity.Group;
 import share.fare.backend.entity.User;
 import share.fare.backend.exception.ActivityNotFoundException;
 import share.fare.backend.exception.GroupNotFoundException;
-import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.mapper.ActivityMapper;
 import share.fare.backend.repository.ActivityRepository;
 import share.fare.backend.repository.GroupRepository;
-import share.fare.backend.repository.UserRepository;
 
 @Service
 @RequiredArgsConstructor
 public class ActivityService {
     private final ActivityRepository activityRepository;
     private final GroupRepository groupRepository;
-    private final UserRepository userRepository;
+    private final SecurityService securityService;
 
-    public ActivityResponse createActivity(ActivityRequest activityRequest, Long createdByUserId, Long groupId) {
+    public ActivityResponse createActivity(ActivityRequest activityRequest, User currentUser, Long groupId) {
         if (activityRequest.getStartDate() != null && activityRequest.getEndDate() != null) {
             if (activityRequest.getStartDate().isAfter(activityRequest.getEndDate())) {
                 throw new IllegalArgumentException("Start date must be before end date.");
@@ -35,19 +33,19 @@ public class ActivityService {
                 .findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
 
-        User user = userRepository
-                .findById(createdByUserId)
-                .orElseThrow(() -> new UserNotFoundException(createdByUserId));
+        securityService.checkIfUserIsInGroup(currentUser, group);
 
         Activity activity = ActivityMapper.toEntity(activityRequest, group);
 
         return ActivityMapper.toResponse(activityRepository.save(activity));
     }
 
-    public ActivityResponse updateActivity(ActivityRequest request, Long activityId) {
+    public ActivityResponse updateActivity(ActivityRequest request, Long activityId, User currentUser) {
         Activity activity = activityRepository
                 .findById(activityId)
                 .orElseThrow(() -> new ActivityNotFoundException("Activity with ID: " + activityId + " not found"));
+
+        securityService.checkIfUserIsInGroup(currentUser, activity.getGroup());
 
         activity.setName(request.getName());
         activity.setDescription(request.getDescription());
@@ -56,7 +54,12 @@ public class ActivityService {
         return ActivityMapper.toResponse(activityRepository.save(activity));
     }
 
-    public void deleteActivity(Long activityId) {
+    public void deleteActivity(Long activityId, User currentUser) {
+        Activity activity = activityRepository.findById(activityId)
+                .orElseThrow(() -> new ActivityNotFoundException("Activity with ID: " + activityId + " not found"));
+
+        securityService.checkIfUserIsInGroup(currentUser, activity.getGroup());
+
         activityRepository.deleteById(activityId);
     }
 

@@ -39,10 +39,14 @@ class GroupMembershipServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private SecurityService securityService;
+
     @InjectMocks
     private GroupMembershipService groupMembershipService;
 
     private User testUser;
+    private User testUser2;
     private Group testGroup;
     private GroupMembership testMembership;
 
@@ -52,6 +56,12 @@ class GroupMembershipServiceTest {
                 .id(1L)
                 .email("test@test.com")
                 .password("password")
+                .build();
+
+        testUser2 = User.builder()
+                .id(2L)
+                .email("test2@test.com")
+                .password("password2")
                 .build();
 
         testGroup = Group.builder()
@@ -75,7 +85,7 @@ class GroupMembershipServiceTest {
         when(groupMembershipRepository.existsByGroupAndUser(testGroup, testUser)).thenReturn(false);
         when(groupMembershipRepository.save(any(GroupMembership.class))).thenReturn(testMembership);
 
-        GroupMembershipResponse result = groupMembershipService.addMemberToGroup(1L, 1L, GroupRole.MEMBER, 1L);
+        GroupMembershipResponse result = groupMembershipService.addMemberToGroup(1L, 1L, GroupRole.MEMBER, testUser);
 
         assertNotNull(result);
         assertEquals(1L, result.getUserId());
@@ -89,7 +99,7 @@ class GroupMembershipServiceTest {
     public void testAddMemberToGroupGroupNotFound() {
         when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(GroupNotFoundException.class, () -> groupMembershipService.addMemberToGroup(1L, 1L, GroupRole.MEMBER, 1L));
+        assertThrows(GroupNotFoundException.class, () -> groupMembershipService.addMemberToGroup(1L, 1L, GroupRole.MEMBER, testUser));
         verify(groupRepository, times(1)).findById(1L);
     }
 
@@ -98,7 +108,7 @@ class GroupMembershipServiceTest {
         when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
         when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> groupMembershipService.addMemberToGroup(1L, 1L, GroupRole.MEMBER, 1L));
+        assertThrows(UserNotFoundException.class, () -> groupMembershipService.addMemberToGroup(1L, 1L, GroupRole.MEMBER, testUser));
         verify(groupRepository, times(1)).findById(1L);
         verify(userRepository, times(1)).findById(1L);
     }
@@ -109,7 +119,7 @@ class GroupMembershipServiceTest {
         when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
         when(groupMembershipRepository.existsByGroupAndUser(testGroup, testUser)).thenReturn(true);
 
-        assertThrows(UserAlreadyInGroupException.class, () -> groupMembershipService.addMemberToGroup(1L, 1L, GroupRole.MEMBER, 1L));
+        assertThrows(UserAlreadyInGroupException.class, () -> groupMembershipService.addMemberToGroup(1L, 1L, GroupRole.MEMBER, testUser));
         verify(groupRepository, times(1)).findById(1L);
         verify(userRepository, times(1)).findById(1L);
         verify(groupMembershipRepository, times(1)).existsByGroupAndUser(testGroup, testUser);
@@ -118,15 +128,14 @@ class GroupMembershipServiceTest {
     @Test
     public void testRemoveMemberFromGroupSuccess() {
         when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser)).thenReturn(Optional.of(testMembership));
+        when(userRepository.findById(2L)).thenReturn(Optional.ofNullable(testUser2));
+        when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser2)).thenReturn(Optional.ofNullable(testMembership));
         doNothing().when(groupMembershipRepository).delete(testMembership);
 
-        groupMembershipService.removeMemberFromGroup(1L, 1L);
+        groupMembershipService.removeMemberFromGroup(1L, 2L, testUser);
 
         verify(groupRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(1L);
-        verify(groupMembershipRepository, times(1)).findByGroupAndUser(testGroup, testUser);
+        verify(userRepository, times(1)).findById(2L);
         verify(groupMembershipRepository, times(1)).delete(testMembership);
     }
 
@@ -134,59 +143,59 @@ class GroupMembershipServiceTest {
     public void testRemoveMemberFromGroupGroupNotFound() {
         when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(GroupNotFoundException.class, () -> groupMembershipService.removeMemberFromGroup(1L, 1L));
+        assertThrows(GroupNotFoundException.class, () -> groupMembershipService.removeMemberFromGroup(1L, 2L, testUser));
         verify(groupRepository, times(1)).findById(1L);
     }
 
     @Test
     public void testRemoveMemberFromGroupUserNotFound() {
         when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> groupMembershipService.removeMemberFromGroup(1L, 1L));
+        assertThrows(UserNotFoundException.class, () -> groupMembershipService.removeMemberFromGroup(1L, 2L, testUser));
         verify(groupRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).findById(2L);
     }
 
     @Test
     public void testRemoveMemberFromGroupUserNotInGroup() {
         when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser)).thenReturn(Optional.empty());
+        when(userRepository.findById(2L)).thenReturn(Optional.of(testUser2));
+        when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser2)).thenReturn(Optional.empty());
 
-        assertThrows(UserIsNotInGroupException.class, () -> groupMembershipService.removeMemberFromGroup(1L, 1L));
+        assertThrows(UserIsNotInGroupException.class, () -> groupMembershipService.removeMemberFromGroup(1L, 2L, testUser));
         verify(groupRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(1L);
-        verify(groupMembershipRepository, times(1)).findByGroupAndUser(testGroup, testUser);
+        verify(userRepository, times(1)).findById(2L);
+        verify(groupMembershipRepository, times(1)).findByGroupAndUser(testGroup, testUser2);
     }
 
     @Test
     public void testRemoveMemberFromGroupOwnerCannotBeRemoved() {
         testMembership.setRole(GroupRole.OWNER);
         when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser)).thenReturn(Optional.of(testMembership));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(testUser2));
+        when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser2)).thenReturn(Optional.of(testMembership));
 
-        assertThrows(IllegalArgumentException.class, () -> groupMembershipService.removeMemberFromGroup(1L, 1L));
+        assertThrows(IllegalArgumentException.class, () -> groupMembershipService.removeMemberFromGroup(1L, 2L, testUser));
         verify(groupRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(1L);
-        verify(groupMembershipRepository, times(1)).findByGroupAndUser(testGroup, testUser);
+        verify(userRepository, times(1)).findById(2L);
+        verify(groupMembershipRepository, times(1)).findByGroupAndUser(testGroup, testUser2);
     }
 
     @Test
     public void testUpdateMemberRoleSuccess() {
         when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser)).thenReturn(Optional.of(testMembership));
+        when(userRepository.findById(2L)).thenReturn(Optional.of(testUser2));
+        when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser2)).thenReturn(Optional.of(testMembership));
         when(groupMembershipRepository.save(any(GroupMembership.class))).thenReturn(testMembership);
 
-        GroupMembershipResponse result = groupMembershipService.updateMemberRole(1L, 1L, GroupRole.ADMIN);
+        GroupMembershipResponse result = groupMembershipService.updateMemberRole(1L, 2L, GroupRole.ADMIN, testUser);
 
         assertNotNull(result);
         assertEquals(1L, result.getUserId());
         verify(groupRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(1L);
-        verify(groupMembershipRepository, times(1)).findByGroupAndUser(testGroup, testUser);
+        verify(userRepository, times(1)).findById(2L);
+        verify(groupMembershipRepository, times(1)).findByGroupAndUser(testGroup, testUser2);
         verify(groupMembershipRepository, times(1)).save(any(GroupMembership.class));
     }
 
@@ -194,30 +203,30 @@ class GroupMembershipServiceTest {
     public void testUpdateMemberRoleGroupNotFound() {
         when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(GroupNotFoundException.class, () -> groupMembershipService.updateMemberRole(1L, 1L, GroupRole.ADMIN));
+        assertThrows(GroupNotFoundException.class, () -> groupMembershipService.updateMemberRole(1L, 2L, GroupRole.ADMIN, testUser));
         verify(groupRepository, times(1)).findById(1L);
     }
 
     @Test
     public void testUpdateMemberRoleUserNotFound() {
         when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(2L)).thenReturn(Optional.empty());
 
-        assertThrows(UserNotFoundException.class, () -> groupMembershipService.updateMemberRole(1L, 1L, GroupRole.ADMIN));
+        assertThrows(UserNotFoundException.class, () -> groupMembershipService.updateMemberRole(1L, 2L, GroupRole.ADMIN, testUser));
         verify(groupRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(1L);
+        verify(userRepository, times(1)).findById(2L);
     }
 
     @Test
     public void testUpdateMemberRoleUserNotInGroup() {
         when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
-        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
-        when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser)).thenReturn(Optional.empty());
+        when(userRepository.findById(2L)).thenReturn(Optional.of(testUser2));
+        when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser2)).thenReturn(Optional.empty());
 
-        assertThrows(UserIsNotInGroupException.class, () -> groupMembershipService.updateMemberRole(1L, 1L, GroupRole.ADMIN));
+        assertThrows(UserIsNotInGroupException.class, () -> groupMembershipService.updateMemberRole(1L, 2L, GroupRole.ADMIN, testUser));
         verify(groupRepository, times(1)).findById(1L);
-        verify(userRepository, times(1)).findById(1L);
-        verify(groupMembershipRepository, times(1)).findByGroupAndUser(testGroup, testUser);
+        verify(userRepository, times(1)).findById(2L);
+        verify(groupMembershipRepository, times(1)).findByGroupAndUser(testGroup, testUser2);
     }
 
     @Test

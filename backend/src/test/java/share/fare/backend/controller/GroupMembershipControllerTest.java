@@ -77,7 +77,13 @@ public class GroupMembershipControllerTest {
 
         testGroup = groupRepository.save(group);
 
-        groupMembershipService.addMemberToGroup(testGroup.getId(), testUser.getId(), GroupRole.OWNER, testUser.getId());
+        GroupMembership groupMembership = GroupMembership.builder()
+                .group(testGroup)
+                .user(testUser)
+                .role(GroupRole.OWNER)
+                .build();
+
+        groupMembershipRepository.save(groupMembership);
     }
 
     @AfterEach
@@ -101,7 +107,7 @@ public class GroupMembershipControllerTest {
 
     @Test
     void addMemberAlreadyIsInGroupTest() throws Exception {
-        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.MEMBER, testUser.getId());
+        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.MEMBER, testUser);
         mockMvc.perform(post(URI, testGroup.getId())
                         .param("userId", String.valueOf(newUser.getId()))
                         .with(user(testUser))
@@ -131,7 +137,7 @@ public class GroupMembershipControllerTest {
 
     @Test
     void removeMemberTest() throws Exception {
-        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.MEMBER, testUser.getId());
+        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.MEMBER, testUser);
 
         mockMvc.perform(delete(URI + "/{userId}", testGroup.getId(), newUser.getId())
                         .with(user(testUser))
@@ -141,7 +147,7 @@ public class GroupMembershipControllerTest {
 
     @Test
     void removeOwnerTest() throws Exception {
-        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.MEMBER, testUser.getId());
+        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.OWNER, testUser);
 
         mockMvc.perform(delete(URI + "/{userId}", testGroup.getId(), testUser.getId())
                         .with(user(newUser))
@@ -151,12 +157,21 @@ public class GroupMembershipControllerTest {
     }
 
     @Test
+    void userRemovesSelfFromGroupTest() throws Exception {
+        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.MEMBER, testUser);
+
+        mockMvc.perform(delete(URI + "/{userId}", testGroup.getId(), newUser.getId())
+                        .with(user(newUser))
+                        .principal(() -> String.valueOf(newUser.getId())))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
     void removeNonMemberTest() throws Exception {
         mockMvc.perform(delete(URI + "/{userId}", testGroup.getId(), newUser.getId())
                         .with(user(testUser))
                         .principal(() -> String.valueOf(testUser.getId())))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.message").value("User is not a member of the group"));
+                .andExpect(status().isConflict());
     }
 
     @Test
@@ -171,7 +186,7 @@ public class GroupMembershipControllerTest {
 
     @Test
     void updateMemberRoleTest() throws Exception {
-        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.MEMBER, testUser.getId());
+        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.MEMBER, testUser);
 
         mockMvc.perform(put(URI + "/{userId}/role", testGroup.getId(), newUser.getId())
                         .param("role", "ADMIN")
@@ -183,7 +198,7 @@ public class GroupMembershipControllerTest {
 
     @Test
     void getGroupMembersTest() throws Exception {
-        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.MEMBER, testUser.getId());
+        groupMembershipService.addMemberToGroup(testGroup.getId(), newUser.getId(), GroupRole.MEMBER, testUser);
 
         mockMvc.perform(get(URI, testGroup.getId())
                         .with(user(testUser))

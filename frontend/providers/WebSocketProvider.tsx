@@ -55,7 +55,6 @@ export const WebSocketProvider = ({
         Authorization: `Bearer ${token}`,
       },
       reconnectDelay: 5000,
-      debug: (str) => console.log(str),
     });
 
     stompClient.onConnect = () => {

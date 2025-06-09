@@ -41,6 +41,7 @@ import SearchUsers from '@/components/shared/SearchUsers';
 import { formatDate } from '@/lib/utils';
 import Link from 'next/link';
 import { UserSearch } from '@/validation/userProfileSchemas';
+import axios from 'axios';
 
 type SortKey = 'userEmail' | 'joinedAt' | 'role';
 
@@ -112,16 +113,31 @@ export default function TripMembersPage() {
           },
         },
       });
-    } catch {
-      toast('Error sending an invitation.', {
-        duration: 3000,
-        action: {
-          label: 'Close',
-          onClick: () => {
-            toast.dismiss();
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        if (err.response?.status === 409) {
+          toast('User has already been invited.', {
+            duration: 3000,
+            action: {
+              label: 'Close',
+              onClick: () => {
+                toast.dismiss();
+              },
+            },
+          });
+          return;
+        }
+      } else {
+        toast('Error sending an invitation.', {
+          duration: 3000,
+          action: {
+            label: 'Close',
+            onClick: () => {
+              toast.dismiss();
+            },
           },
-        },
-      });
+        });
+      }
     }
   };
 
@@ -393,9 +409,16 @@ export default function TripMembersPage() {
                                     membership.role as MembershipRole,
                                   );
                                 }}
-                                disabled={editingUserId === null}
+                                disabled={
+                                  editingUserId !== null ||
+                                  (membership.role === 'OWNER' &&
+                                    memberships &&
+                                    memberships.filter(
+                                      (el) => el.role === 'OWNER',
+                                    ).length <= 1)
+                                }
                                 className="flex items-center gap-1 px-4 py-1.5 rounded-full border 
-                                  disabled:cursor-not-allowed disabled:opacity-50 cursor-pointer text-primary-500 hover:bg-primary-500/10"
+                                  disabled:cursor-not-allowed disabled:text-gray-300 cursor-pointer text-primary-500 hover:bg-primary-500/10"
                               >
                                 <Pencil width={18} height={18} />
                                 <span>Edit</span>

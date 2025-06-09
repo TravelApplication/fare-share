@@ -12,7 +12,6 @@ export default async function LoggedInLayout({
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
   if (!token || !isLoggedIn(token)) {
-    console.log('User is not logged in');
     redirect('/sign-in');
   }
 

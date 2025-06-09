@@ -1,5 +1,5 @@
 'use client';
-import { ActivitySchema } from '@/validation/activitySchema';
+import { Activity } from '@/validation/activitySchema';
 import YesNoModal from '../shared/YesNoModal';
 import {
   EllipsisVertical,
@@ -31,11 +31,7 @@ import { useEffect, useState } from 'react';
 import { Vote } from '@/validation/voteSchema';
 import { toast } from 'sonner';
 
-export default function ActivityCard({
-  activity,
-}: {
-  activity: ActivitySchema;
-}) {
+export default function ActivityCard({ activity }: { activity: Activity }) {
   const router = useRouter();
   const { trip, refreshTrip, getVotes } = useTrip();
   const user = appStore((state) => state.user);

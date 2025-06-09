@@ -152,7 +152,7 @@ function TripCard({ trip, showDropdownOptions = false }: TripCardProps) {
           </button>
           <button
             className="text-primary-500 text-sm border shadow-sm flex gap-2 py-2 px-4 rounded-full items-center hover:bg-gray-100"
-            onClick={() => router.push(`/trips/${id}/members`)}
+            onClick={() => router.push(`/trips/${id}/chat`)}
           >
             <MessageCircle size={20} />
             <div>Chat</div>

@@ -1,20 +1,5 @@
 import { StateCreator } from 'zustand';
-
-export type NotificationType =
-  | 'VOTE'
-  | 'VOTE_CHANGE'
-  | 'FRIEND_INVITATION'
-  | 'GROUP_INVITATION'
-  | 'FRIEND_INVITATION_ACCEPT'
-  | 'FRIEND_INVITATION_REJECT'
-  | 'GROUP_INVITATION_ACCEPT'
-  | 'GROUP_INVITATION_REJECT';
-
-export type Notification = {
-  type: NotificationType;
-  senderId: number;
-  message: string;
-};
+import { Notification } from '@/validation/notificationSchema';
 
 export type NotificationSlice = {
   notifications: Notification[];

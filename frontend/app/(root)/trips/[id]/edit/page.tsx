@@ -67,7 +67,7 @@ const Page = () => {
 
       return () => clearTimeout(timeout);
     }
-  }, [isUserOwner]);
+  }, [isUserOwner, router, trip]);
 
   if (!trip) {
     return <div>Loading trip data...</div>;

@@ -16,7 +16,6 @@ import share.fare.backend.mapper.ActivityMapper;
 import share.fare.backend.repository.ActivityRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
-import share.fare.backend.repository.VoteRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -24,9 +23,14 @@ public class ActivityService {
     private final ActivityRepository activityRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
-    private final VoteRepository voteRepository;
 
     public ActivityResponse createActivity(ActivityRequest activityRequest, Long createdByUserId, Long groupId) {
+        if (activityRequest.getStartDate() != null && activityRequest.getEndDate() != null) {
+            if (activityRequest.getStartDate().isAfter(activityRequest.getEndDate())) {
+                throw new IllegalArgumentException("Start date must be before end date.");
+            }
+        }
+
         Group group = groupRepository
                 .findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));

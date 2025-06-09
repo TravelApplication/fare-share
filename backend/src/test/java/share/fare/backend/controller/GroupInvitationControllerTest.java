@@ -105,8 +105,8 @@ public class GroupInvitationControllerTest {
                         .param("receiverId", String.valueOf(testSecondUser.getId()))
                         .param("groupId", String.valueOf(testGroup.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.senderId").value(testUser.getId()))
-                .andExpect(jsonPath("$.receiverId").value(testSecondUser.getId()))
+                .andExpect(jsonPath("$.sender.id").value(testUser.getId()))
+                .andExpect(jsonPath("$.receiver.id").value(testSecondUser.getId()))
                 .andExpect(jsonPath("$.groupId").value(testGroup.getId()));
     }
 
@@ -248,7 +248,7 @@ public class GroupInvitationControllerTest {
                         .with(user(testUser))
                         .principal(() -> String.valueOf(testUser.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].senderId").value(testUser.getId()));
+                .andExpect(jsonPath("$.[0].sender.id").value(testUser.getId()));
 
         mockMvc.perform(get(URI + "/received")
                         .with(user(testUser))
@@ -278,6 +278,6 @@ public class GroupInvitationControllerTest {
                         .with(user(testSecondUser))
                         .principal(() -> String.valueOf(testSecondUser.getId())))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].senderId").value(testUser.getId()));
+                .andExpect(jsonPath("$.[0].sender.id").value(testUser.getId()));
     }
 }

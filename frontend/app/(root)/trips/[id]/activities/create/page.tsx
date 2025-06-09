@@ -4,8 +4,7 @@ import { useState } from 'react';
 import { activityFormSchema } from '@/validation/activityFormSchema';
 import { z } from 'zod';
 import { FormikHelpers } from 'formik';
-import { getToken } from '@/lib/auth';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { Alert } from '@/components/ui/alert';
 import { useTrip } from '@/context/TripContext';
 import { useRouter } from 'next/navigation';
@@ -24,13 +23,9 @@ export default function NewActivityPage() {
   ) => {
     if (!trip) return;
     try {
-      const token = getToken();
-      const response = await axios.post(
-        `/api/v1/groups/${trip.id}/activities`,
+      const response = await axiosInstance.post(
+        `groups/${trip.id}/activities`,
         values,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
       );
       console.log(response.data);
       toast(`Activity ${values.name} added!`, {
@@ -46,8 +41,8 @@ export default function NewActivityPage() {
       refreshTrip();
 
       router.push(`/trips/${trip.id}`);
-    } catch (err: unknown) {
-      setError(err.message || 'An error occurred');
+    } catch {
+      setError('An error occurred');
     }
   };
 

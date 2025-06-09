@@ -1,5 +1,6 @@
 'use client';
 import { ActivitySchema } from '@/validation/activitySchema';
+import YesNoModal from '../shared/YesNoModal';
 import {
   EllipsisVertical,
   MapPinIcon,
@@ -22,9 +23,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { useTrip } from '@/context/TripContext';
-import { getToken } from '@/lib/auth';
 import { appStore } from '@/store/appStore';
 import { useEffect, useState } from 'react';
 import { Vote } from '@/validation/voteSchema';
@@ -52,7 +52,6 @@ export default function ActivityCard({
   }, [trip, user?.id, getVotes, user]);
 
   const castVote = async (activityId: number, type: 'FOR' | 'AGAINST') => {
-    const token = getToken();
     const currentActivity = trip?.activities.find((a) => a.id === activityId);
     const existingVote = currentActivity?.votes.find(
       (v: Vote) => v.userId === user?.id,
@@ -60,21 +59,18 @@ export default function ActivityCard({
 
     try {
       if (existingVote && existingVote.voteType === type) {
-        await axios.delete(
-          `/api/v1/groups/${trip!.id}/activities/${activityId}/votes/${existingVote.id}`,
-          { headers: { Authorization: `Bearer ${token}` } },
+        await axiosInstance.delete(
+          `groups/${trip!.id}/activities/${activityId}/votes/${existingVote.id}`,
         );
       } else if (existingVote) {
-        await axios.put(
-          `/api/v1/groups/${trip!.id}/activities/${activityId}/votes/${existingVote.id}`,
+        await axiosInstance.put(
+          `groups/${trip!.id}/activities/${activityId}/votes/${existingVote.id}`,
           { voteType: type },
-          { headers: { Authorization: `Bearer ${token}` } },
         );
       } else {
-        await axios.post(
-          `/api/v1/groups/${trip!.id}/activities/${activityId}/votes`,
+        await axiosInstance.post(
+          `groups/${trip!.id}/activities/${activityId}/votes`,
           { voteType: type },
-          { headers: { Authorization: `Bearer ${token}` } },
         );
       }
 
@@ -87,12 +83,8 @@ export default function ActivityCard({
   const handleDelete = async () => {
     try {
       if (activity && trip) {
-        const token = getToken();
-        await axios.delete(
-          `/api/v1/groups/${trip.id}/activities/${activity.id}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
+        await axiosInstance.delete(
+          `groups/${trip.id}/activities/${activity.id}`,
         );
         toast(`Activity ${activity.name} deleted!`, {
           duration: 7000,
@@ -152,7 +144,7 @@ export default function ActivityCard({
           </Link>
         )}
       </div>
-      <div className="flex flex-col justify-between items-end">
+      <div className="flex flex-col justify-between gap-2 items-end">
         <DropdownMenu>
           <DropdownMenuTrigger className="text-gray-400 rounded-full hover:bg-gray-100 p-1.5 h-min w-min">
             <EllipsisVertical width={20} height={20} />
@@ -168,11 +160,24 @@ export default function ActivityCard({
               <span>Edit</span>
             </DropdownMenuItem>
             <DropdownMenuItem
-              className="cursor-pointer !text-red-800 hover:!bg-red-500/10 flex items-center gap-2"
-              onClick={() => handleDelete()}
+              className="cursor-pointer !text-red-800 hover:!bg-red-500/10"
+              onSelect={(e) => e.preventDefault()}
             >
-              <Trash width={16} height={16} />
-              <span>Delete</span>
+              <div>
+                <YesNoModal
+                  title="Are you sure you want to delete this activity?"
+                  description={`Activity "${activity.name}" will be permanently removed.`}
+                  cancelName="Cancel"
+                  actionName="Delete"
+                  onConfirm={handleDelete}
+                  trigger={
+                    <div className="flex items-center gap-2">
+                      <Trash width={16} height={16} />
+                      <span>Delete</span>
+                    </div>
+                  }
+                />
+              </div>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -4,9 +4,9 @@ import { appStore } from '@/store/appStore';
 import { getToken } from '@/lib/auth';
 import { Client } from '@stomp/stompjs';
 import SockJS from 'sockjs-client';
-import axios from 'axios';
+import axiosInstance from '@/lib/axiosInstance';
 import { toast } from 'sonner';
-import { MembershipSchema } from '@/validation/membershipSchema';
+import { Membership } from '@/validation/membershipSchema';
 
 export const WebSocketProvider = ({
   children,
@@ -16,6 +16,10 @@ export const WebSocketProvider = ({
   const user = appStore((state) => state.user);
   const setUser = appStore((state) => state.setUser);
   const addNotfication = appStore((state) => state.addNotification);
+  const addSentFriendInvitation = appStore(
+    (state) => state.addSentFriendInvitation,
+  );
+  const sentFriendInvitations = appStore((s) => s.sentFriendInvitations);
   const setToFetchGroup = appStore((state) => state.setToFetchGroup);
 
   useEffect(() => {
@@ -25,11 +29,17 @@ export const WebSocketProvider = ({
     const fetchUserData = async () => {
       if (!user) {
         try {
-          const response = await axios.get('/api/v1/users', {
-            headers: { Authorization: `Bearer ${token}` },
-          });
-          const userData = response.data;
+          const userResponse = await axiosInstance.get('users');
+          const userData = userResponse.data;
           setUser(userData);
+
+          const invitationsResponse = await axiosInstance.get(
+            'friend-invitations/sent',
+          );
+          const invitationsData = invitationsResponse.data;
+          invitationsData.forEach((invitation) => {
+            addSentFriendInvitation(invitation.receiverId);
+          });
         } catch (err) {
           console.error('error websockeet', err);
         }
@@ -64,7 +74,7 @@ export const WebSocketProvider = ({
           addNotfication(notification);
         });
 
-        user.memberships.forEach((memb: MembershipSchema) => {
+        user.memberships.forEach((memb: Membership) => {
           stompClient.subscribe(
             `/group/${memb.groupId}/notifications`,
             (vote) => {

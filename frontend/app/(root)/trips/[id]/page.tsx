@@ -46,10 +46,9 @@ export default function TripPage() {
       setToFetchGroup(false);
     }
     if (trip && user && user.id) {
-      console.log('getujemy vote');
       setVotes(getVotes(user.id));
     }
-  }, [trip, toFetchGroup, refreshTrip, setToFetchGroup]);
+  }, [trip, toFetchGroup, refreshTrip, setToFetchGroup, getVotes, user]);
 
   if (!trip) return null;
 
@@ -101,15 +100,22 @@ export default function TripPage() {
     <div>
       <Button
         onClick={() => router.push('/trips')}
-        className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full my-4"
+        className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full mb-4"
       >
         <ArrowLeft />
         <span>Back To Trips</span>
       </Button>
 
-      <TripCard trip={trip} />
-      <ExpensesDashboard trip={trip} />
+      <TripCard
+        trip={trip}
+        showDropdownOptions={
+          !!trip.memberships.find(
+            (m) => m.userId === user?.id && m.role === 'OWNER',
+          )
+        }
+      />
 
+      <ExpensesDashboard trip={trip} />
       <button
         onClick={() => redirect(`/trips/${trip.id}/activities/create`)}
         className="mx-auto relative -mb-6 z-50 bg-white border text-primary-500 hover:bg-gray-100 px-4 py-3 shadow-md flex gap-2 items-center justify-center rounded-full mt-4"

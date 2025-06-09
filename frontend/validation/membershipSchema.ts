@@ -10,4 +10,4 @@ export const membershipSchema = z
   })
   .passthrough();
 
-export type MembershipSchema = z.infer<typeof membershipSchema>;
+export type Membership = z.infer<typeof membershipSchema>;

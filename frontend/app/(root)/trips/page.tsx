@@ -1,8 +1,6 @@
 'use client';
 import React from 'react';
 import TripCard from '@/components/trip/TripCard';
-import { getToken, logout } from '@/lib/auth';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Group, groupSchema } from '@/validation/groupSchema';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -16,6 +14,7 @@ import {
   ArrowUp,
 } from 'lucide-react';
 import { Alert } from '@/components/ui/alert';
+import axiosInstance from '@/lib/axiosInstance';
 
 function Page() {
   const [error, setError] = useState<string | null>(null);
@@ -33,14 +32,7 @@ function Page() {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const token = getToken();
-        if (!token) {
-          logout();
-          return;
-        }
-
-        const response = await axios.get('/api/v1/groups/user-groups', {
-          headers: { Authorization: `Bearer ${token}` },
+        const response = await axiosInstance.get('groups/user-groups', {
           params: {
             page: page - 1,
             size: tripsPerPage,

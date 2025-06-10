@@ -41,7 +41,7 @@ export default function GroupExpensesPage() {
         await Promise.all([
           axiosInstance.get(`/groups/${trip.id}/balance/balances`),
           axiosInstance.get(`/groups/${trip.id}/expenses`),
-          axiosInstance.get(`/groups/${trip.id}/balance/min`),
+          axiosInstance.get(`/groups/${trip.id}/balance/minimum-transactions`),
           axiosInstance.get(`/groups/${trip.id}/settlements`),
         ]);
 

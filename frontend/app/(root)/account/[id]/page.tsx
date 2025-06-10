@@ -17,14 +17,14 @@ import {
   X,
 } from 'lucide-react';
 import { UserInfo } from '@/validation/userProfileSchemas';
-import { Formik, Field, Form, ErrorMessage, FormikHelpers } from 'formik';
+import { Formik, Field, Form, ErrorMessage } from 'formik';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
-import { z } from 'zod';
-import { updateProfileFormSchema } from '@/validation/authSchemas';
 import { toast } from 'sonner';
 import { appStore } from '@/store/appStore';
+import { userInfoFormSchema } from '@/validation/userInfoFormSchema';
+import { Invitation } from '@/validation/invitationsSchema';
 
 function Page() {
   const { id } = useParams();
@@ -32,8 +32,11 @@ function Page() {
   const [user, setUser] = useState<UserInfo | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isEditing, setIsEditing] = useState(false);
+  const [sentInvitations, setSentInvitiations] = useState<Invitation[]>([]);
+
+  const today = new Date().toISOString().split('T')[0];
+
   const addSentFriendInvitation = appStore((s) => s.addSentFriendInvitation);
-  const hasSentFriendInvitation = appStore((s) => s.hasSentFriendInvitation);
   const isFriend = appStore((s) => s.hasFriend);
 
   const fetchUserData = async (id: number) => {
@@ -41,26 +44,49 @@ function Page() {
       const response = await axiosInstance.get(`user-info/${id}`);
       setUser(response.data);
     } catch {
-      setError('An error occured');
+      setError('An error occured while fetching user data.');
+    }
+  };
+
+  const fetchInvitations = async () => {
+    try {
+      const response = await axiosInstance.get('friend-invitations/sent');
+      setSentInvitiations(response.data);
+    } catch {
+      toast('Failed to load invitations', {
+        description: 'Please try again later',
+        duration: 5000,
+        action: {
+          label: 'Close',
+          onClick: () => toast.dismiss(),
+        },
+      });
     }
   };
 
   const sendFriendRequest = async (userId: number) => {
-    try {
-      await axiosInstance.post(`friend-invitations/send/${userId}`);
-      toast('Friend request sent!', {
-        duration: 7000,
-        action: {
-          label: 'Close',
-          onClick: () => {
-            toast.dismiss();
+    if (id && !isFriend(+id)) {
+      try {
+        await axiosInstance.post(`friend-invitations/send/${userId}`);
+        toast('Friend request sent!', {
+          duration: 7000,
+          action: {
+            label: 'Close',
+            onClick: () => toast.dismiss(),
           },
-        },
-      });
-      addSentFriendInvitation(userId);
-    } catch {
-      setError('An error occured.');
+        });
+        addSentFriendInvitation(userId);
+        window.location.reload();
+      } catch {
+        setError('An error occured while sending friend request.');
+      }
     }
+  };
+
+  const hasSentFriendInvitation = (userId: number): boolean => {
+    return sentInvitations.some(
+      (invitation) => invitation.receiver.id === userId,
+    );
   };
 
   useEffect(() => {
@@ -69,6 +95,7 @@ function Page() {
       const decode = decodeToken(token);
       setLoggedUserId(decode?.sub ?? '');
       fetchUserData(Number(id));
+      fetchInvitations();
     }
   }, [id]);
 
@@ -80,38 +107,9 @@ function Page() {
     return <div className="text-red-500 text-center mt-10">{error}</div>;
   }
 
-  const handleSubmit = async (
-    values: z.infer<typeof updateProfileFormSchema>,
-    {
-      setError,
-      resetForm,
-    }: FormikHelpers<z.infer<typeof updateProfileFormSchema>> & {
-      setError: (error: string) => void;
-    },
-  ) => {
-    try {
-      const newUser = await axiosInstance.put(`user-info`, values);
-      setUser(newUser.data);
-      resetForm();
-      setIsEditing(false);
-
-      toast('User information updated successfully!', {
-        duration: 7000,
-        action: {
-          label: 'Close',
-          onClick: () => {
-            toast.dismiss();
-          },
-        },
-      });
-    } catch {
-      setError('An error occured');
-    }
-  };
-
   return (
     <div className="max-w-2xl mx-auto">
-      <Card className="p-4 shadow-lg rounded-3xl  bg-gradient-to-r from-blue-500/80 to-primary-600/85 text-white">
+      <Card className="p-4 shadow-lg rounded-3xl bg-gradient-to-r from-blue-500/80 to-primary-600/85 text-white">
         {loggedUserId === id && (
           <button
             className="bg-white p-2 m-2 rounded-full shadow-md hover:bg-gray-200 transition"
@@ -144,15 +142,28 @@ function Page() {
         <CardContent className="bg-white/20 rounded-3xl p-6 shadow-inner">
           {isEditing ? (
             <Formik
-              initialValues={{ user }}
-              validationSchema={toFormikValidationSchema(
-                updateProfileFormSchema,
-              )}
-              onSubmit={(values, actions) =>
-                handleSubmit(values, { ...actions, setError })
-              }
+              initialValues={{
+                firstName: user.firstName || '',
+                lastName: user.lastName || '',
+                bio: user.bio || '',
+                phoneNumber: user.phoneNumber || '',
+                dateOfBirth: user.dateOfBirth || '',
+              }}
+              validationSchema={toFormikValidationSchema(userInfoFormSchema)}
+              onSubmit={async (values, { setSubmitting }) => {
+                try {
+                  await axiosInstance.put(`user-info`, values);
+                  toast.success('Profile updated successfully!');
+                  setIsEditing(false);
+                  fetchUserData(user.id);
+                } catch {
+                  toast.error('Failed to update profile.');
+                } finally {
+                  setSubmitting(false);
+                }
+              }}
             >
-              {({ isSubmitting, errors, touched, setFieldValue, values }) => (
+              {({ errors, touched, isSubmitting }) => (
                 <Form>
                   <div className="mb-4">
                     <label className="font-semibold">First Name</label>
@@ -167,6 +178,7 @@ function Page() {
                       )}
                     />
                   </div>
+
                   <div className="mb-4">
                     <label className="font-semibold">Last Name</label>
                     <Field name="lastName" className="text-black" as={Input} />
@@ -180,10 +192,12 @@ function Page() {
                       )}
                     />
                   </div>
+
                   <div className="mb-4">
                     <label className="font-semibold">Bio</label>
                     <Field name="bio" className="text-black" as={Input} />
                   </div>
+
                   <div className="mb-4">
                     <label className="font-semibold">Phone Number</label>
                     <Field
@@ -201,23 +215,14 @@ function Page() {
                       )}
                     />
                   </div>
+
                   <div className="mb-4">
                     <label className="font-semibold">Date of Birth</label>
                     <Field
                       name="dateOfBirth"
                       type="date"
+                      max={today}
                       as={Input}
-                      value={
-                        values.dateOfBirth
-                          ? new Date(values.dateOfBirth)
-                              .toISOString()
-                              .split('T')[0]
-                          : ''
-                      }
-                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-                        const date = e.target.value;
-                        setFieldValue('dateOfBirth', date);
-                      }}
                       className={`mt-1 text-black ${
                         errors.dateOfBirth && touched.dateOfBirth
                           ? 'border-red-500'
@@ -234,6 +239,7 @@ function Page() {
                       )}
                     />
                   </div>
+
                   <Button
                     type="submit"
                     className="bg-white text-primary-500 hover:bg-gray-100"
@@ -254,11 +260,12 @@ function Page() {
                 <div className="flex flex-col items-center bg-white/25 p-4 rounded-xl shadow">
                   <Calendar className="w-6 h-6 text-primary-500" />
                   <span className="text-white mt-2">
-                    {new Intl.DateTimeFormat('en-US', {
-                      day: '2-digit',
-                      month: 'long',
-                      year: 'numeric',
-                    }).format(new Date(user.dateOfBirth))}
+                    {user.dateOfBirth &&
+                      new Intl.DateTimeFormat('en-US', {
+                        day: '2-digit',
+                        month: 'long',
+                        year: 'numeric',
+                      }).format(new Date(user.dateOfBirth))}
                   </span>
                 </div>
                 {loggedUserId !== id && (
@@ -279,16 +286,12 @@ function Page() {
                     ) : hasSentFriendInvitation(user.id) ? (
                       <>
                         <UserCog className="w-6 h-6" />
-                        <span className="text-white font-semibold">
-                          Friend Request Sent
-                        </span>
+                        <span>Invitation Sent</span>
                       </>
                     ) : (
                       <>
                         <UserPlus className="w-6 h-6" />
-                        <span className="text-white font-semibold">
-                          Send Friend Request
-                        </span>
+                        <span>Add Friend</span>
                       </>
                     )}
                   </button>

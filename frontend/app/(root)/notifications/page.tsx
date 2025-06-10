@@ -56,8 +56,7 @@ export default function InvitationsPage() {
       setFriendInvitesSent(friendsSent.data);
       setGroupInvitesReceived(groupsReceived.data);
       setGroupInvitesSent(groupsSent.data);
-    } catch (err) {
-      console.error('error with invitations', err);
+    } catch {
       toast('Failed to load invitations', {
         description: 'Please try again later',
         duration: 5000,

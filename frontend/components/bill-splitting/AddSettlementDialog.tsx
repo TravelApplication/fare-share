@@ -51,13 +51,6 @@ export default function AddSettlementDialog({
           validationSchema={toFormikValidationSchema(
             settlementFormSchema(maxAmount),
           )}
-          // validate={(values) => {
-          //   const errors: { amount?: string } = {};
-          //   if (!values.amount || values.amount <= 0) {
-          //     errors.amount = 'Amount must be greater than 0';
-          //   }
-          //   return errors;
-          // }}
           onSubmit={(values, { setSubmitting }) => {
             onSubmit({
               groupId,

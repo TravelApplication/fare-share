@@ -1,6 +1,22 @@
 import { useState } from 'react';
 import { Users } from 'lucide-react';
 import AddSettlementDialog from '@/components/bill-splitting/AddSettlementDialog';
+import { groupSchema } from '@/validation/groupSchema';
+
+export interface settlementsHistoryProp {
+  id: number;
+  groupId: number;
+  paidByUserId: number;
+  paidToUserId: number;
+  amount: number;
+  paymentDate: string;
+}
+
+export interface settlementProp {
+  debtorId: number;
+  creditorId: number;
+  amount: number;
+}
 
 export default function SettlementsTab({
   settlements,
@@ -8,9 +24,20 @@ export default function SettlementsTab({
   currentUserId,
   history,
   onSubmit,
-}: unknown) {
+}: {
+  settlements: settlementProp;
+  trip: groupSchema;
+  currentUserId: number;
+  history: settlementsProp[];
+  onSubmit: (values: {
+    groupId: number;
+    debtorId: number;
+    creditorId: number;
+    amount: number;
+  }) => void;
+}) {
   const [showDialog, setShowDialog] = useState(false);
-  const [selectedUser, setSelectedUser] = useState<unknown>(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const [selectedAmount, setSelectedAmount] = useState<number>(0);
   const [settlementType, setSettlementType] = useState<
     'youOwe' | 'theyOwe' | null
@@ -29,10 +56,10 @@ export default function SettlementsTab({
 
   const findSettlement = (userId: number) => {
     const youOwe = settlements.find(
-      (s: unknown) => s.debtorId === currentUserId && s.creditorId === userId,
+      (s) => s.debtorId === currentUserId && s.creditorId === userId,
     );
     const theyOwe = settlements.find(
-      (s: unknown) => s.debtorId === userId && s.creditorId === currentUserId,
+      (s) => s.debtorId === userId && s.creditorId === currentUserId,
     );
     return { youOwe, theyOwe };
   };
@@ -45,8 +72,8 @@ export default function SettlementsTab({
       </h4>
       <ul className="space-y-2">
         {trip?.memberships
-          .filter((user: unknown) => user.userId !== currentUserId)
-          .map((user: unknown) => {
+          .filter((user) => user.userId !== currentUserId)
+          .map((user) => {
             const { youOwe, theyOwe } = findSettlement(user.userId);
             const info = youOwe
               ? {
@@ -107,15 +134,13 @@ export default function SettlementsTab({
             >
               <span>
                 <span className="font-semibold text-primary-600">
-                  {trip?.memberships.find(
-                    (u: unknown) => u.userId === item.paidByUserId,
-                  )?.userEmail || item.paidByUserId}
+                  {trip?.memberships.find((u) => u.userId === item.paidByUserId)
+                    ?.userEmail || item.paidByUserId}
                 </span>{' '}
                 paid{' '}
                 <span className="font-semibold text-primary-600">
-                  {trip?.memberships.find(
-                    (u: unknown) => u.userId === item.paidToUserId,
-                  )?.userEmail || item.paidToUserId}
+                  {trip?.memberships.find((u) => u.userId === item.paidToUserId)
+                    ?.userEmail || item.paidToUserId}
                 </span>
               </span>
               <span className="text-primary-500 font-bold">
@@ -135,8 +160,8 @@ export default function SettlementsTab({
         open={showDialog}
         onOpenChange={setShowDialog}
         userEmail={
-          trip?.memberships.find((u: unknown) => u.userId === selectedUser)
-            ?.userEmail || ''
+          trip?.memberships.find((u) => u.userId === selectedUser)?.userEmail ||
+          ''
         }
         settlementType={settlementType}
         maxAmount={selectedAmount}

@@ -1,7 +1,14 @@
 import Link from 'next/link';
 import { Banknote } from 'lucide-react';
+import { groupSchema } from '@/validation/groupSchema';
 
-export default function BalancesTab({ trip, balanceMap }: unknown) {
+export default function BalancesTab({
+  trip,
+  balanceMap,
+}: {
+  trip: groupSchema;
+  balanceMap: Map<number, number>;
+}) {
   return (
     <div>
       <h4 className="text-heading3-bold text-primary-500 mb-4 flex items-center gap-2">
@@ -9,7 +16,7 @@ export default function BalancesTab({ trip, balanceMap }: unknown) {
         Group Balances
       </h4>
       <ul className="space-y-2">
-        {trip?.memberships.map((user: unknown) => {
+        {trip?.memberships.map((user) => {
           const balance = balanceMap.get(user.userId) ?? 0;
           const balanceClass =
             balance > 0

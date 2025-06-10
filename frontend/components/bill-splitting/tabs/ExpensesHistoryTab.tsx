@@ -1,5 +1,19 @@
 import AddExpenseDialog from '@/components/bill-splitting/AddExpenseDialog';
 import ExpensesHistory from '@/components/bill-splitting/ExpensesHistory';
+import { groupSchema } from '@/validation/groupSchema';
+import { AddExpenseInitialValues } from '@/components/bill-splitting/AddExpenseDialog.tsx';
+
+export interface expenseProp {
+  id: number;
+  groupId: number;
+  description: string;
+  totalAmount: number;
+  splitType: 'EQUALLY' | 'PERCENTAGE' | 'AMOUNT' | 'SHARES' | string;
+  paidByUserId: number;
+  createdAt: string;
+  expenseDate: string;
+  userShares: Record<number, number>;
+}
 
 export default function ExpensesHistoryTab({
   showDialog,
@@ -10,7 +24,16 @@ export default function ExpensesHistoryTab({
   paginatedExpenses,
   expenses,
   ITEMS_PER_PAGE,
-}: unknown) {
+}: {
+  showDialog: boolean;
+  setShowDialog: (v: boolean) => void;
+  trip: groupSchema;
+  initialValues: AddExpenseInitialValues;
+  onSubmit: (values: AddExpenseInitialValues) => Promise<void>;
+  paginatedExpenses: expenseProp[];
+  expenses: expenseProp[];
+  ITEMS_PER_PAGE: number;
+}) {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">

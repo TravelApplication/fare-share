@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { getToken, logout } from '@/lib/auth';
-import axios from 'axios';
 import { Alert } from '@/components/ui/alert';
 import { Banknote, Users, ListOrdered } from 'lucide-react';
 import { useTrip } from '@/context/TripContext';
@@ -12,6 +11,7 @@ import BalancesTab from '@/components/bill-splitting/tabs/BalancesTab';
 import SettlementsTab from '@/components/bill-splitting/tabs/SettlementsTab';
 import { appStore } from '@/store/appStore';
 import { toast } from 'sonner';
+import axiosInstance from '@/lib/axiosInstance';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -37,25 +37,12 @@ export default function GroupExpensesPage() {
 
   const fetchData = async () => {
     try {
-      const token = getToken();
-      if (!token) {
-        logout();
-        return;
-      }
       const [balanceRes, expensesRes, settlementsRes, settlementsHistoryRes] =
         await Promise.all([
-          axios.get(`/api/v1/groups/${trip.id}/balance/balances`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`/api/v1/groups/${trip.id}/expenses`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`/api/v1/groups/${trip.id}/balance/min`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
-          axios.get(`/api/v1/groups/${trip.id}/settlements`, {
-            headers: { Authorization: `Bearer ${token}` },
-          }),
+          axiosInstance.get(`/groups/${trip.id}/balance/balances`),
+          axiosInstance.get(`/groups/${trip.id}/expenses`),
+          axiosInstance.get(`/groups/${trip.id}/balance/min`),
+          axiosInstance.get(`/groups/${trip.id}/settlements`),
         ]);
 
       setGroupBalance(balanceRes.data);
@@ -108,9 +95,7 @@ export default function GroupExpensesPage() {
         userShares,
         expenseDate: values.expenseDate || new Date().toISOString(),
       };
-      await axios.post(`/api/v1/groups/${trip.id}/expenses`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axiosInstance.post(`/groups/${trip.id}/expenses`, payload);
       setShowDialog(false);
       toast('Expense added successfully!', {
         duration: 7000,
@@ -140,9 +125,7 @@ export default function GroupExpensesPage() {
         creditorId: String(values.creditorId),
         amount: Number(values.amount),
       };
-      await axios.post(`/api/v1/groups/${trip.id}/settlements`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      await axiosInstance.post(`/groups/${trip.id}/settlements`, payload);
       setShowDialog(false);
       toast('Settlement added successfully!', {
         duration: 7000,

@@ -1,14 +1,15 @@
 'use client';
 import { useEffect, useState } from 'react';
 import { getToken, logout } from '@/lib/auth';
-import axios from 'axios';
 import { Alert } from '@/components/ui/alert';
 import { Banknote } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
+import { groupSchema } from '@/validation/groupSchema';
+import axiosInstance from '@/lib/axiosInstance';
 
-export default function ExpansesDashboard({ trip }: unknown) {
+export default function ExpansesDashboard({ trip }: { trip: groupSchema }) {
   const [error, setError] = useState<string | null>(null);
   const [groupBalance, setGroupBalance] = useState([]);
   const router = useRouter();
@@ -20,14 +21,11 @@ export default function ExpansesDashboard({ trip }: unknown) {
         logout();
         return;
       }
-      const response = await axios.get(
-        `/api/v1/groups/${trip.id}/balance/balances`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+      const response = await axiosInstance.get(
+        `/groups/${trip.id}/balance/balances`,
       );
       setGroupBalance(response.data);
-    } catch (err: unknown) {
+    } catch (err) {
       setError(err.message || 'An error occurred');
     }
   };
@@ -44,9 +42,7 @@ export default function ExpansesDashboard({ trip }: unknown) {
     );
   }
 
-  const balanceMap = new Map(
-    groupBalance.map((b: unknown) => [b.userId, b.balance]),
-  );
+  const balanceMap = new Map(groupBalance.map((b) => [b.userId, b.balance]));
 
   return (
     <div className="section mt-4 flex flex-col justify-start border bg-white shadow-md rounded-lg p-6">
@@ -55,9 +51,9 @@ export default function ExpansesDashboard({ trip }: unknown) {
       </h4>
       <div className="flex flex-col gap-4">
         <ul className="space-y-4">
-          {trip.memberships.map((user: unknown) => {
+          {trip.memberships.map((user) => {
             const userInfo = trip.memberships.find(
-              (u: unknown) => u.userId === user.userId,
+              (u) => u.userId === user.userId,
             );
             const balance = balanceMap.get(user.userId) ?? 0;
             const balanceClass =

@@ -1,12 +1,12 @@
 import Link from 'next/link';
 import { Banknote } from 'lucide-react';
-import { groupSchema } from '@/validation/groupSchema';
+import { Group } from '@/validation/groupSchema';
 
 export default function BalancesTab({
   trip,
   balanceMap,
 }: {
-  trip: groupSchema;
+  trip: Group;
   balanceMap: Map<number, number>;
 }) {
   return (

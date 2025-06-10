@@ -6,10 +6,10 @@ import { Banknote } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { groupSchema } from '@/validation/groupSchema';
+import { Group } from '@/validation/groupSchema';
 import axiosInstance from '@/lib/axiosInstance';
 
-export default function ExpansesDashboard({ trip }: { trip: groupSchema }) {
+export default function ExpansesDashboard({ trip }: { trip: Group }) {
   const [error, setError] = useState<string | null>(null);
   const [groupBalance, setGroupBalance] = useState([]);
   const router = useRouter();

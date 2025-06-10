@@ -1,11 +1,39 @@
 import CustomPagination from '@/components/shared/CustomPagination';
+import { Button } from '@/components/ui/button';
+import { Pencil, Trash2 } from 'lucide-react';
+import { Group } from '@/validation/groupSchema';
+import { appStore } from '@/store/appStore';
+
+export interface expenseProp {
+  id: number;
+  groupId: number;
+  description: string;
+  totalAmount: number;
+  splitType: 'EQUALLY' | 'PERCENTAGE' | 'AMOUNT' | 'SHARES' | string;
+  paidByUserId: number;
+  createdAt: string;
+  expenseDate: string;
+  userShares: Record<number, number>;
+}
+
+interface ExpenseHistoryProps {
+  paginatedExpenses: expenseProp[];
+  expenses: expenseProp[];
+  trip: Group;
+  ITEMS_PER_PAGE: number;
+  onDelete: (expenseId: number) => void;
+  onEdit: (expense: expenseProp) => void;
+}
 
 export default function ExpenseHistory({
   paginatedExpenses,
   expenses,
   trip,
   ITEMS_PER_PAGE,
+  onDelete,
+  onEdit,
 }: ExpenseHistoryProps) {
+  const user = appStore((state) => state.user);
   return (
     <>
       {paginatedExpenses.length > 0 ? (
@@ -45,6 +73,28 @@ export default function ExpenseHistory({
                       : {Number(amount).toFixed(2)} zł
                     </div>
                   ))}
+                </div>
+                <div className="flex gap-2 mt-2 justify-end">
+                  {expense.paidByUserId === user.id && (
+                    <>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => onEdit(expense)}
+                        title="Edit"
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        size="icon"
+                        variant="ghost"
+                        onClick={() => onDelete(expense.id)}
+                        title="Delete"
+                      >
+                        <Trash2 className="w-4 h-4 text-red-500" />
+                      </Button>
+                    </>
+                  )}
                 </div>
               </li>
             ))}

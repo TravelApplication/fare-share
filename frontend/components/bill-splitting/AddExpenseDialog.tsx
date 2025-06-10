@@ -13,7 +13,7 @@ import { toFormikValidationSchema } from 'zod-formik-adapter';
 import { expenseFormSchema } from '@/validation/expenseFormSchema';
 import { Plus } from 'lucide-react';
 import { CircleAlert } from 'lucide-react';
-import { groupSchema } from '@/validation/groupSchema';
+import { Group } from '@/validation/groupSchema';
 
 export interface ExpenseShare {
   userId: number;
@@ -37,7 +37,7 @@ export default function AddExpenseDialog({
 }: {
   open: boolean;
   setOpen: (v: boolean) => void;
-  trip: groupSchema;
+  trip: Group;
   onSubmit: (values: AddExpenseInitialValues) => Promise<void>;
   initialValues: AddExpenseInitialValues;
 }) {
@@ -115,7 +115,7 @@ export default function AddExpenseDialog({
               </div>
 
               <div className="mt-4">
-                <label className="font-semibold" htmlFor="splitMethod">
+                <label className="font-semibold pr-2" htmlFor="splitMethod">
                   Split Method
                 </label>
                 <Field
@@ -185,7 +185,7 @@ export default function AddExpenseDialog({
                                 <Field
                                   name={`shares.${idx}.value`}
                                   as={Input}
-                                  type={number}
+                                  type="number"
                                   step={
                                     values.splitMethod === 'share'
                                       ? '1'

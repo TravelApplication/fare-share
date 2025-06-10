@@ -56,13 +56,8 @@ export default function GroupExpensesPage() {
     }
   };
 
-  const handleExpenseSubmit = async (values) => {
+  const upsertExpense = async (values, id?: number) => {
     try {
-      const token = getToken();
-      if (!token) {
-        logout();
-        return;
-      }
       const splitTypeMap = {
         amount: 'AMOUNT',
         share: 'SHARES',
@@ -95,24 +90,21 @@ export default function GroupExpensesPage() {
         userShares,
         expenseDate: values.expenseDate || new Date().toISOString(),
       };
-      await axiosInstance.post(`/groups/${trip.id}/expenses`, payload);
+      if (id) {
+        await axiosInstance.put(`/groups/${trip.id}/expenses/${id}`, payload);
+        toast('Expense updated!');
+      } else {
+        await axiosInstance.post(`/groups/${trip.id}/expenses`, payload);
+        toast('Expense added successfully!');
+      }
       setShowDialog(false);
-      toast('Expense added successfully!', {
-        duration: 7000,
-        action: {
-          label: 'Close',
-          onClick: () => {
-            toast.dismiss();
-          },
-        },
-      });
       refreshTrip();
     } catch (err) {
       setError(err.message || 'An error occurred while adding the expense');
     }
   };
 
-  const handleSettlementSubmit = async (values) => {
+  const upsertSettlement = async (values, id?: number) => {
     try {
       const token = getToken();
       if (!token) {
@@ -125,20 +117,45 @@ export default function GroupExpensesPage() {
         creditorId: String(values.creditorId),
         amount: Number(values.amount),
       };
-      await axiosInstance.post(`/groups/${trip.id}/settlements`, payload);
+
+      if (id) {
+        await axiosInstance.put(
+          `/groups/${trip.id}/settlements/${id}`,
+          payload,
+        );
+        toast('Settlement updated!');
+      } else {
+        await axiosInstance.post(`/groups/${trip.id}/settlements`, payload);
+        toast('Settlement added successfully!');
+      }
       setShowDialog(false);
-      toast('Settlement added successfully!', {
-        duration: 7000,
-        action: {
-          label: 'Close',
-          onClick: () => {
-            toast.dismiss();
-          },
-        },
-      });
       refreshTrip();
     } catch (err) {
-      setError(err.message || 'An error occurred while adding the settlement');
+      setError(err.message || 'An error occurred while saving the settlement');
+    }
+  };
+
+  const handleSettlementDelete = async (settlementId: number) => {
+    try {
+      await axiosInstance.delete(
+        `/groups/${trip.id}/settlements/${settlementId}`,
+      );
+      toast('Settlement deleted!');
+      refreshTrip();
+    } catch (err) {
+      toast.error(err.message || 'Failed to delete settlement');
+    }
+  };
+
+  const handleExpenseDelete = async (expenseId: number) => {
+    try {
+      await axiosInstance.delete(`/groups/${trip.id}/expenses`, {
+        params: { expenseId },
+      });
+      toast('Expense deleted!');
+      refreshTrip();
+    } catch (err) {
+      toast.error(err.message || 'Failed to delete expense');
     }
   };
 
@@ -216,7 +233,9 @@ export default function GroupExpensesPage() {
           setShowDialog={setShowDialog}
           trip={trip}
           initialValues={initialValues}
-          onSubmit={async (values) => handleExpenseSubmit(values)}
+          onSubmit={async (values) => upsertExpense(values)}
+          onEditExpense={async (id, values) => upsertExpense(values, id)}
+          onDelete={async (id) => handleExpenseDelete(id)}
           paginatedExpenses={paginatedExpenses}
           expenses={expenses}
           ITEMS_PER_PAGE={ITEMS_PER_PAGE}
@@ -233,7 +252,8 @@ export default function GroupExpensesPage() {
           trip={trip}
           currentUserId={user.id}
           history={settlementsHistory}
-          onSubmit={async (values) => handleSettlementSubmit(values)}
+          onSubmit={async (values, id) => upsertSettlement(values, id)}
+          onDelete={async (id) => handleSettlementDelete(id)}
         />
       )}
     </div>

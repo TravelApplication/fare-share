@@ -6,7 +6,17 @@ import UserTile from './UserTile';
 import { Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-function SearchUsers() {
+interface SearchUsersProps {
+  userIdsToFilterOut?: number[];
+  onUserClick?: 'redirect' | 'select';
+  onSelectUser?: (user: UserSearch) => void;
+}
+
+function SearchUsers({
+  onUserClick = 'redirect',
+  onSelectUser,
+  userIdsToFilterOut,
+}: SearchUsersProps) {
   const [query, setQuery] = useState<string>('');
   const [debouncedQuery, setDebouncedQuery] = useState<string>('');
   const [results, setResults] = useState<UserSearch[]>([]);
@@ -26,12 +36,18 @@ function SearchUsers() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      if (query.length > 0) {
+      if (debouncedQuery.length > 0) {
         try {
           const response = await axiosInstance.get(
-            `user-info/search/top8?name=${query}`,
+            `user-info/search/top8?name=${debouncedQuery}`,
           );
-          setResults(response.data);
+          let filteredResults = response.data;
+          if (userIdsToFilterOut) {
+            filteredResults = filteredResults.filter(
+              (user: UserSearch) => !userIdsToFilterOut.includes(user.id),
+            );
+          }
+          setResults(filteredResults);
         } catch (error) {
           console.error('Error fetching users:', error);
         }
@@ -41,7 +57,7 @@ function SearchUsers() {
     };
 
     fetchUsers();
-  }, [debouncedQuery, query]);
+  }, [debouncedQuery, userIdsToFilterOut]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -81,23 +97,36 @@ function SearchUsers() {
         </div>
       </div>
 
-      {isDropdownVisible && results.length > 0 && (
+      {isDropdownVisible && (results.length > 0 || query.trim().length > 0) && (
         <div
           ref={dropdownRef}
           className="absolute top-full left-0 w-full p-2 bg-light-1 shadow-lg rounded-lg z-50 max-h-60 overflow-y-auto mt-2"
         >
-          <ul>
-            {results.map((user) => (
-              <UserTile
-                key={user.id}
-                user={user}
-                onClick={() => {
-                  setIsDropdownVisible(false);
-                  setQuery('');
-                }}
-              />
-            ))}
-          </ul>
+          {results.length > 0 ? (
+            <ul>
+              {results.map((user) => (
+                <UserTile
+                  key={user.id}
+                  user={user}
+                  onClick={() => {
+                    if (onUserClick === 'redirect') {
+                      router.push(`/account/${user.id}`);
+                    }
+                  }}
+                  showInviteButton={onUserClick === 'select'}
+                  onInvite={() => {
+                    setIsDropdownVisible(false);
+                    setQuery('');
+                    onSelectUser?.(user);
+                  }}
+                />
+              ))}
+            </ul>
+          ) : (
+            <ul>
+              <li className="p-3 font-normal text-gray-600">No users found.</li>
+            </ul>
+          )}
         </div>
       )}
     </div>

@@ -14,31 +14,19 @@ import { Button } from '@/components/ui/button';
 import { appStore } from '@/store/appStore';
 import YesNoModal from '@/components/shared/YesNoModal';
 import { toast } from 'sonner';
-
-interface InvitationResponse {
-  id: number;
-  senderId: number;
-  receiverId: number;
-  createdAt: string;
-}
-
-interface GroupInvitationResponse extends InvitationResponse {
-  groupId: number;
-}
+import { Invitation, GroupInvitation } from '@/validation/invitationsSchema';
 
 export default function InvitationsPage() {
   const [friendInvitesReceived, setFriendInvitesReceived] = useState<
-    InvitationResponse[]
+    Invitation[]
   >([]);
-  const [friendInvitesSent, setFriendInvitesSent] = useState<
-    InvitationResponse[]
-  >([]);
+  const [friendInvitesSent, setFriendInvitesSent] = useState<Invitation[]>([]);
   const [groupInvitesReceived, setGroupInvitesReceived] = useState<
-    GroupInvitationResponse[]
+    GroupInvitation[]
   >([]);
-  const [groupInvitesSent, setGroupInvitesSent] = useState<
-    GroupInvitationResponse[]
-  >([]);
+  const [groupInvitesSent, setGroupInvitesSent] = useState<GroupInvitation[]>(
+    [],
+  );
   const [currentAction, setCurrentAction] = useState<{
     id: number;
     type: 'friend' | 'group';
@@ -68,8 +56,7 @@ export default function InvitationsPage() {
       setFriendInvitesSent(friendsSent.data);
       setGroupInvitesReceived(groupsReceived.data);
       setGroupInvitesSent(groupsSent.data);
-    } catch (err) {
-      console.error('error with invitations', err);
+    } catch {
       toast('Failed to load invitations', {
         description: 'Please try again later',
         duration: 5000,
@@ -150,25 +137,43 @@ export default function InvitationsPage() {
   };
 
   const renderInvitationCard = (
-    inv: InvitationResponse | GroupInvitationResponse,
+    inv: Invitation | GroupInvitation,
     type: 'received' | 'sent',
   ) => {
     const isGroup = 'groupId' in inv;
 
     return (
       <Card key={inv.id} className="mb-4">
-        <CardContent className="p-4 flex flex-col gap-2">
-          <p>
-            <strong>From:</strong> {inv.senderId}
-          </p>
-          {'groupId' in inv && (
-            <p>
-              <strong>Trip:</strong> {inv.groupId}
-            </p>
-          )}
-          <p>
-            <strong>Sent At:</strong> {new Date(inv.createdAt).toLocaleString()}
-          </p>
+        <CardContent className="p-4 flex justify-between flex-col gap-2 sm:flex-row sm:items-center ">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <div className="text-gray-700 text-sm flex flex-col gap-1 sm:gap-2 sm:flex-row sm:items-center">
+                {type === 'received' ? 'From user' : 'Sent to '}
+                <div className="text-primary-500 text-base font-bold">
+                  {type === 'received'
+                    ? `${inv.sender.firstName} ${inv.sender.lastName}`
+                    : `${inv.receiver.firstName} ${inv.receiver.lastName}`}
+                </div>
+                {'groupId' in inv && (
+                  <>
+                    to the trip
+                    <div className="text-primary-500 text-base font-bold">
+                      {inv.groupName}
+                    </div>
+                  </>
+                )}
+              </div>
+              <div className="text-sm text-gray-800 font-semibold">
+                {type === 'received'
+                  ? `${inv.sender.email}`
+                  : `${inv.receiver.email}`}
+              </div>
+            </div>
+            <div className="flex gap-2 text-xs font-semibold text-gray-400">
+              <div>Sent at:</div>
+              <div>{new Date(inv.createdAt).toLocaleString()}</div>
+            </div>
+          </div>
           {type === 'received' && (
             <div className="flex gap-2 mt-2">
               <YesNoModal
@@ -180,7 +185,7 @@ export default function InvitationsPage() {
                 onConfirm={handleActionConfirmation}
                 trigger={
                   <Button
-                    className="bg-primary-500 hover:bg-primary-600"
+                    className="bg-primary-500 hover:bg-primary-600 w-full rounded-xl"
                     onClick={() =>
                       setCurrentAction({
                         id: inv.id,
@@ -202,7 +207,7 @@ export default function InvitationsPage() {
                 onConfirm={handleActionConfirmation}
                 trigger={
                   <Button
-                    className="border border-primary-500 text-primary-500 bg-white hover:text-white hover:bg-primary-600 hover:border-primary-600"
+                    className="border w-full border-primary-500 text-primary-500 bg-white hover:text-white hover:bg-primary-600 hover:border-primary-600 rounded-xl"
                     onClick={() =>
                       setCurrentAction({
                         id: inv.id,
@@ -223,12 +228,14 @@ export default function InvitationsPage() {
   };
 
   const renderInvitationSection = (
-    invitations: InvitationResponse[] | GroupInvitationResponse[],
+    invitations: Invitation[] | GroupInvitation[],
     label: string,
     type: 'received' | 'sent',
   ) => (
     <>
-      <h2 className="text-xl font-semibold mt-4 mb-2">{label}</h2>
+      <h2 className="text-lg text-primary-500 font-semibold mt-4 mb-2">
+        {label}
+      </h2>
       {invitations.length === 0 ? (
         <Card className="mb-4">
           <CardContent className="p-4 text-muted-foreground">
@@ -254,8 +261,8 @@ export default function InvitationsPage() {
       <CardContent>
         <Tabs defaultValue="friends" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="friends">Friend Invitations</TabsTrigger>
-            <TabsTrigger value="groups">Trip Invitations</TabsTrigger>
+            <TabsTrigger value="friends">Friends</TabsTrigger>
+            <TabsTrigger value="groups">Trips</TabsTrigger>
           </TabsList>
 
           <TabsContent value="friends">

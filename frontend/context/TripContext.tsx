@@ -59,7 +59,6 @@ export function TripContextProvider({ children }: { children: ReactNode }) {
       }
 
       setTrip(fetchedTrip);
-      console.log('Fetched trip', fetchedTrip);
     } catch (err) {
       console.error(err);
       setTripError('Failed to fetch trip');

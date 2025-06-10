@@ -12,6 +12,7 @@ import {
   ArrowUpAZ,
   ArrowDown,
   ArrowUp,
+  MapPlus,
 } from 'lucide-react';
 import { Alert } from '@/components/ui/alert';
 import axiosInstance from '@/lib/axiosInstance';
@@ -83,40 +84,42 @@ function Page() {
           <CirclePlus />
           <p>Add a Trip</p>
         </Link>
-
-        <div className="flex flex-col md:flex-row gap-4">
-          <button
-            className={`flex items-center gap-2 px-3 py-2  shadow-md ${
-              sortBy === 'createdAt' ? 'bg-primary-100' : ''
-            }`}
-            onClick={() => handleSortChange('createdAt')}
-          >
-            Sort by {sortBy !== 'createdAt' ? 'Newest' : ''}
-            {sortBy === 'createdAt' &&
-              (sortDirection === 'ASC' ? (
-                <>
-                  Oldest <ArrowDown />
-                </>
-              ) : (
-                <>
-                  Newest <ArrowUp />
-                </>
-              ))}
-          </button>
-          <button
-            className={`flex items-center gap-2 px-3 py-2 shadow-md ${
-              sortBy === 'name' ? 'bg-primary-100' : ''
-            }`}
-            onClick={() => handleSortChange('name')}
-          >
-            Sort by Name
-            {sortBy === 'name' && (
-              <span>
-                {sortDirection === 'ASC' ? <ArrowUpAZ /> : <ArrowDownZA />}
-              </span>
-            )}
-          </button>
-        </div>
+        {trips && trips.length === 0 && (
+          <div className="flex flex-col items-center text-gray-700 md:flex-row gap-4">
+            <div className="font-semibold ">Sort By</div>
+            <button
+              className={`flex items-center gap-2 px-3 py-2  shadow-md ${
+                sortBy === 'createdAt' ? 'bg-gray-100' : ''
+              }`}
+              onClick={() => handleSortChange('createdAt')}
+            >
+              Date{' '}
+              {sortBy === 'createdAt' &&
+                (sortDirection === 'ASC' ? (
+                  <>
+                    <ArrowDown />
+                  </>
+                ) : (
+                  <>
+                    <ArrowUp />
+                  </>
+                ))}
+            </button>
+            <button
+              className={`flex items-center gap-2 px-3 py-2 shadow-md ${
+                sortBy === 'name' ? 'bg-gray-100' : ''
+              }`}
+              onClick={() => handleSortChange('name')}
+            >
+              Name
+              {sortBy === 'name' && (
+                <span>
+                  {sortDirection === 'ASC' ? <ArrowUpAZ /> : <ArrowDownZA />}
+                </span>
+              )}
+            </button>
+          </div>
+        )}
       </div>
 
       {trips.length > 0 ? (
@@ -132,7 +135,12 @@ function Page() {
           />
         </>
       ) : (
-        <div>No trips yet. Add a trip to get started!</div>
+        <div className="mt-20 flex flex-col items-center justify-center gap-3">
+          <MapPlus size={220} className="text-gray-200" />
+          <p className="text-gray-300 font-semibold text-center">
+            No trips yet. Create a trip to get started!
+          </p>
+        </div>
       )}
       {error && <Alert className="mt-4">{error}</Alert>}
     </div>

@@ -11,6 +11,7 @@ import {
 import { createFriendSlice, FriendSlice } from './slice/friendSlice';
 
 type StoreState = UserSlice & NotificationSlice & InvitationSlice & FriendSlice;
+
 export const appStore = create<StoreState>()((...a) => ({
   ...createUserSlice(...a),
   ...createNotificationSlice(...a),

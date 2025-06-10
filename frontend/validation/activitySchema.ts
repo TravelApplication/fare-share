@@ -12,4 +12,4 @@ export const activitySchema = z.object({
   votes: z.array(voteSchema),
 });
 
-export type ActivitySchema = z.infer<typeof activitySchema>;
+export type Activity = z.infer<typeof activitySchema>;

@@ -226,7 +226,7 @@ function Page() {
               >
                 Sign Up
               </Button>
-              <div className="mt-4 flex items-center">
+              <div className="mt-4 flex items-center xs:flex-row flex-col">
                 <p className="text-center">Already have an account?</p>
                 <Link
                   href="/sign-in"

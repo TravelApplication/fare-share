@@ -4,7 +4,7 @@ import { useTrip } from '@/context/TripContext';
 import { useGroupChat } from '@/context/GroupChatContext';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, SendHorizonal } from 'lucide-react';
+import { ArrowLeft, MessageCircleMore, SendHorizonal } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { Formik, Form, Field } from 'formik';
 import { toFormikValidationSchema } from 'zod-formik-adapter';
@@ -111,44 +111,55 @@ export default function ChatPage() {
             </div>
           )}
 
-          {user &&
-            messages.map((msg, i) => {
-              const isOwnMessage = msg.senderId === user.id;
-              return (
-                <div
-                  key={`${msg.id}-${i}`}
-                  className={`flex flex-col max-w-[80%] ${
-                    isOwnMessage
-                      ? 'self-end items-end'
-                      : 'self-start items-start'
-                  }`}
-                >
-                  {!isOwnMessage && (
-                    <div className="text-xs text-primary-500/70">
-                      {msg.senderEmail}
-                    </div>
-                  )}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div
-                        className={`px-4 py-2 rounded-xl text-sm shadow-sm break-all whitespace-pre-wrap ${
-                          isOwnMessage
-                            ? 'bg-primary-500 text-white rounded-br-none'
-                            : 'bg-gray-100 text-gray-800 rounded-bl-none'
-                        }`}
-                      >
-                        {msg.content}
+          {user && messages.length > 0 ? (
+            <>
+              {messages.map((msg, i) => {
+                const isOwnMessage = msg.senderId === user.id;
+                return (
+                  <div
+                    key={`${msg.id}-${i}`}
+                    className={`flex flex-col max-w-[80%] ${
+                      isOwnMessage
+                        ? 'self-end items-end'
+                        : 'self-start items-start'
+                    }`}
+                  >
+                    {!isOwnMessage && (
+                      <div className="text-xs text-primary-500/70">
+                        {msg.senderEmail}
                       </div>
-                    </TooltipTrigger>
-                    <TooltipContent side={isOwnMessage ? 'left' : 'right'}>
-                      <div className="text-sm text-gray-500">
-                        {new Date(msg.timestamp).toLocaleString()}
-                      </div>
-                    </TooltipContent>
-                  </Tooltip>
-                </div>
-              );
-            })}
+                    )}
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div
+                          className={`px-4 py-2 rounded-xl text-sm shadow-sm break-all whitespace-pre-wrap ${
+                            isOwnMessage
+                              ? 'bg-primary-500 text-white rounded-br-none'
+                              : 'bg-gray-100 text-gray-800 rounded-bl-none'
+                          }`}
+                        >
+                          {msg.content}
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent side={isOwnMessage ? 'left' : 'right'}>
+                        <div className="text-sm text-gray-500">
+                          {new Date(msg.timestamp).toLocaleString()}
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </div>
+                );
+              })}
+            </>
+          ) : (
+            <div className="h-[400px] flex flex-col items-center justify-center gap-3">
+              <MessageCircleMore size={200} className="text-gray-200" />
+              <p className="text-gray-400 font-semibold text-center">
+                No messages yet. Start the conversation!
+              </p>
+            </div>
+          )}
+
           <div ref={messagesEndRef} />
         </div>
 

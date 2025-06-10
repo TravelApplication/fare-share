@@ -84,7 +84,7 @@ function Page() {
           <CirclePlus />
           <p>Add a Trip</p>
         </Link>
-        {trips && trips.length === 0 && (
+        {trips && trips.length > 0 && (
           <div className="flex flex-col items-center text-gray-700 md:flex-row gap-4">
             <div className="font-semibold ">Sort By</div>
             <button

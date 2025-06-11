@@ -14,6 +14,7 @@ import share.fare.backend.dto.request.ActivityRequest;
 import share.fare.backend.dto.response.ActivityResponse;
 import share.fare.backend.entity.User;
 import share.fare.backend.service.ActivityService;
+import share.fare.backend.service.SecurityService;
 import share.fare.backend.util.PaginatedResponse;
 
 @RestController
@@ -21,13 +22,14 @@ import share.fare.backend.util.PaginatedResponse;
 @RequiredArgsConstructor
 public class ActivityController {
     private final ActivityService activityService;
+    private final SecurityService securityService;
 
     @PostMapping
     public ResponseEntity<ActivityResponse> createActivity(
             @PathVariable Long groupId,
             @Valid @RequestBody ActivityRequest request,
             @AuthenticationPrincipal User user) {
-        ActivityResponse response = activityService.createActivity(request, user.getId(), groupId);
+        ActivityResponse response = activityService.createActivity(request, user, groupId);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
@@ -35,16 +37,18 @@ public class ActivityController {
     public ResponseEntity<ActivityResponse> updateActivity(
             @PathVariable Long groupId,
             @PathVariable Long activityId,
-            @Valid @RequestBody ActivityRequest request) {
-        ActivityResponse response = activityService.updateActivity(request, activityId);
+            @Valid @RequestBody ActivityRequest request,
+            @AuthenticationPrincipal User user) {
+        ActivityResponse response = activityService.updateActivity(request, activityId, user);
         return ResponseEntity.ok(response);
     }
 
     @DeleteMapping("/{activityId}")
     public ResponseEntity<Void> deleteActivity(
             @PathVariable Long groupId,
-            @PathVariable Long activityId) {
-        activityService.deleteActivity(activityId);
+            @PathVariable Long activityId,
+            @AuthenticationPrincipal User user) {
+        activityService.deleteActivity(activityId, user);
         return ResponseEntity.noContent().build();
     }
 

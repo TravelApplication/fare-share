@@ -25,10 +25,13 @@ public class GroupMembershipService {
     private final GroupMembershipRepository groupMembershipRepository;
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+    private final SecurityService securityService;
 
-    public GroupMembershipResponse addMemberToGroup(Long groupId, Long userId, GroupRole role, Long currentUserId) {
+    public GroupMembershipResponse addMemberToGroup(Long groupId, Long userId, GroupRole role, User currentUser) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
+
+        securityService.checkIfUserIsInGroup(currentUser, group);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));
@@ -47,7 +50,7 @@ public class GroupMembershipService {
         return GroupMembershipMapper.toResponse(savedMembership);
     }
 
-    public void removeMemberFromGroup(Long groupId, Long userId) {
+    public void removeMemberFromGroup(Long groupId, Long userId, User currentUser) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
 
@@ -57,6 +60,8 @@ public class GroupMembershipService {
         GroupMembership membership = groupMembershipRepository.findByGroupAndUser(group, user)
                 .orElseThrow(() -> new UserIsNotInGroupException("User is not a member of the group"));
 
+        securityService.checkIfUserCanRemoveMember(currentUser, user, group);
+
         if (membership.getRole() == GroupRole.OWNER) {
             throw new IllegalArgumentException("Owner cannot be removed from the group");
         }
@@ -64,9 +69,11 @@ public class GroupMembershipService {
         groupMembershipRepository.delete(membership);
     }
 
-    public GroupMembershipResponse updateMemberRole(Long groupId, Long userId, GroupRole newRole) {
+    public GroupMembershipResponse updateMemberRole(Long groupId, Long userId, GroupRole newRole, User currentUser) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
+
+        securityService.checkIfUserIsGroupOwner(currentUser, group);
 
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException(userId));

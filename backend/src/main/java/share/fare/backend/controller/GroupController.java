@@ -61,13 +61,15 @@ public class GroupController {
     @PutMapping("/{groupId}")
     public ResponseEntity<GroupResponse> updateGroup(
             @PathVariable Long groupId,
-            @Valid @RequestBody GroupRequest groupRequest) {
-        return ResponseEntity.ok(groupService.updateGroup(groupId, groupRequest));
+            @Valid @RequestBody GroupRequest groupRequest,
+            @AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(groupService.updateGroup(groupId, groupRequest, user));
     }
 
     @DeleteMapping("/{groupId}")
-    public ResponseEntity<Void> deleteGroup(@PathVariable Long groupId) {
-        groupService.deleteGroup(groupId);
+    public ResponseEntity<Void> deleteGroup(@PathVariable Long groupId,
+                                            @AuthenticationPrincipal User user) {
+        groupService.deleteGroup(groupId, user);
         return ResponseEntity.noContent().build();
     }
 }

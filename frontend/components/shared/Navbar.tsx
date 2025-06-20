@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from '../ui/button';
-import { Bell, Plane } from 'lucide-react';
+import { Bell, Plane, Menu, X } from 'lucide-react';
 import { getToken, isLoggedIn } from '@/lib/auth';
 import SearchUsers from './SearchUsers';
 import { appStore } from '@/store/appStore';
@@ -15,6 +15,7 @@ import { Friend } from '@/validation/friendSchema';
 
 function Navbar() {
   const [token, setToken] = useState<string | null>(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const user = appStore((s) => s.user);
   const setUser = appStore((s) => s.setUser);
   const setFriends = appStore((s) => s.setFriends);
@@ -111,6 +112,10 @@ function Navbar() {
     setToFetchGroupInvitations,
   ]);
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
   return (
     <nav className="navbar">
       <div className="navbar_content">
@@ -119,15 +124,16 @@ function Navbar() {
           className="-ml-1 flex items-center gap-1.5"
         >
           <Image src="/assets/logo.svg" alt="logo" width={44} height={44} />
-          <p className="text-heading3-bold max-xs:hidden">FareShare</p>
+          <p className="text-heading3-bold">FareShare</p>
         </Link>
-        <div className="flex items-center gap-6">
+
+        <div className="hidden sm:flex items-center md:gap-6 gap-4">
           {token ? (
             <>
               <SearchUsers />
               <Link className="navbar_link" href="/trips">
                 <Plane />
-                <p className="max-sm:hidden">Trips</p>
+                <p className="md:block hidden">Trips</p>
               </Link>
 
               <Link className="navbar_link relative" href="/notifications">
@@ -139,7 +145,7 @@ function Navbar() {
                     </div>
                   )}
                 </div>
-                <p className="max-sm:hidden">Invitations</p>
+                <p className="md:block hidden">Invitations</p>
               </Link>
 
               <ProfileMenu user={user} />
@@ -155,6 +161,60 @@ function Navbar() {
             </>
           )}
         </div>
+
+        {token && (
+          <div className="sm:hidden flex items-center gap-4">
+            <button
+              onClick={toggleMobileMenu}
+              className="p-2 rounded-md focus:outline-none"
+            >
+              {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+            </button>
+
+            {isMobileMenuOpen && (
+              <div className="absolute top-16 right-0 w-full bg-white shadow-lg z-50 p-4 flex flex-col gap-4">
+                <SearchUsers />
+                <Link
+                  className="navbar_link flex items-center gap-2 p-2"
+                  href="/trips"
+                  onClick={toggleMobileMenu}
+                >
+                  <Plane size={20} />
+                  <p>Trips</p>
+                </Link>
+                <Link
+                  className="navbar_link flex items-center gap-2 p-2 relative"
+                  href="/notifications"
+                  onClick={toggleMobileMenu}
+                >
+                  <div>
+                    <Bell size={20} />
+                    {notificationAmount > 0 && (
+                      <div className="absolute -top-0.5 left-7 bg-primary-500 text-white text-xs font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {notificationAmount}
+                      </div>
+                    )}
+                  </div>
+                  <p>Invitations</p>
+                </Link>
+                <div className="border-t pt-2">
+                  <ProfileMenu user={user} />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {!token && (
+          <div className="sm:hidden flex items-center gap-2">
+            <Link className="navbar_link" href="/sign-in">
+              Sign In
+            </Link>
+            <Button className="bg-primary-500 hover:bg-primary-600 p-2">
+              <Link href="/sign-up">Sign Up</Link>
+            </Button>
+          </div>
+        )}
       </div>
     </nav>
   );

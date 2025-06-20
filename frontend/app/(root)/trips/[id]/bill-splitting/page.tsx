@@ -3,15 +3,16 @@
 import { useEffect, useState } from 'react';
 import { getToken, logout } from '@/lib/auth';
 import { Alert } from '@/components/ui/alert';
-import { Banknote, Users, ListOrdered } from 'lucide-react';
+import { Banknote, Users, ListOrdered, ArrowLeft } from 'lucide-react';
 import { useTrip } from '@/context/TripContext';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import ExpensesHistoryTab from '@/components/bill-splitting/tabs/ExpensesHistoryTab';
 import BalancesTab from '@/components/bill-splitting/tabs/BalancesTab';
 import SettlementsTab from '@/components/bill-splitting/tabs/SettlementsTab';
 import { appStore } from '@/store/appStore';
 import { toast } from 'sonner';
 import axiosInstance from '@/lib/axiosInstance';
+import { Button } from '@/components/ui/button';
 
 const ITEMS_PER_PAGE = 5;
 
@@ -29,6 +30,7 @@ export default function GroupExpensesPage() {
   >('history');
   const searchParams = useSearchParams();
   const user = appStore((state) => state.user);
+  const router = useRouter();
 
   useEffect(() => {
     if (!trip || !trip.id) return;
@@ -188,74 +190,86 @@ export default function GroupExpensesPage() {
   }
 
   return (
-    <div className="section mt-4 flex flex-col gap-10 border bg-white shadow-md p-6 max-w-3xl mx-auto">
-      {error && <Alert variant="destructive">{error}</Alert>}
-
-      <div className="flex w-full mb-6">
-        <button
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border-b-2 transition-all rounded-none ${
-            activeTab === 'history'
-              ? 'border-primary-500 text-primary-600 bg-gray-50 font-semibold'
-              : 'border-transparent text-gray-500 hover:text-primary-500'
-          }`}
-          onClick={() => setActiveTab('history')}
+    <>
+      <div className="flex justify-between">
+        <Button
+          onClick={() => router.push(`/trips/${trip.id}`)}
+          className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full mb-4"
         >
-          <ListOrdered className="w-4 h-4" />
-          Expense history
-        </button>
-        <button
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border-b-2 transition-all rounded-none ${
-            activeTab === 'balances'
-              ? 'border-primary-500 text-primary-600 bg-gray-50 font-semibold'
-              : 'border-transparent text-gray-500 hover:text-primary-500'
-          }`}
-          onClick={() => setActiveTab('balances')}
-        >
-          <Banknote className="w-4 h-4" />
-          Users balances
-        </button>
-        <button
-          className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border-b-2 transition-all rounded-none ${
-            activeTab === 'settlements'
-              ? 'border-primary-500 text-primary-600 bg-gray-50 font-semibold'
-              : 'border-transparent text-gray-500 hover:text-primary-500'
-          }`}
-          onClick={() => setActiveTab('settlements')}
-        >
-          <Users className="w-4 h-4" />
-          Settlements
-        </button>
+          <ArrowLeft />
+          <span>Back To Trip</span>
+        </Button>
       </div>
 
-      {activeTab === 'history' && (
-        <ExpensesHistoryTab
-          showDialog={showDialog}
-          setShowDialog={setShowDialog}
-          trip={trip}
-          initialValues={initialValues}
-          onSubmit={async (values) => upsertExpense(values)}
-          onEditExpense={async (id, values) => upsertExpense(values, id)}
-          onDelete={async (id) => handleExpenseDelete(id)}
-          paginatedExpenses={paginatedExpenses}
-          expenses={expenses}
-          ITEMS_PER_PAGE={ITEMS_PER_PAGE}
-        />
-      )}
+      <div className="section mt-4 flex flex-col gap-10 border bg-white shadow-md p-6 mx-auto">
+        {error && <Alert variant="destructive">{error}</Alert>}
 
-      {activeTab === 'balances' && (
-        <BalancesTab trip={trip} balanceMap={balanceMap} />
-      )}
+        <div className="flex w-full mb-6">
+          <button
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border-b-2 transition-all rounded-none ${
+              activeTab === 'history'
+                ? 'border-primary-500 text-primary-600 bg-gray-50 font-semibold'
+                : 'border-transparent text-gray-500 hover:text-primary-500'
+            }`}
+            onClick={() => setActiveTab('history')}
+          >
+            <ListOrdered className="w-4 h-4" />
+            Expense history
+          </button>
+          <button
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border-b-2 transition-all rounded-none ${
+              activeTab === 'balances'
+                ? 'border-primary-500 text-primary-600 bg-gray-50 font-semibold'
+                : 'border-transparent text-gray-500 hover:text-primary-500'
+            }`}
+            onClick={() => setActiveTab('balances')}
+          >
+            <Banknote className="w-4 h-4" />
+            Users balances
+          </button>
+          <button
+            className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 border-b-2 transition-all rounded-none ${
+              activeTab === 'settlements'
+                ? 'border-primary-500 text-primary-600 bg-gray-50 font-semibold'
+                : 'border-transparent text-gray-500 hover:text-primary-500'
+            }`}
+            onClick={() => setActiveTab('settlements')}
+          >
+            <Users className="w-4 h-4" />
+            Settlements
+          </button>
+        </div>
 
-      {activeTab === 'settlements' && (
-        <SettlementsTab
-          settlements={settlements}
-          trip={trip}
-          currentUserId={user.id}
-          history={settlementsHistory}
-          onSubmit={async (values, id) => upsertSettlement(values, id)}
-          onDelete={async (id) => handleSettlementDelete(id)}
-        />
-      )}
-    </div>
+        {activeTab === 'history' && (
+          <ExpensesHistoryTab
+            showDialog={showDialog}
+            setShowDialog={setShowDialog}
+            trip={trip}
+            initialValues={initialValues}
+            onSubmit={async (values) => upsertExpense(values)}
+            onEditExpense={async (id, values) => upsertExpense(values, id)}
+            onDelete={async (id) => handleExpenseDelete(id)}
+            paginatedExpenses={paginatedExpenses}
+            expenses={expenses}
+            ITEMS_PER_PAGE={ITEMS_PER_PAGE}
+          />
+        )}
+
+        {activeTab === 'balances' && (
+          <BalancesTab trip={trip} balanceMap={balanceMap} />
+        )}
+
+        {activeTab === 'settlements' && (
+          <SettlementsTab
+            settlements={settlements}
+            trip={trip}
+            currentUserId={user.id}
+            history={settlementsHistory}
+            onSubmit={async (values, id) => upsertSettlement(values, id)}
+            onDelete={async (id) => handleSettlementDelete(id)}
+          />
+        )}
+      </div>
+    </>
   );
 }

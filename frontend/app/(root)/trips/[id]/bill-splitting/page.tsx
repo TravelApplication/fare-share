@@ -62,10 +62,10 @@ export default function GroupExpensesPage() {
         amount: 'AMOUNT',
         share: 'SHARES',
         percentage: 'PERCENTAGE',
-        equal: 'EQUALLY',
+        equally: 'EQUALLY',
       };
       const userShares = {};
-      if (values.splitMethod === 'equal') {
+      if (values.splitMethod === 'equally') {
         trip.memberships.forEach((u) => {
           userShares[u.userId] = 0;
         });

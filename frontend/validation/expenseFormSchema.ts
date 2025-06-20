@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const splitSchema = z.enum(['equal', 'percentage', 'amount', 'share']);
+export const splitSchema = z.enum(['equally', 'percentage', 'amount', 'share']);
 
 export const expenseFormSchema = z
   .object({

@@ -24,7 +24,7 @@ export interface ExpenseShare {
 export interface AddExpenseInitialValues {
   description: string;
   totalAmount: number;
-  splitMethod: 'equal' | 'percentage' | 'amount' | 'share';
+  splitMethod: 'equally' | 'percentage' | 'amount' | 'share';
   shares: ExpenseShare[];
 }
 
@@ -124,7 +124,7 @@ export default function AddExpenseDialog({
                   className="border rounded px-2 py-1"
                   disabled={isSubmitting}
                 >
-                  <option value="equal">Equal</option>
+                  <option value="equally">Equally</option>
                   <option value="percentage">Percentage</option>
                   <option value="amount">Amount</option>
                   <option value="share">Share</option>

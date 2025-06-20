@@ -19,7 +19,7 @@ export interface ExpenseShare {
 export interface AddExpenseInitialValues {
   description: string;
   totalAmount: number;
-  splitMethod: 'equal' | 'percentage' | 'amount' | 'share';
+  splitMethod: 'equally' | 'percentage' | 'amount' | 'share';
   shares: ExpenseShare[];
 }
 
@@ -59,7 +59,7 @@ export default function ExpensesHistoryTab({
       description: expense.description,
       totalAmount: expense.totalAmount,
       splitMethod: expense.splitType.toLowerCase() as
-        | 'equal'
+        | 'equally'
         | 'percentage'
         | 'amount'
         | 'share',

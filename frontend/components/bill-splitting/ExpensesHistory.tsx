@@ -1,8 +1,10 @@
 import CustomPagination from '@/components/shared/CustomPagination';
 import { Button } from '@/components/ui/button';
-import { Pencil, Trash2 } from 'lucide-react';
+import { Pencil } from 'lucide-react';
 import { Group } from '@/validation/groupSchema';
 import { appStore } from '@/store/appStore';
+import YesNoModal from '@/components/shared/YesNoModal';
+import { Trash } from 'lucide-react';
 
 export interface expenseProp {
   id: number;
@@ -83,16 +85,20 @@ export default function ExpenseHistory({
                         onClick={() => onEdit(expense)}
                         title="Edit"
                       >
-                        <Pencil className="w-4 h-4" />
+                        <Pencil className="w-4 h-4 text-primary-500" />
                       </Button>
-                      <Button
-                        size="icon"
-                        variant="ghost"
-                        onClick={() => onDelete(expense.id)}
-                        title="Delete"
-                      >
-                        <Trash2 className="w-4 h-4 text-red-500" />
-                      </Button>
+                      <YesNoModal
+                        title="Are you sure you want to delete this expense?"
+                        description={`This expense will be permanently removed.`}
+                        actionName="Delete"
+                        cancelName="Cancel"
+                        onConfirm={() => onDelete(expense.id)}
+                        trigger={
+                          <Button size="icon" variant="ghost" title="Delete">
+                            <Trash className="w-4 h-4 text-red-500" />
+                          </Button>
+                        }
+                      />
                     </>
                   )}
                 </div>

@@ -51,7 +51,7 @@ export default function AddExpenseDialog({
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Group Expense</DialogTitle>
+          <DialogTitle>Group Expense</DialogTitle>
         </DialogHeader>
         <Formik
           initialValues={initialValues}
@@ -238,7 +238,11 @@ export default function AddExpenseDialog({
                   </div>
                 )}
               </FieldArray>
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                className="w-full bg-primary-500 text-white hover:bg-primary-600"
+                disabled={isSubmitting}
+              >
                 Submit
               </Button>
             </Form>

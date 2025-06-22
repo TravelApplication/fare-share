@@ -3,12 +3,6 @@ import ExpensesHistory from '@/components/bill-splitting/ExpensesHistory';
 import { Group } from '@/validation/groupSchema';
 import { AddExpenseInitialValues } from '@/components/bill-splitting/AddExpenseDialog.tsx';
 import { useState } from 'react';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
 
 export interface ExpenseShare {
   userId: number;
@@ -48,8 +42,6 @@ export default function ExpensesHistoryTab({
 }) {
   const [editExpense, setEditExpense] = useState<expenseProp | null>(null);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
-  const [deleteId, setDeleteId] = useState<number | null>(null);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   function mapExpenseToInitialValues(
     expense: expenseProp,
@@ -100,13 +92,12 @@ export default function ExpensesHistoryTab({
         trip={trip}
         ITEMS_PER_PAGE={ITEMS_PER_PAGE}
         onDelete={(id) => {
-          setDeleteId(id);
-          setShowDeleteDialog(true);
+          onDelete(id);
         }}
         onEdit={handleEdit}
       />
 
-      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+      {/* <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Delete expense</DialogTitle>
@@ -134,7 +125,7 @@ export default function ExpensesHistoryTab({
             </button>
           </div>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
 
       {editExpense && (
         <AddExpenseDialog

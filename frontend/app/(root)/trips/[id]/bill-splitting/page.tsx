@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { getToken, logout } from '@/lib/auth';
 import { Alert } from '@/components/ui/alert';
 import { Banknote, Users, ListOrdered, ArrowLeft } from 'lucide-react';
 import { useTrip } from '@/context/TripContext';
@@ -15,6 +14,29 @@ import axiosInstance from '@/lib/axiosInstance';
 import { Button } from '@/components/ui/button';
 
 const ITEMS_PER_PAGE = 5;
+
+export interface ExpenseShare {
+  description: string;
+  totalAmount: number;
+  splitMethod: 'equally' | 'percentage' | 'amount' | 'share';
+  shares: {
+    userId: number;
+    included: boolean;
+    value?: number;
+  }[];
+}
+
+export interface SettlementShare {
+  groupId: number;
+  debtorId: string;
+  creditorId: string;
+  amount: number;
+}
+
+export interface GroupBalance {
+  userId: number;
+  balance: number;
+}
 
 export default function GroupExpensesPage() {
   const { trip, refreshTrip } = useTrip();
@@ -35,62 +57,69 @@ export default function GroupExpensesPage() {
   useEffect(() => {
     if (!trip || !trip.id) return;
     fetchData();
-  }, [trip]);
+  });
 
   const fetchData = async () => {
     try {
-      const [balanceRes, expensesRes, settlementsRes, settlementsHistoryRes] =
-        await Promise.all([
-          axiosInstance.get(`/groups/${trip.id}/balance/balances`),
-          axiosInstance.get(`/groups/${trip.id}/expenses`),
-          axiosInstance.get(`/groups/${trip.id}/balance/minimum-transactions`),
-          axiosInstance.get(`/groups/${trip.id}/settlements`),
-        ]);
+      if (trip) {
+        const [balanceRes, expensesRes, settlementsRes, settlementsHistoryRes] =
+          await Promise.all([
+            axiosInstance.get(`/groups/${trip.id}/balance/balances`),
+            axiosInstance.get(`/groups/${trip.id}/expenses`),
+            axiosInstance.get(
+              `/groups/${trip.id}/balance/minimum-transactions`,
+            ),
+            axiosInstance.get(`/groups/${trip.id}/settlements`),
+          ]);
 
-      setGroupBalance(balanceRes.data);
-      setExpenses(expensesRes.data.content);
-      setSettlements(settlementsRes.data);
-      setSettlementsHistory(settlementsHistoryRes.data);
-    } catch (err) {
-      setError(err.message || 'An error occurred');
+        setGroupBalance(balanceRes.data);
+        setExpenses(expensesRes.data.content);
+        setSettlements(settlementsRes.data);
+        setSettlementsHistory(settlementsHistoryRes.data);
+      }
+    } catch {
+      setError('An error occurred');
     } finally {
       setLoading(false);
     }
   };
 
-  const upsertExpense = async (values, id?: number) => {
+  const upsertExpense = async (values: ExpenseShare, id?: number) => {
     try {
+      if (!trip || !trip.id) {
+        setError('Trip not found');
+        return;
+      }
       const splitTypeMap = {
         amount: 'AMOUNT',
         share: 'SHARES',
         percentage: 'PERCENTAGE',
         equally: 'EQUALLY',
       };
-      const userShares = {};
+      const userShares: Record<number, number> = {};
       if (values.splitMethod === 'equally') {
-        trip.memberships.forEach((u) => {
+        trip?.memberships.forEach((u) => {
           userShares[u.userId] = 0;
         });
       } else {
-        values.shares.forEach((share) => {
+        values?.shares.forEach((share) => {
           if (
             share.included &&
             share.value !== undefined &&
-            share.value !== null &&
-            share.value !== ''
+            share.value !== null
           ) {
             userShares[share.userId] = Number(share.value);
           }
         });
       }
       const payload = {
-        groupId: trip.id,
-        paidByUserId: user.id,
-        description: values.description,
-        totalAmount: Number(values.totalAmount),
-        splitType: splitTypeMap[values.splitMethod],
+        groupId: trip!.id,
+        paidByUserId: user!.id,
+        description: values!.description,
+        totalAmount: Number(values!.totalAmount),
+        splitType: splitTypeMap[values!.splitMethod],
         userShares,
-        expenseDate: values.expenseDate || new Date().toISOString(),
+        expenseDate: new Date().toISOString(),
       };
       if (id) {
         await axiosInstance.put(`/groups/${trip.id}/expenses/${id}`, payload);
@@ -101,16 +130,15 @@ export default function GroupExpensesPage() {
       }
       setShowDialog(false);
       refreshTrip();
-    } catch (err) {
-      setError(err.message || 'An error occurred while adding the expense');
+    } catch {
+      setError('An error occurred while adding the expense');
     }
   };
 
-  const upsertSettlement = async (values, id?: number) => {
+  const upsertSettlement = async (values: SettlementShare, id?: number) => {
     try {
-      const token = getToken();
-      if (!token) {
-        logout();
+      if (!trip || !trip.id) {
+        setError('Trip not found');
         return;
       }
       const payload = {
@@ -132,36 +160,38 @@ export default function GroupExpensesPage() {
       }
       setShowDialog(false);
       refreshTrip();
-    } catch (err) {
-      setError(err.message || 'An error occurred while saving the settlement');
+    } catch {
+      setError('An error occurred while saving the settlement');
     }
   };
 
   const handleSettlementDelete = async (settlementId: number) => {
     try {
       await axiosInstance.delete(
-        `/groups/${trip.id}/settlements/${settlementId}`,
+        `/groups/${trip!.id}/settlements/${settlementId}`,
       );
       toast('Settlement deleted!');
       refreshTrip();
-    } catch (err) {
-      toast.error(err.message || 'Failed to delete settlement');
+    } catch {
+      toast.error('Failed to delete settlement');
     }
   };
 
   const handleExpenseDelete = async (expenseId: number) => {
     try {
-      await axiosInstance.delete(`/groups/${trip.id}/expenses`, {
+      await axiosInstance.delete(`/groups/${trip!.id}/expenses`, {
         params: { expenseId },
       });
       toast('Expense deleted!');
       refreshTrip();
-    } catch (err) {
-      toast.error(err.message || 'Failed to delete expense');
+    } catch {
+      toast.error('Failed to delete expense');
     }
   };
 
-  const balanceMap = new Map(groupBalance.map((b) => [b.userId, b.balance]));
+  const balanceMap = new Map(
+    groupBalance.map((b: GroupBalance) => [b.userId, b.balance]),
+  );
 
   const currentPage = Number(searchParams.get('page') || 1);
   const paginatedExpenses = expenses.slice(
@@ -172,7 +202,7 @@ export default function GroupExpensesPage() {
   const initialValues = {
     description: '',
     totalAmount: 0,
-    splitMethod: 'amount',
+    splitMethod: 'amount' as 'amount' | 'share' | 'percentage' | 'equally',
     shares:
       trip?.memberships.map((u) => ({
         userId: u.userId,
@@ -189,11 +219,19 @@ export default function GroupExpensesPage() {
     );
   }
 
+  if (!trip) {
+    return (
+      <Alert variant="destructive" className="p-4">
+        Trip not found.
+      </Alert>
+    );
+  }
+
   return (
     <>
       <div className="flex justify-between">
         <Button
-          onClick={() => router.push(`/trips/${trip.id}`)}
+          onClick={() => router.push(`/trips/${trip!.id}`)}
           className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full mb-4"
         >
           <ArrowLeft />
@@ -263,9 +301,11 @@ export default function GroupExpensesPage() {
           <SettlementsTab
             settlements={settlements}
             trip={trip}
-            currentUserId={user.id}
+            currentUserId={user!.id}
             history={settlementsHistory}
-            onSubmit={async (values, id) => upsertSettlement(values, id)}
+            onSubmit={async (values: SettlementShare, id?: number) =>
+              upsertSettlement(values, id)
+            }
             onDelete={async (id) => handleSettlementDelete(id)}
           />
         )}

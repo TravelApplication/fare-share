@@ -14,18 +14,12 @@ import { expenseFormSchema } from '@/validation/expenseFormSchema';
 import { Plus } from 'lucide-react';
 import { CircleAlert } from 'lucide-react';
 import { Group } from '@/validation/groupSchema';
+import { AddExpenseInitialValues } from '@/components/bill-splitting/tabs/ExpensesHistoryTab';
 
 export interface ExpenseShare {
   userId: number;
   included: boolean;
   value?: number;
-}
-
-export interface AddExpenseInitialValues {
-  description: string;
-  totalAmount: number;
-  splitMethod: 'equally' | 'percentage' | 'amount' | 'share';
-  shares: ExpenseShare[];
 }
 
 export default function AddExpenseDialog({
@@ -142,7 +136,7 @@ export default function AddExpenseDialog({
               <FieldArray name="shares">
                 {() => (
                   <div className="space-y-2">
-                    {values.shares.map((user: unknown, idx: number) => (
+                    {values.shares.map((user: ExpenseShare, idx: number) => (
                       <div
                         key={user.userId}
                         className="flex items-center gap-4"
@@ -164,7 +158,9 @@ export default function AddExpenseDialog({
                           <Label className="w-40">
                             {
                               trip?.memberships.find(
-                                (u: unknown) => u.userId === user.userId,
+                                (u) =>
+                                  (u as { userId: number }).userId ===
+                                  user.userId,
                               )?.userEmail
                             }
                           </Label>
@@ -217,12 +213,27 @@ export default function AddExpenseDialog({
                                   }
                                 />
                               </div>
-                              {errors.shares &&
+                              {Array.isArray(errors.shares) &&
                                 errors.shares[idx] &&
-                                errors.shares[idx].value && (
+                                typeof errors.shares[idx] === 'object' &&
+                                errors.shares[idx] !== null &&
+                                'value' in errors.shares[idx] &&
+                                typeof (
+                                  errors.shares[idx] as { value?: string }
+                                ).value === 'string' &&
+                                (errors.shares[idx] as { value?: string })
+                                  .value && (
                                   <div className="flex items-center mt-1 text-xs text-red-500">
                                     <CircleAlert className="mr-1" />
-                                    <p>{errors.shares[idx].value}</p>
+                                    <p>
+                                      {
+                                        (
+                                          errors.shares[idx] as {
+                                            value: string;
+                                          }
+                                        ).value
+                                      }
+                                    </p>
                                   </div>
                                 )}
                             </div>

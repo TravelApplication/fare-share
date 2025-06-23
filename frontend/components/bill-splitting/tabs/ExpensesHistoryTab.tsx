@@ -1,8 +1,8 @@
 import AddExpenseDialog from '@/components/bill-splitting/AddExpenseDialog';
 import ExpensesHistory from '@/components/bill-splitting/ExpensesHistory';
 import { Group } from '@/validation/groupSchema';
-import { AddExpenseInitialValues } from '@/components/bill-splitting/AddExpenseDialog.tsx';
 import { useState } from 'react';
+import type { expenseProp } from '@/components/bill-splitting/ExpensesHistory';
 
 export interface ExpenseShare {
   userId: number;

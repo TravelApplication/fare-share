@@ -9,6 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
+import type { SettlementShare } from '@/app/(root)/trips/[id]/bill-splitting/page';
 
 export interface settlementsHistoryProp {
   id: number;
@@ -23,6 +24,10 @@ export interface settlementProp {
   debtorId: number;
   creditorId: number;
   amount: number;
+  paidByUserId: number;
+  paidToUserId: number;
+  id: number;
+  paymentDate: string;
 }
 
 export default function SettlementsTab({
@@ -33,20 +38,15 @@ export default function SettlementsTab({
   onSubmit,
   onDelete,
 }: {
-  settlements: settlementProp;
+  settlements: settlementProp[];
   trip: Group;
   currentUserId: number;
-  history: settlementsProp[];
-  onSubmit: (values: {
-    groupId: number;
-    debtorId: number;
-    creditorId: number;
-    amount: number;
-  }) => void;
-  onDelete: (values: number) => void;
+  history: settlementProp[];
+  onSubmit: (values: SettlementShare, id?: number) => Promise<void>;
+  onDelete: (values: number) => Promise<void>;
 }) {
   const [showDialog, setShowDialog] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [selectedUser, setSelectedUser] = useState<number | null>(null);
   const [selectedAmount, setSelectedAmount] = useState<number>(0);
   const [settlementType, setSettlementType] = useState<
     'youOwe' | 'theyOwe' | null
@@ -229,21 +229,31 @@ export default function SettlementsTab({
         </Dialog>
       </div>
 
-      <AddSettlementDialog
-        open={showDialog}
-        onOpenChange={setShowDialog}
-        userEmail={
-          trip?.memberships.find((u) => u.userId === selectedUser)?.userEmail ||
-          ''
-        }
-        settlementType={settlementType}
-        maxAmount={selectedAmount}
-        amount={selectedAmount}
-        debtorId={settlementType === 'youOwe' ? currentUserId : selectedUser}
-        creditorId={settlementType === 'youOwe' ? selectedUser : currentUserId}
-        groupId={trip?.id}
-        onSubmit={(values) => onSubmit(values)}
-      />
+      {selectedUser !== null && (
+        <AddSettlementDialog
+          open={showDialog}
+          onOpenChange={setShowDialog}
+          userEmail={
+            trip?.memberships.find((u) => u.userId === selectedUser)
+              ?.userEmail || ''
+          }
+          settlementType={settlementType}
+          maxAmount={selectedAmount}
+          amount={selectedAmount}
+          debtorId={settlementType === 'youOwe' ? currentUserId : selectedUser}
+          creditorId={
+            settlementType === 'youOwe' ? selectedUser : currentUserId
+          }
+          groupId={trip?.id}
+          onSubmit={(values) =>
+            onSubmit({
+              ...values,
+              debtorId: String(values.debtorId),
+              creditorId: String(values.creditorId),
+            })
+          }
+        />
+      )}
     </div>
   );
 }

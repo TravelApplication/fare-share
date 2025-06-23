@@ -11,7 +11,9 @@ import axiosInstance from '@/lib/axiosInstance';
 
 export default function ExpansesDashboard({ trip }: { trip: Group }) {
   const [error, setError] = useState<string | null>(null);
-  const [groupBalance, setGroupBalance] = useState([]);
+  const [groupBalance, setGroupBalance] = useState<
+    { userId: number; balance: number }[]
+  >([]);
   const router = useRouter();
 
   const fetchGroupExpenses = async () => {
@@ -25,14 +27,14 @@ export default function ExpansesDashboard({ trip }: { trip: Group }) {
         `/groups/${trip.id}/balance/balances`,
       );
       setGroupBalance(response.data);
-    } catch (err) {
-      setError(err.message || 'An error occurred');
+    } catch {
+      setError('An error occurred');
     }
   };
 
   useEffect(() => {
     fetchGroupExpenses();
-  }, [trip]);
+  }, []);
 
   if (error) {
     return (
@@ -42,7 +44,9 @@ export default function ExpansesDashboard({ trip }: { trip: Group }) {
     );
   }
 
-  const balanceMap = new Map(groupBalance.map((b) => [b.userId, b.balance]));
+  const balanceMap: Map<number, number> = new Map(
+    groupBalance.map((b) => [b.userId, b.balance]),
+  );
 
   return (
     <div className="section mt-4 flex flex-col justify-start border bg-white shadow-md rounded-lg p-6">
@@ -65,7 +69,7 @@ export default function ExpansesDashboard({ trip }: { trip: Group }) {
 
             return (
               <li
-                key={userInfo?.id || user.userId}
+                key={user.userId}
                 className="flex items-center justify-between p-3 border rounded-lg shadow-sm bg-light-1"
               >
                 <div className="flex items-center gap-4">
@@ -73,7 +77,7 @@ export default function ExpansesDashboard({ trip }: { trip: Group }) {
                     href={`/account/${userInfo?.userId || user.userId}`}
                     className="text-primary-500 font-semibold hover:underline"
                   >
-                    {userInfo?.userEmail || user.email || 'User'}
+                    {userInfo?.userEmail || 'User'}
                   </Link>
                 </div>
                 <span

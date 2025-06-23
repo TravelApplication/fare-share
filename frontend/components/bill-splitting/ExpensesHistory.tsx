@@ -71,13 +71,16 @@ export default function ExpenseHistory({
                 <div className="text-sm mt-2 text-muted-foreground">
                   {Object.entries(expense.userShares).map(([uid, amount]) => (
                     <div key={uid}>
-                      {trip.memberships.find((u) => u.userId == uid)?.userEmail}
+                      {
+                        trip.memberships.find((u) => u.userId == Number(uid))
+                          ?.userEmail
+                      }
                       : {Number(amount).toFixed(2)} zł
                     </div>
                   ))}
                 </div>
                 <div className="flex gap-2 mt-2 justify-end">
-                  {expense.paidByUserId === user.id && (
+                  {expense.paidByUserId === user?.id && (
                     <>
                       <Button
                         size="icon"

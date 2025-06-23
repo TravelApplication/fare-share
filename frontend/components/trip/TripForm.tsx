@@ -237,7 +237,7 @@ function TripForm({
             {isSubmitting
               ? 'Submitting...'
               : mode === 'create'
-                ? 'Create Trip'
+                ? 'Create a Trip'
                 : 'Save Changes'}
           </Button>
 

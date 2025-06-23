@@ -23,11 +23,7 @@ export default function NewActivityPage() {
   ) => {
     if (!trip) return;
     try {
-      const response = await axiosInstance.post(
-        `groups/${trip.id}/activities`,
-        values,
-      );
-      console.log(response.data);
+      await axiosInstance.post(`groups/${trip.id}/activities`, values);
       toast(`Activity ${values.name} added!`, {
         duration: 7000,
         action: {

@@ -20,6 +20,7 @@ import {
 import { Label } from '@/components/ui/label';
 import { Input } from '@/components/ui/input';
 import ActivityCard from '@/components/activity/ActivityCard';
+import ExpensesDashboard from '@/components/bill-splitting/ExpensesDashboard';
 const ITEMS_PER_PAGE = 3;
 
 export default function TripPage() {
@@ -96,14 +97,16 @@ export default function TripPage() {
   );
 
   return (
-    <div>
-      <Button
-        onClick={() => router.push('/trips')}
-        className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full mb-4"
-      >
-        <ArrowLeft />
-        <span>Back To Trips</span>
-      </Button>
+    <>
+      <div className="flex justify-between">
+        <Button
+          onClick={() => router.push('/trips')}
+          className="bg-white border text-primary-500 hover:bg-gray-100 shadow-sm rounded-full mb-4"
+        >
+          <ArrowLeft />
+          <span>Back To Trips</span>
+        </Button>
+      </div>
 
       <TripCard
         trip={trip}
@@ -114,9 +117,10 @@ export default function TripPage() {
         }
       />
 
+      <ExpensesDashboard trip={trip} />
       <button
         onClick={() => redirect(`/trips/${trip.id}/activities/create`)}
-        className="mx-auto relative -mb-6 z-50 bg-white border text-primary-500 hover:bg-gray-100 px-4 py-3 shadow-md flex gap-2 items-center justify-center rounded-full mt-4"
+        className="mx-auto relative -mb-6 z-20 bg-white border text-primary-500 hover:bg-gray-100 px-4 py-3 shadow-md flex gap-2 items-center justify-center rounded-full mt-4"
       >
         <CirclePlus />
         <span className="text-base-semibold">Add an Activity</span>
@@ -124,7 +128,9 @@ export default function TripPage() {
 
       <div className="p-5 z-0 border rounded-lg shadow-md">
         <div>
-          <h2 className="text-heading3-bold text-primary-500">Activities</h2>
+          <h2 className="text-heading3-bold text-primary-500 mt-4 md:mt-0">
+            Activities
+          </h2>
           {trip.activities.length > 0 && (
             <div className="grid grid-cols-[2fr_1fr] flex gap-4 my-4">
               <div>
@@ -196,6 +202,6 @@ export default function TripPage() {
           itemsPerPage={ITEMS_PER_PAGE}
         />
       </div>
-    </div>
+    </>
   );
 }

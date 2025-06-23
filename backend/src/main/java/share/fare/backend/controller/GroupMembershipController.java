@@ -24,15 +24,16 @@ public class GroupMembershipController {
             @RequestParam Long userId,
             @RequestParam(defaultValue = "MEMBER") GroupRole role,
             @AuthenticationPrincipal User currentUser) {
-        GroupMembershipResponse response = groupMembershipService.addMemberToGroup(groupId, userId, role, currentUser.getId());
+        GroupMembershipResponse response = groupMembershipService.addMemberToGroup(groupId, userId, role, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @DeleteMapping("/{userId}")
     public ResponseEntity<Void> removeMember(
             @PathVariable Long groupId,
-            @PathVariable Long userId) {
-        groupMembershipService.removeMemberFromGroup(groupId, userId);
+            @PathVariable Long userId,
+            @AuthenticationPrincipal User currentUser) {
+        groupMembershipService.removeMemberFromGroup(groupId, userId, currentUser);
         return ResponseEntity.noContent().build();
     }
 
@@ -40,8 +41,9 @@ public class GroupMembershipController {
     public ResponseEntity<GroupMembershipResponse> updateMemberRole(
             @PathVariable Long groupId,
             @PathVariable Long userId,
-            @RequestParam GroupRole role) {
-        GroupMembershipResponse response = groupMembershipService.updateMemberRole(groupId, userId, role);
+            @RequestParam GroupRole role,
+            @AuthenticationPrincipal User currentUser) {
+        GroupMembershipResponse response = groupMembershipService.updateMemberRole(groupId, userId, role, currentUser);
         return ResponseEntity.ok(response);
     }
 

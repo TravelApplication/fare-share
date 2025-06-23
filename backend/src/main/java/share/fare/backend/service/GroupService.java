@@ -22,6 +22,7 @@ import java.time.LocalDate;
 public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
+    private final SecurityService securityService;
 
     public GroupResponse createGroup(GroupRequest groupRequest, Long createdByUserId) {
         validateTripDates(groupRequest.getTripStartDate(), groupRequest.getTripEndDate());
@@ -50,18 +51,20 @@ public class GroupService {
         return groups.map(GroupMapper::toResponse);
     }
 
-    public void deleteGroup(Long groupId) {
-        if (!groupRepository.existsById(groupId)) {
-            throw new GroupNotFoundException(groupId);
-        }
+    public void deleteGroup(Long groupId, User currentUser) {
+        Group group = groupRepository.findById(groupId)
+                        .orElseThrow(() -> new GroupNotFoundException(groupId));
+        securityService.checkIfUserIsGroupOwner(currentUser, group);
         groupRepository.deleteById(groupId);
     }
 
-    public GroupResponse updateGroup(Long groupId, GroupRequest groupRequest) {
+    public GroupResponse updateGroup(Long groupId, GroupRequest groupRequest, User currentUser) {
         validateTripDates(groupRequest.getTripStartDate(), groupRequest.getTripEndDate());
 
         Group existingGroup = groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
+
+        securityService.checkIfUserIsGroupOwner(currentUser, existingGroup);
 
         updateGroupFields(existingGroup, groupRequest);
 

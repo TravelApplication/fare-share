@@ -36,6 +36,9 @@ class GroupServiceTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private SecurityService securityService;
+
     @InjectMocks
     private GroupService groupService;
 
@@ -149,21 +152,21 @@ class GroupServiceTest {
 
     @Test
     public void testDeleteGroupSuccess() {
-        when(groupRepository.existsById(1L)).thenReturn(true);
+        when(groupRepository.findById(1L)).thenReturn(Optional.ofNullable(testGroup));
         doNothing().when(groupRepository).deleteById(1L);
 
-        groupService.deleteGroup(1L);
+        groupService.deleteGroup(1L, testUser);
 
-        verify(groupRepository, times(1)).existsById(1L);
+        verify(groupRepository, times(1)).findById(1L);
         verify(groupRepository, times(1)).deleteById(1L);
     }
 
     @Test
     public void testDeleteGroupNotFound() {
-        when(groupRepository.existsById(1L)).thenReturn(false);
+        when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(GroupNotFoundException.class, () -> groupService.deleteGroup(1L));
-        verify(groupRepository, times(1)).existsById(1L);
+        assertThrows(GroupNotFoundException.class, () -> groupService.deleteGroup(1L, testUser));
+        verify(groupRepository, times(1)).findById(1L);
     }
 
     @Test
@@ -171,7 +174,7 @@ class GroupServiceTest {
         when(groupRepository.findById(1L)).thenReturn(Optional.of(testGroup));
         when(groupRepository.save(any(Group.class))).thenReturn(testGroup);
 
-        GroupResponse result = groupService.updateGroup(1L, testGroupRequest);
+        GroupResponse result = groupService.updateGroup(1L, testGroupRequest, testUser);
 
         assertNotNull(result);
         assertEquals("Test Group", result.getName());
@@ -183,7 +186,7 @@ class GroupServiceTest {
     public void testUpdateGroupNotFound() {
         when(groupRepository.findById(1L)).thenReturn(Optional.empty());
 
-        assertThrows(GroupNotFoundException.class, () -> groupService.updateGroup(1L, testGroupRequest));
+        assertThrows(GroupNotFoundException.class, () -> groupService.updateGroup(1L, testGroupRequest, testUser));
         verify(groupRepository, times(1)).findById(1L);
     }
 
@@ -196,6 +199,6 @@ class GroupServiceTest {
                 .tripEndDate(LocalDate.now().plusDays(1))
                 .build();
 
-        assertThrows(IllegalArgumentException.class, () -> groupService.updateGroup(1L, invalidRequest));
+        assertThrows(IllegalArgumentException.class, () -> groupService.updateGroup(1L, invalidRequest, testUser));
     }
 }

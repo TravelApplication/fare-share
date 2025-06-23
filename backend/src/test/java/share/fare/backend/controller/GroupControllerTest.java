@@ -11,6 +11,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import share.fare.backend.dto.request.GroupRequest;
 import share.fare.backend.entity.*;
+import share.fare.backend.mapper.GroupMapper;
+import share.fare.backend.repository.GroupMembershipRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
 
@@ -41,6 +43,9 @@ public class GroupControllerTest {
     @Autowired
     private GroupRepository groupRepository;
 
+    @Autowired
+    private GroupMembershipRepository groupMembershipRepository;
+
     private User testUser;
 
     private Group testGroup;
@@ -61,8 +66,15 @@ public class GroupControllerTest {
                 .createdAt(LocalDateTime.now())
                 .createdBy(testUser)
                 .build();
-
         testGroup = groupRepository.save(group);
+
+        GroupMembership groupMembership = GroupMembership.builder()
+                .group(testGroup)
+                .user(testUser)
+                .role(GroupRole.OWNER)
+                .build();
+
+        groupMembershipRepository.save(groupMembership);
     }
 
     @AfterEach

@@ -13,6 +13,7 @@ import SockJS from 'sockjs-client';
 import { getToken } from '@/lib/auth';
 import axiosInstance from '@/lib/axiosInstance';
 import { ChatMessage } from '@/validation/chatMessageSchema';
+import { useRouter } from 'next/navigation';
 
 interface GroupChatContextType {
   messages: ChatMessage[];
@@ -40,6 +41,7 @@ export const GroupChatProvider = ({
   const [isLoading, setIsLoading] = useState(false);
   const pageSize = 10;
 
+  const router = useRouter();
   const fetchMessages = useCallback(
     async (pageNumber: number) => {
       try {
@@ -62,6 +64,7 @@ export const GroupChatProvider = ({
         setHasMore(!res.data.last);
       } catch (err) {
         console.error('Error fetching chat messages:', err);
+        router.push('/trips');
       } finally {
         setIsLoading(false);
       }

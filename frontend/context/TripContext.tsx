@@ -11,6 +11,7 @@ import axiosInstance from '@/lib/axiosInstance';
 import { useParams } from 'next/navigation';
 import { getToken, decodeToken } from '@/lib/auth';
 import { Group, groupSchema } from '@/validation/groupSchema';
+import { useRouter } from 'next/navigation';
 
 interface TripContextType {
   trip: Group | null;
@@ -32,6 +33,7 @@ export function TripContextProvider({ children }: { children: ReactNode }) {
   const [trip, setTrip] = useState<Group | null>(null);
   const [loading, setLoading] = useState(true);
   const [tripError, setTripError] = useState<string | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     if (!params.id) return;
@@ -62,6 +64,7 @@ export function TripContextProvider({ children }: { children: ReactNode }) {
     } catch (err) {
       console.error(err);
       setTripError('Failed to fetch trip');
+      router.push('/trips');
     } finally {
       setLoading(false);
     }

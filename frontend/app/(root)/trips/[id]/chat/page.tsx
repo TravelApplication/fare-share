@@ -17,6 +17,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useState, useRef, useEffect, useCallback } from 'react';
+import Link from 'next/link';
 
 export default function ChatPage() {
   const router = useRouter();
@@ -126,7 +127,9 @@ export default function ChatPage() {
                   >
                     {!isOwnMessage && (
                       <div className="text-xs text-primary-500/70">
-                        {msg.senderEmail}
+                        <Link href={`/account/${msg.senderId}`}>
+                          {msg.senderEmail}
+                        </Link>
                       </div>
                     )}
                     <Tooltip>

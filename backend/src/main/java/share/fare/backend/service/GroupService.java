@@ -47,7 +47,7 @@ public class GroupService {
     }
 
     public Page<GroupResponse> getGroupsForUser(Long userId, Pageable pageable) {
-        Page<Group> groups = groupRepository.findByCreatedByIdOrMembershipsUser_Id(userId, pageable);
+        Page<Group> groups = groupRepository.findGroupsByUserMembership(userId, pageable);
         return groups.map(GroupMapper::toResponse);
     }
 

@@ -1,5 +1,6 @@
 package share.fare.backend.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import share.fare.backend.dto.response.GroupMembershipResponse;
@@ -15,6 +16,7 @@ import share.fare.backend.mapper.GroupMembershipMapper;
 import share.fare.backend.repository.GroupMembershipRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
+import share.fare.backend.repository.VoteRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,6 +28,7 @@ public class GroupMembershipService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final SecurityService securityService;
+    private final VoteRepository voteRepository;
 
     public GroupMembershipResponse addMemberToGroup(Long groupId, Long userId, GroupRole role, User currentUser) {
         Group group = groupRepository.findById(groupId)
@@ -50,6 +53,7 @@ public class GroupMembershipService {
         return GroupMembershipMapper.toResponse(savedMembership);
     }
 
+    @Transactional
     public void removeMemberFromGroup(Long groupId, Long userId, User currentUser) {
         Group group = groupRepository.findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));
@@ -66,6 +70,7 @@ public class GroupMembershipService {
             throw new IllegalArgumentException("Owner cannot be removed from the group");
         }
 
+        voteRepository.deleteUserVotesInGroup(groupId, userId);
         groupMembershipRepository.delete(membership);
     }
 

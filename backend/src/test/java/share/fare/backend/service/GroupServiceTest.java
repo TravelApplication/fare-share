@@ -141,13 +141,13 @@ class GroupServiceTest {
     public void testGetGroupsForUser() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Group> groupPage = new PageImpl<>(Collections.singletonList(testGroup), pageable, 1);
-        when(groupRepository.findByCreatedByIdOrMembershipsUser_Id(1L, pageable)).thenReturn(groupPage);
+        when(groupRepository.findGroupsByUserMembership(1L, pageable)).thenReturn(groupPage);
 
         Page<GroupResponse> result = groupService.getGroupsForUser(1L, pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
-        verify(groupRepository, times(1)).findByCreatedByIdOrMembershipsUser_Id(1L, pageable);
+        verify(groupRepository, times(1)).findGroupsByUserMembership(1L, pageable);
     }
 
     @Test

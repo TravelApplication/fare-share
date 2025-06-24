@@ -200,7 +200,7 @@ public class ExpenseService {
     private void validateUserSplitsBelongToGroup(Group group, Map<Long, BigDecimal> userSplits) {
         for (Long userId : userSplits.keySet()) {
             if (!groupMembershipRepository.existsByGroupAndUser_Id(group, userId)) {
-                throw new InvalidExpenseException("User with ID " + userId + " is not a member of the group.");
+                throw new ActionIsNotAllowedException("User with ID " + userId + " is not a member of the group.");
             }
         }
     }

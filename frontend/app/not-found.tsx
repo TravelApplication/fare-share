@@ -9,9 +9,9 @@ export default function NotFound() {
         <div className="flex-1 text-center lg:text-left">
           <h1 className="text-heading1-bold">Oops! Page not found.</h1>
           <p className="mt-4 text-base">
-            The page you're looking for doesn't exist or has been moved.
+            The page you&#39;re looking for doesn&#39;t exist or has been moved.
             <br />
-            Let's get you back on track.
+            Let&#39;s get you back on track.
           </p>
           <Link href="/">
             <button className="primary-btn text-heading4-medium px-16 py-3 mt-6">

@@ -21,12 +21,8 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => {
-    console.log('AXIOS INTERCEPTOR RESPONSE:', response.status);
-    return response;
-  },
+  (response) => response,
   (error) => {
-    console.log('AXIOS INTERCEPTOR ERROR:', error.response?.status);
     if (
       error.response &&
       (error.response.status === 403 || error.response.status === 409)

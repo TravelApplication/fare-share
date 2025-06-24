@@ -76,7 +76,7 @@ function Page() {
 
   return (
     <div>
-      <div className="flex justify-between">
+      <div className="flex justify-between gap-4 sm:p-0 p-2 sm:flex-row flex-col ">
         <Link
           href="/trips/create"
           className="flex items-center gap-1.5 text-body-semibold text-primary-500 hover:underline"
@@ -85,7 +85,7 @@ function Page() {
           <p>Add a Trip</p>
         </Link>
         {trips && trips.length > 0 && (
-          <div className="flex flex-col items-center text-gray-700 md:flex-row gap-4">
+          <div className="flex items-center text-gray-700 gap-4">
             <div className="font-semibold ">Sort By</div>
             <button
               className={`flex items-center gap-2 px-3 py-2  shadow-md ${

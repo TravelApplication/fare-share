@@ -20,6 +20,7 @@ import share.fare.backend.entity.Group;
 import share.fare.backend.entity.User;
 import share.fare.backend.exception.GroupNotFoundException;
 import share.fare.backend.exception.UserNotFoundException;
+import share.fare.backend.repository.ChatMessageRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
 
@@ -38,6 +39,9 @@ class GroupServiceTest {
 
     @Mock
     private SecurityService securityService;
+
+    @Mock
+    private ChatMessageRepository chatMessageRepository;
 
     @InjectMocks
     private GroupService groupService;

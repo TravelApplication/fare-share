@@ -31,8 +31,7 @@ FareShare is a full-stack application built to simplify group travel planning. W
 - **Friendships Management**: Add and manage friends within the app.
 - **Notifications**: Stay updated with real-time notifications.
 - **Voting on Attractions**: Vote on attractions to include in your trip itinerary.
-- **Bill Splitting**: (Coming Soon) Easily split expenses among group members.
-- **Shared Photo Bucket**: (Coming Soon) Share and store trip memories in a shared photo bucket.
+- **Bill Splitting**: Easily split expenses among group members.
 
 ---
 

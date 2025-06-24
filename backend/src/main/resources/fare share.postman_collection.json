@@ -20,7 +20,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"password\"\n}",
+							"raw": "{\n    \"email\": \"user2@example.com\",\n    \"password\": \"password2\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -77,7 +77,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token-user}}",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQzOTc0NTU5LCJleHAiOjE3NDQwMTA1NTl9.nzMCC4NCBhN6zJ5rMM6jjFKYlILzJwjhvEESaKM74n8",
 									"type": "string"
 								}
 							]
@@ -85,11 +85,12 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "/api/v1/users",
+							"raw": "/api/v1/users/admin",
 							"path": [
 								"api",
 								"v1",
-								"users"
+								"users",
+								"admin"
 							]
 						}
 					},
@@ -145,6 +146,16 @@
 				{
 					"name": "remove group member",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ5NjQwMzA4LCJleHAiOjE3NDk2NzYzMDh9.7E75A_zmXgZWIyCypTRi1O2aQEFbUbWkPPEuI3x2ne0",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -164,17 +175,27 @@
 				{
 					"name": "change role",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQ5NjM5OTY1LCJleHAiOjE3NDk2NzU5NjV9.P3t30hQTB8k4NHI_eDhDtfcv-em3MiegUCyXBUbNpYs",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "/api/v1/groups/1/members/3/role?role=OWNER",
+							"raw": "/api/v1/groups/1/members/2/role?role=OWNER",
 							"path": [
 								"api",
 								"v1",
 								"groups",
 								"1",
 								"members",
-								"3",
+								"2",
 								"role"
 							],
 							"query": [
@@ -233,6 +254,16 @@
 				{
 					"name": "delete user",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ4ODAwNjE5LCJleHAiOjE3NDg4MzY2MTl9.kgsr2MAa1mabpfXYRxzCQRWyGhHrjTegjfdaWloAbBw",
+									"type": "string"
+								}
+							]
+						},
 						"method": "DELETE",
 						"header": [],
 						"url": {
@@ -253,7 +284,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"email\": \"abc@test.com\",\n    \"password\": 12345678\n}",
+							"raw": "{\n    \"email\": \"abc@test.com\",\n    \"password\": 1238\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -436,7 +467,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1c2VyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4MzIxNzY0LCJleHAiOjE3MzgzNTc3NjR9.GSDwpHhfiM3U-hhTXAduSLO4-xcCOxehbeBIfRVpQyA",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ4Nzk5ODQxLCJleHAiOjE3NDg4MzU4NDF9.mI24XxTqb9wFo5vgsVQ-k-XSz_N90K53X1jWPiX1qro",
 									"type": "string"
 								}
 							]
@@ -463,7 +494,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token-user}}",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzUwNzcwNTc4LCJleHAiOjE3NTA4MDY1Nzh9.9pmpbYBPCmCf9btClUOt1udjJU5JLyetOURkjbouDEw",
 									"type": "string"
 								}
 							]
@@ -665,7 +696,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyODQwNjkzLCJleHAiOjE3NDI4NzY2OTN9.1hmvABeAUOfbGb24kmysdYGvDdnlZGYykrTo6VrRsLA",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ4Nzk5ODc0LCJleHAiOjE3NDg4MzU4NzR9.bGGYBUbGTV1WFm-sh3v-R7FlQpA_9LHgOkPbe78Opx8",
 									"type": "string"
 								}
 							]
@@ -693,7 +724,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwiaWF0IjoxNzQyODQwNzMzLCJleHAiOjE3NDI4NzY3MzN9.mkdLUtuVV4bQ_Ug3LjtIqyEHjw1ML4iJQ-H6YAh1vUc",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ4MjYzMjM5LCJleHAiOjE3NDgyOTkyMzl9.dIRH2z9rLGG2f2vP1XNvt98N8u0PddKHlg4n5YSO2HE",
 									"type": "string"
 								}
 							]
@@ -749,7 +780,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyODQwNjkzLCJleHAiOjE3NDI4NzY2OTN9.1hmvABeAUOfbGb24kmysdYGvDdnlZGYykrTo6VrRsLA",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ4ODAwNjE5LCJleHAiOjE3NDg4MzY2MTl9.kgsr2MAa1mabpfXYRxzCQRWyGhHrjTegjfdaWloAbBw",
 									"type": "string"
 								}
 							]
@@ -776,7 +807,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyODQwNjkzLCJleHAiOjE3NDI4NzY2OTN9.1hmvABeAUOfbGb24kmysdYGvDdnlZGYykrTo6VrRsLA",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ4ODAwNjE5LCJleHAiOjE3NDg4MzY2MTl9.kgsr2MAa1mabpfXYRxzCQRWyGhHrjTegjfdaWloAbBw",
 									"type": "string"
 								}
 							]
@@ -873,7 +904,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token-user2}}",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ4ODAwNjE5LCJleHAiOjE3NDg4MzY2MTl9.kgsr2MAa1mabpfXYRxzCQRWyGhHrjTegjfdaWloAbBw",
 									"type": "string"
 								}
 							]
@@ -881,13 +912,13 @@
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "/api/v1/group-invitations/accept/2",
+							"raw": "/api/v1/group-invitations/accept/1",
 							"path": [
 								"api",
 								"v1",
 								"group-invitations",
 								"accept",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -928,7 +959,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token-user2}}",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ5NjM5ODU3LCJleHAiOjE3NDk2NzU4NTd9.Ipyg15fqFGxc-4hJWgYaNLHTOsrxjGxIqiiyl_pEb9A",
 									"type": "string"
 								}
 							]
@@ -1115,7 +1146,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "{{jwt-token-user}}",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQ4ODAwNjE5LCJleHAiOjE3NDg4MzY2MTl9.kgsr2MAa1mabpfXYRxzCQRWyGhHrjTegjfdaWloAbBw",
 									"type": "string"
 								}
 							]
@@ -1287,7 +1318,7 @@
 							"bearer": [
 								{
 									"key": "token",
-									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIyIiwiaWF0IjoxNzQyNzU4NTc4LCJleHAiOjE3NDI3OTQ1Nzh9.PhCg8TqNQ8zg55a4p8ECBOsjKpOfTgkXvaDCLeHbH7M",
+									"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI2IiwiaWF0IjoxNzQzMTUxMjIyLCJleHAiOjE3NDMxODcyMjJ9.Rr7QxrPaNuFHK7Hh8nSUugTX8hVoBuB4ufSgp0B5MvI",
 									"type": "string"
 								}
 							]
@@ -1304,12 +1335,12 @@
 							}
 						},
 						"url": {
-							"raw": "/api/v1/groups/1/expenses",
+							"raw": "/api/v1/groups/2/expenses",
 							"path": [
 								"api",
 								"v1",
 								"groups",
-								"1",
+								"2",
 								"expenses"
 							]
 						}
@@ -1706,6 +1737,34 @@
 								"1",
 								"settlements",
 								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "chat-messages",
+			"item": [
+				{
+					"name": "Get chat messages",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/group/1/chat",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"group",
+								"1",
+								"chat"
 							]
 						}
 					},

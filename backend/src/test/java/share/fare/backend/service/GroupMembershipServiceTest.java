@@ -19,6 +19,7 @@ import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.repository.GroupMembershipRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
+import share.fare.backend.repository.VoteRepository;
 
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +42,9 @@ class GroupMembershipServiceTest {
 
     @Mock
     private SecurityService securityService;
+
+    @Mock
+    private VoteRepository voteRepository;
 
     @InjectMocks
     private GroupMembershipService groupMembershipService;
@@ -131,7 +135,7 @@ class GroupMembershipServiceTest {
         when(userRepository.findById(2L)).thenReturn(Optional.ofNullable(testUser2));
         when(groupMembershipRepository.findByGroupAndUser(testGroup, testUser2)).thenReturn(Optional.ofNullable(testMembership));
         doNothing().when(groupMembershipRepository).delete(testMembership);
-
+        doNothing().when(voteRepository).deleteUserVotesInGroup(1L, 2L);
         groupMembershipService.removeMemberFromGroup(1L, 2L, testUser);
 
         verify(groupRepository, times(1)).findById(1L);

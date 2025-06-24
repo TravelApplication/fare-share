@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { UserSearch } from '@/validation/userProfileSchemas';
 import UserTile from '@/components/shared/UserTile';
-import { getToken, logout } from '@/lib/auth';
 import axiosInstance from '@/lib/axiosInstance';
 
 const SearchPage = () => {

@@ -57,7 +57,7 @@ export default function GroupExpensesPage() {
   useEffect(() => {
     if (!trip || !trip.id) return;
     fetchData();
-  });
+  }, [trip]);
 
   const fetchData = async () => {
     try {

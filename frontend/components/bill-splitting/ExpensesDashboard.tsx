@@ -34,7 +34,7 @@ export default function ExpansesDashboard({ trip }: { trip: Group }) {
 
   useEffect(() => {
     fetchGroupExpenses();
-  }, []);
+  }, [trip]);
 
   if (error) {
     return (

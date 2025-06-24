@@ -69,7 +69,7 @@ public class FareShareResponseEntityExceptionHandler extends ResponseEntityExcep
     @ExceptionHandler(UserIsNotInGroupException.class)
     public final ResponseEntity<ErrorDetails> userIsNotInGroupException(Exception ex, WebRequest request) {
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(), request.getDescription(false), ex.getStackTrace().length);
-        return new ResponseEntity<>(errorDetails, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(UserIsNotGroupOwner.class)

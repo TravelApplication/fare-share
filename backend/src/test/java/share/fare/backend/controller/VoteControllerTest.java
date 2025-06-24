@@ -140,7 +140,7 @@ public class VoteControllerTest {
                         .content(objectMapper.writeValueAsString(voteRequest))
                         .with(user(anotherUser))
                         .principal(() -> String.valueOf(anotherUser.getId())))
-                .andExpect(status().isConflict())
+                .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.message").value("User with ID: " + anotherUser.getId() +" is not a member of the group"));
     }
 

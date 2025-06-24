@@ -20,4 +20,19 @@ axiosInstance.interceptors.request.use(
   },
 );
 
+axiosInstance.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (
+      error.response &&
+      (error.response.status === 403 || error.response.status === 409)
+    ) {
+      if (typeof window !== 'undefined') {
+        window.location.href = '/trips';
+      }
+    }
+    return Promise.reject(error);
+  },
+);
+
 export default axiosInstance;

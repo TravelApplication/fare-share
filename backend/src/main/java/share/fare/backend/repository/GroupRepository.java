@@ -8,7 +8,8 @@ import org.springframework.data.repository.query.Param;
 import share.fare.backend.entity.Group;
 
 public interface GroupRepository extends JpaRepository<Group, Long> {
-    @Query("SELECT g FROM user_groups g WHERE g.createdBy.id = :userId OR EXISTS " +
+    @Query("SELECT g FROM user_groups g WHERE EXISTS " +
             "(SELECT m FROM GroupMembership m WHERE m.group.id = g.id AND m.user.id = :userId)")
-    Page<Group> findByCreatedByIdOrMembershipsUser_Id(@Param("userId") Long userId, Pageable pageable);
+    Page<Group> findGroupsByUserMembership(@Param("userId") Long userId, Pageable pageable);
+
 }

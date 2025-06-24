@@ -1,5 +1,6 @@
 package share.fare.backend.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,6 +13,7 @@ import share.fare.backend.entity.User;
 import share.fare.backend.exception.GroupNotFoundException;
 import share.fare.backend.exception.UserNotFoundException;
 import share.fare.backend.mapper.GroupMapper;
+import share.fare.backend.repository.ChatMessageRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
 
@@ -23,6 +25,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
     private final UserRepository userRepository;
     private final SecurityService securityService;
+    private final ChatMessageRepository chatMessageRepository;
 
     public GroupResponse createGroup(GroupRequest groupRequest, Long createdByUserId) {
         validateTripDates(groupRequest.getTripStartDate(), groupRequest.getTripEndDate());
@@ -47,14 +50,16 @@ public class GroupService {
     }
 
     public Page<GroupResponse> getGroupsForUser(Long userId, Pageable pageable) {
-        Page<Group> groups = groupRepository.findByCreatedByIdOrMembershipsUser_Id(userId, pageable);
+        Page<Group> groups = groupRepository.findGroupsByUserMembership(userId, pageable);
         return groups.map(GroupMapper::toResponse);
     }
 
+    @Transactional
     public void deleteGroup(Long groupId, User currentUser) {
         Group group = groupRepository.findById(groupId)
                         .orElseThrow(() -> new GroupNotFoundException(groupId));
         securityService.checkIfUserIsGroupOwner(currentUser, group);
+        chatMessageRepository.deleteAllByGroupId(groupId);
         groupRepository.deleteById(groupId);
     }
 

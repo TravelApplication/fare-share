@@ -20,6 +20,7 @@ import share.fare.backend.entity.Group;
 import share.fare.backend.entity.User;
 import share.fare.backend.exception.GroupNotFoundException;
 import share.fare.backend.exception.UserNotFoundException;
+import share.fare.backend.repository.ChatMessageRepository;
 import share.fare.backend.repository.GroupRepository;
 import share.fare.backend.repository.UserRepository;
 
@@ -38,6 +39,9 @@ class GroupServiceTest {
 
     @Mock
     private SecurityService securityService;
+
+    @Mock
+    private ChatMessageRepository chatMessageRepository;
 
     @InjectMocks
     private GroupService groupService;
@@ -141,13 +145,13 @@ class GroupServiceTest {
     public void testGetGroupsForUser() {
         Pageable pageable = PageRequest.of(0, 10);
         Page<Group> groupPage = new PageImpl<>(Collections.singletonList(testGroup), pageable, 1);
-        when(groupRepository.findByCreatedByIdOrMembershipsUser_Id(1L, pageable)).thenReturn(groupPage);
+        when(groupRepository.findGroupsByUserMembership(1L, pageable)).thenReturn(groupPage);
 
         Page<GroupResponse> result = groupService.getGroupsForUser(1L, pageable);
 
         assertNotNull(result);
         assertEquals(1, result.getTotalElements());
-        verify(groupRepository, times(1)).findByCreatedByIdOrMembershipsUser_Id(1L, pageable);
+        verify(groupRepository, times(1)).findGroupsByUserMembership(1L, pageable);
     }
 
     @Test

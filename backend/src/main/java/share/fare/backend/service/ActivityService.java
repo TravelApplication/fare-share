@@ -28,7 +28,6 @@ public class ActivityService {
                 throw new IllegalArgumentException("Start date must be before end date.");
             }
         }
-
         Group group = groupRepository
                 .findById(groupId)
                 .orElseThrow(() -> new GroupNotFoundException(groupId));

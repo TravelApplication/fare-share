@@ -115,7 +115,7 @@ public class GroupChatControllerTest {
                         .param("size", "20")
                         .with(user(testSecondUser))
                 )
-                .andExpect(status().isConflict())
+                .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.message").value("User " + testSecondUser.getId() + " is not in group " + testGroup.getName()));
     }
 }

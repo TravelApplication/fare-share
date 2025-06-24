@@ -171,7 +171,7 @@ public class GroupMembershipControllerTest {
         mockMvc.perform(delete(URI + "/{userId}", testGroup.getId(), newUser.getId())
                         .with(user(testUser))
                         .principal(() -> String.valueOf(testUser.getId())))
-                .andExpect(status().isConflict());
+                .andExpect(status().isForbidden());
     }
 
     @Test

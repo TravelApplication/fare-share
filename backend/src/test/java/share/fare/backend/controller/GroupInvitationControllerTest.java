@@ -173,7 +173,7 @@ public class GroupInvitationControllerTest {
                         .principal(() -> String.valueOf(testUser.getId()))
                         .param("receiverId", String.valueOf(testSecondUser.getId()))
                         .param("groupId", String.valueOf(testGroup.getId())))
-                .andExpect(status().isConflict())
+                .andExpect(status().isForbidden())
                 .andExpect(jsonPath("$.message").value("Sender does not belong to group."));
     }
 

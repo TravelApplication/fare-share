@@ -41,6 +41,17 @@ export default function RootLayout({
             <Toaster />
           </section>
         </Suspense>
+        <footer className="w-full text-center text-xs text-gray-500 py-4 border-t">
+          Illustration by{' '}
+          <a
+            href="https://storyset.com/city"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-blue-600"
+          >
+            Storyset
+          </a>
+        </footer>
       </body>
     </html>
   );

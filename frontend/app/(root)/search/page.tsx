@@ -4,7 +4,6 @@ import React, { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { UserSearch } from '@/validation/userProfileSchemas';
 import UserTile from '@/components/shared/UserTile';
-import { getToken, logout } from '@/lib/auth';
 import axiosInstance from '@/lib/axiosInstance';
 
 const SearchPage = () => {
@@ -20,15 +19,9 @@ const SearchPage = () => {
 
       setLoading(true);
       setError(null);
-      const token = await getToken();
-      if (!token) {
-        logout();
-        return;
-      }
       try {
         const response = await axiosInstance.get(`user-info/search`, {
           params: { name: query, page: 0, size: 20 },
-          headers: { Authorization: `Bearer ${token}` },
         });
         setResults(response.data.content || []);
       } catch (error) {

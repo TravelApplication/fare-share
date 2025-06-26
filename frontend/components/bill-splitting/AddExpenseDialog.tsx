@@ -56,10 +56,11 @@ export default function AddExpenseDialog({
           {({ values, errors, touched, isSubmitting, setFieldValue }) => (
             <Form className="space-y-4">
               <div className="mt-4">
-                <label className="font-semibold" htmlFor="name">
+                <label className="font-semibold" htmlFor="expense-description">
                   Description
                 </label>
                 <Field
+                  id="expense-description"
                   name="description"
                   as={Input}
                   placeholder="Description"
@@ -82,10 +83,11 @@ export default function AddExpenseDialog({
               </div>
 
               <div className="mt-4">
-                <label className="font-semibold" htmlFor="totalAmount">
+                <label className="font-semibold" htmlFor="expense-total-amount">
                   Total amount
                 </label>
                 <Field
+                  id="expense-total-amount"
                   name="totalAmount"
                   as={Input}
                   type="number"
@@ -109,10 +111,14 @@ export default function AddExpenseDialog({
               </div>
 
               <div className="mt-4">
-                <label className="font-semibold pr-2" htmlFor="splitMethod">
+                <label
+                  className="font-semibold pr-2"
+                  htmlFor="expense-split-method"
+                >
                   Split Method
                 </label>
                 <Field
+                  id="expense-split-method"
                   name="splitMethod"
                   as="select"
                   className="border rounded px-2 py-1"

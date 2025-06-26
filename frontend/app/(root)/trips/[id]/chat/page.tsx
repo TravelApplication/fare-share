@@ -185,6 +185,7 @@ export default function ChatPage() {
               </label>
               <div className="flex gap-2 items-end">
                 <Field
+                  id="message"
                   name="message"
                   as={TextareaAutosize}
                   maxLength={MAX_LENGTH}

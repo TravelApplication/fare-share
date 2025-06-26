@@ -60,10 +60,11 @@ export default function ActivityForm({
         {({ errors, touched, submitForm }) => (
           <Form>
             <div className="mt-4">
-              <label className="font-semibold" htmlFor="name">
+              <label className="font-semibold" htmlFor="activity-name">
                 Name
               </label>
               <Field
+                id="activity-name"
                 name="name"
                 as={Input}
                 className={`mt-1 ${
@@ -82,10 +83,11 @@ export default function ActivityForm({
             </div>
 
             <div className="mt-4">
-              <label className="font-semibold" htmlFor="description">
+              <label className="font-semibold" htmlFor="activity-description">
                 Description
               </label>
               <Field
+                id="activity-description"
                 name="description"
                 as={Textarea}
                 className={`mt-1 ${
@@ -106,10 +108,11 @@ export default function ActivityForm({
             </div>
 
             <div className="mt-4">
-              <label className="font-semibold" htmlFor="location">
+              <label className="font-semibold" htmlFor="activity-location">
                 Location
               </label>
               <Field
+                id="activity-location"
                 name="location"
                 as={Input}
                 className={`mt-1 ${
@@ -117,7 +120,7 @@ export default function ActivityForm({
                 }`}
               />
               <ErrorMessage
-                name="description"
+                name="location"
                 render={(msg) => (
                   <div className="flex items-center mt-1 text-sm text-red-500">
                     <CircleAlert className="mr-2" />
@@ -128,10 +131,11 @@ export default function ActivityForm({
             </div>
 
             <div className="mt-4">
-              <label className="font-semibold" htmlFor="link">
+              <label className="font-semibold" htmlFor="activity-link">
                 Link
               </label>
               <Field
+                id="activity-link"
                 name="link"
                 type="url"
                 as={Input}
